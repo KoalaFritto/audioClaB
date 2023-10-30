@@ -1,0 +1,381 @@
+/* style.css */ 
+body {
+    font-family: ArialFrank Ruhl MF, Bold Italic;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 100px; /* Aggiunge uno spazio di 100 pixel alla fine della pagina */
+    background-color: #000
+  }
+  
+header {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0 10px 0;
+}
+
+header img {
+    padding: 7px;
+    padding-left: 17px; /* Riduce il padding a destra */
+    max-width: 25%;
+    height: auto;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 25px;
+}
+
+nav ul li a {
+    text-align: contain;
+    padding-right: 57x;
+    font-size: 18px; /* Aggiunto questo per ridurre la dimensione del testo */
+    color: #fff;
+    text-decoration: none;
+}
+
+section {
+    padding: 5px;
+}
+
+section h2 {
+    padding: 0px;
+    padding-left: 52px; /* Riduce il padding a sinistra */
+    padding-right: 30px; /* Riduce il padding a destra */
+    font-size: 40px; /* Aggiunto questo per ridurre la dimensione del testo */
+    color: #ffffff;
+    text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
+}
+
+section h3 {
+  padding-bottom: 450px;
+  padding-left: 52px; /* Riduce il padding a sinistra */
+  padding-right: 30px; /* Riduce il padding a destra */
+  font-size: 40px; /* Aggiunto questo per ridurre la dimensione del testo */
+  color: #ffffff;
+  text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
+}
+
+section p {
+    text-align: left; /* Allinea il testo a sinistra */
+    text-align: center;
+    color: #ffffff;
+    font-size: 25px; /* Aggiunto questo per ridurre la dimensione del testo */
+    padding-left: 50px; /* Riduce il padding a sinistra */
+    margin-right: 850px;
+    text-shadow: 1px 3px 3px rgb(0, 0, 0); /* Ombreggiatura */
+  }
+
+  .music-player {
+    /* Stili per il contenitore principale del lettore audio */
+    max-width: 400px; /* Imposta la larghezza massima del lettore audio */
+    margin: 0 auto; /* Centra il lettore audio nella pagina */
+    text-align: center; /* Allinea il contenuto al centro */
+}
+
+.song-info {
+  font-size: 30px;
+  padding: 12px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 2px 4px 4px rgb(0, 0, 0); /* Ombreggiatura */
+}
+
+#custom-audio {
+    display: none; /* Nasconde il lettore audio */
+}
+
+.controls button {
+  /* Rimuovi il testo e imposta l'immagine come sfondo */ 
+  background-size: cover; /* Adatta l'immagine alla dimensione del pulsante */
+  background-repeat: no-repeat; /* Evita la ripetizione dell'immagine */
+  background-position: center; /* Centra l'immagine all'interno del pulsante */
+  background-color: #00000000;
+  color: #f0f0f0;
+  border: none;
+  width: 60px; /* Imposta la larghezza del pulsante */
+  height: 60px; /* Imposta l'altezza del pulsante */
+  cursor: pointer;
+  padding-right: 8px;
+}
+
+.controls button.pause {
+  background-image: url('pause.png'); /* Immagine per il pulsante Pause */
+}
+
+.controls button.next {
+  background-image: url('next.png'); /* Immagine per il pulsante Next */
+}
+
+.controls button.prev {
+  background-image: url('prev.png'); /* Immagine per il pulsante Previous */
+}
+.controls button:hover {
+    /* Stili per i pulsanti al passaggio del mouse */
+    background-color: #ff0000; /* Cambia il colore di sfondo al passaggio del mouse */
+}
+
+
+.duration {
+  display: block;
+  color: #fff;
+  text-shadow: 2px 4px 4px rgb(0, 0, 0); /* Ombreggiatura */
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+.playlist-container {
+  overflow-y: auto;
+  max-height: 307px; /* Imposta l'altezza massima della playlist */
+  opacity: 1;
+}
+
+.playlist {
+  padding: 0;
+  margin: 0;
+}
+
+.playlist li {
+    /* Stili per l'elenco delle canzoni */
+    position: center;
+    list-style-type: none; /* Rimuove i punti elenco */
+    font-size: 20px; /* Dimensione del testo */
+    color:#f0f0f0;
+    text-shadow: 2px 4px 4px rgb(0, 0, 0); /* Ombreggiatura */
+    padding: 2px 0; /* Spaziatura interna */
+    margin-left: 0px;
+    margin-top: 35px;
+    cursor: pointer;
+}
+
+.playlist li:hover {
+    /* Stili al passaggio del mouse su un elemento della playlist */
+    background-color: #ff0000; /* Cambia il colore di sfondo al passaggio del mouse */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+
+footer {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 0 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.colored-text {
+    font-family: ArialFrank Ruhl MF, Bold Italic;
+    margin: 0;
+    padding: 0;
+    color: red; /* Specifica il colore desiderato */
+}
+
+.text-overlay {
+    position: relative;
+    height: 0px; /* Imposta l'altezza desiderata */
+    bottom: -410px; /* Posiziona il testo 20px dal basso */
+    left: 50%; /* Centra orizzontalmente */
+    transform: translateX(-50%); /* Centra completamente orizzontalmente */
+    text-align: center;
+    z-index: 2; /* Assicura che il testo sia sopra lo slideshow */
+}
+
+.text-overlay h1 {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em; /* Esempio di dimensione del testo in em */
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.2em; /* Regola la dimensione del testo */
+    color: #fff; /* Colore del testo */
+    text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
+}
+
+.text-overlay h2 {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -370px;
+  transform: translate(-50%, -50%);
+  font-size: 1.9em; /* Regola la dimensione del testo */
+  color: #fff; /* Colore del testo */
+  text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
+  opacity: 0.5;
+}
+
+.text-overlay img {
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  top: -400px;
+  transform: translate(-50%, -50%);
+  max-width: 10%;
+  max-height: auto;
+  opacity: 0.5;
+}
+
+.slideshow {
+    position: relative; /* O posizionamento assoluto se necessario */
+    max-width: 100%;
+    max-height: 548px;
+    margin: 0px auto; /* Aggiunto un margine sopra lo slideshow */
+     overflow: hidden;
+  background-image: url('backslide2.jpg'); /* Imposta il percorso dell'immagine */
+  background-size: 40%; /* Imposta la modalità di adattamento dell'immagine */
+  background-position: 50% center; /* Centra l'immagine verticalmente e orizzontalmente */
+  background-position-y: 5%;
+  }
+
+  .slick-dots li button {
+    background-color: #ff0000; /* Colore rosso (cambia con il tuo colore desiderato) */
+    width: 10px; /* Larghezza desiderata */
+    height: 10px; /* Altezza desiderata */
+    background-color: #00ff00; /* Colore verde (cambia con il tuo colore desiderato) */
+}
+
+.slick-dots li {
+  margin-right: 5px; /* Spazio desiderato */
+}
+/* Personalizza lo stile del dot attivo */
+.slick-dots li.slick-active button {
+  background-color: #00ff00; /* Colore verde (cambia con il tuo colore desiderato) */
+}
+
+  .slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+  }
+
+  .slide video {
+    width: 20.5%;
+    max-height: 100%;
+}
+
+  .mute-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+  .slide img {
+    max-width: 40%;
+    max-height: 50%;
+    margin: auto;
+  }
+
+  .slide::before {
+    content: "";
+    background-color: rgba(0, 0, 0, 0.057); /* Un overlay nero semi-trasparente */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Colloca l'overlay dietro all'immagine */
+  }
+
+  .fade {
+    animation: fade 3s infinite; /* Cambia immagine ogni 3 secondi */
+  }
+
+  #background-video {
+    position: absolute;
+    top: 705px;
+    right: 0px;
+    min-width: auto;
+    min-height: 175%;
+    z-index: -1; /* Assicura che il video sia dietro a tutti gli altri elementi */
+  }
+
+  .video-container iframe {
+    border: none;
+    width: 480px; /* Imposta la larghezza a 600 pixel */
+    height: 280px; /* Imposta l'altezza a 400 pixel */
+}
+
+  .video-container {
+    display: relative;
+    flex-wrap: wrap;
+}
+
+.video-container2 iframe {
+  border: none;
+  width: 720px; /* Imposta la larghezza a 600 pixel */
+  height: 480px; /* Imposta l'altezza a 400 pixel */
+}
+
+.video-container2 {
+  display: center;
+  flex-wrap: wrap;
+}
+
+.video1 {
+  position: absolute;
+  top: 780px;
+  left: 950px;
+}
+
+.video2 {
+  position: absolute;
+  top: 1140px;
+  left: 950px;
+}
+
+.video3 {
+  position: absolute;
+  top: 2365px;
+  left: 29%;
+  justify-content: center;
+}
+
+  .social-buttons {
+    display: flex;
+    padding-left: 35px;
+    align-items: center;
+}
+
+.social-button {
+    margin: 0 15px;
+}
+
+.social-button img {
+    width: auto; /* Imposta la larghezza dell'immagine del pulsante */
+    height: 50px; /* Imposta l'altezza dell'immagine del pulsante */
+}
+
+  @keyframes fade {
+    0%, 100% {
+      opacity: 0;
+    }
+    25%, 75% {
+      opacity: 1;
+    }
+  }

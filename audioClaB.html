@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="128x128" href="logoheader.png">
+    <title>audioClaB</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.3/plyr.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.3/tiny-slider.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.3/min/tiny-slider.js"></script>
+    <script src="https://cdn.plyr.io/3.6.3/plyr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize/5.0.0/autosize.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/simplebar@5.3.4/dist/simplebar.min.css">
+    <script src="https://unpkg.com/simplebar@5.3.4/dist/simplebar.min.js"></script>
+</head>
+<body>  
+    <header>
+        <img src="audioclablogo.jpg" alt="Logo di AudioClaB">
+        <nav>
+            <ul>
+                <li><a href="#biografia"><span class="colored-text">B</span>iografia</a></li>
+                <li><a href="#musica">Musi<span class="colored-text">c</span>a</a></li>
+                <li><a href="#tour"><span class="colored-text">C</span>oncerti</a></li>
+                <li><a href="#galleria">Video Musi<span class="colored-text">c</span>ali</a></li>
+                <li><a href="#contatti"><span class="colored-text">C</span>ontatti</a></li>
+                <li><a href="#social">So<span class="colored-text">c</span>ial</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="text-overlay">
+        <h1>La CoverBand di Baglioni a Catania</h1>
+    <img src="Black-Left.png"></img><h2>Scorri per altri media</h2>
+    </div>
+
+    <div class="slideshow">
+        <div class="slide">
+            <img src="background.jpg" alt="Slide 1">
+        </div>
+        <div class="slide">
+            <video src="e adesso.mp4" controls></video>
+        </div>
+    </div>
+
+    <video id="background-video" autoplay muted loop>
+        <source src="AudioClaB - I vecchi background.mp4" type="video/mp4">
+        <!-- Aggiungi ulteriori source se vuoi supportare altri formati -->
+        <!-- <source src="percorso_al_tuo_video.webm" type="video/webm"> -->
+        <!-- <source src="percorso_al_tuo_video.ogv" type="video/ogg"> -->
+      </video>
+      
+    <section id="biografia">
+        <h2><span class="colored-text">B</span>iografia</h2>
+        <p class="biography-text">
+            Gli AudioClaB sono un gruppo musicale nato dalla passione per Claudio Baglioni. Composto da talentuosi musicisti, riproducono con dedizione e maestria il repertorio dell'artista italiano, offrendo esperienze emozionali uniche. 
+        </p>
+        <p class="biography-text">
+            La band ha iniziato anni fa grazie all'amicizia di membri condivisi dall'amore per la musica di Baglioni. Ognuno porta influenze diverse, arricchendo l'interpretazione dei brani.
+        </p>
+        <p class="biography-text">
+            Hanno conquistato un vasto pubblico con esibizioni che catturano l'anima delle canzoni di Baglioni. Sono considerati uno dei tributi più autentici e talentuosi. 
+        </p>
+        <p class="biography-text">
+            Gli AudioClaB celebrano l'arte di Claudio Baglioni, portando avanti la sua eredità musicale attraverso esibizioni coinvolgenti. La loro musica continua a ispirare e toccare i cuori di chi ama Baglioni, dimostrando che il suo impatto sulla cultura musicale italiana è indelebile, grazie anche al loro straordinario tributo.
+        </p>
+
+        <div class="video-container">
+            <iframe class="video1" src="https://www.youtube.com/embed/ylSFNl9_LRA"></iframe>
+        </div>
+        
+        <div class="video-container">
+            <iframe class="video2" src="https://www.youtube.com/embed/d6maA1uokAo"></iframe>
+        </div>
+    </section>
+    
+
+    <section id="musica">
+        <h2>Musi<span class="colored-text">c</span>a</h2>
+        <style>
+            input[type="range"] {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 100%;
+                height: 10px;
+                background: #9a1b1b;
+                outline: none;
+                border-radius: 5px;
+            }
+        
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                background: #ffffff;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+            
+        </style>
+
+        <div class="music-player">
+            <div class="song-info"></div>
+            <audio id="custom-audio" controls>
+                <source src="dagli il via master misterbianco.mp3" type="audio/mp3">
+            </audio>
+            <input type="range" id="progress" min="0" max="100" value="0">
+        <div class="duration">-00:00</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('custom-audio');
+            const progress = document.getElementById('progress');
+            const durationDisplay = document.querySelector('.duration');
+
+            function updateProgressBar() {
+                const progressPercentage = (audio.currentTime / audio.duration) * 100;
+                progress.value = progressPercentage;
+
+                const remainingTime = audio.duration - audio.currentTime;
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = Math.floor(remainingTime % 60);
+
+                durationDisplay.textContent = `-${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            audio.addEventListener('timeupdate', updateProgressBar);
+
+            progress.addEventListener('input', () => {
+                const newTime = (progress.value / 100) * audio.duration;
+                audio.currentTime = newTime;
+                updateProgressBar();
+            });
+        });
+    </script>
+
+            <div class="controls button">
+                <button id="prev-track">Prev</button>
+                <button id="play-pause">Play</button>
+                <button id="next-track">Next</button>
+            </div>
+            <div class="progress-container" data-simplebar>
+                <div class="progress"></div>
+                <div class="progress-knob"></div>
+            </div>
+            <div class="playlist-container">
+            <ul class="playlist">
+                <!-- Elenco delle canzoni -->
+                <li data-src="dagli il via master misterbianco.mp3">Dagli il Via (Live Misterbianco 2010)</li>
+                <li data-src="mille g.mp3">Mille giorni di te e di me (Live Misterbianco 2010)</li>
+                <li data-src="bolero master.mp3">Bolero (Live Misterbianco 2010)</li>
+                <li data-src="song4.mp3">Canzone 4</li>
+                <li data-src="song5.mp3">Canzone 5</li>
+                <li data-src="song6.mp3">Canzone 6</li>
+                <!-- Aggiungi altre canzoni secondo necessità -->
+            </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="tour">
+        <h2><span class="colored-text">C</span>oncerti</h2>
+        <div id="tour-events">
+            <p id="no-events-message">Non ci sono eventi in programma al momento.</p>
+        </div>
+    </section>
+    
+    <section id="galleria">
+        <h3>Video Musi<span class="colored-text">c</span>ali</h3>
+        <div class="video-container2">
+        <iframe class="video3" src="https://www.youtube.com/embed/videoseries?list=PLZ9YASQIi96hSLc9AZA6r3ET4Qafys9U7&enablejsapi=1&origin=http://example.com&key=AIzaSyCRxPUUDGCZ7_kW3FS60plxDKzJPLybm2Q"></iframe>
+        </div>
+    </section>
+    
+    <section id="contatti">
+        <h2><span class="colored-text">C</span>ontatti</h2>
+        <p>Se hai un locale oppure un palco, non esitare a inviare un'email su: <a href="mailto:galberti4@libero.it">galberti4@libero.it</a></p>
+    </section>
+    
+    <footer>
+        <p>&copy; 2007 - 2023 audioClaB</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+<section id="social">
+    <h2>Segui<span class="colored-text">c</span>i su:</h2>
+    <div class="social-buttons">
+        <a href="https://www.facebook.com/audioClaB.it" target="_blank" class="social-button">
+            <img src="Facebook.png" alt="Facebook">
+        </a>
+        <a href="https://www.youtube.com/@galberti6" target="_blank" class="social-button">
+            <img src="Youtube.png" alt="YouTube">
+        </a>
+        <a href="https://www.tiktok.com/@audioclab?lang=it-IT" target="_blank" class="social-button">
+            <img src="Tiktok.png" alt="TikTok">
+        </a>
+        <!-- Aggiungi altri pulsanti per altri social media secondo necessità -->
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
+</html>
