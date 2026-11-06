@@ -33,12 +33,11 @@
   .wall { grid-template-columns: 1fr; }
 }
 
-/* concerti */
-.concerti__vuoto { display: grid; gap: var(--s-4); justify-items: start; }
-.concerti__vuoto p { font-size: var(--t-lead); line-height: 1.5; max-width: 40ch; margin: 0; }
-.concerti__vuoto[hidden] { display: none; }
-#lista-concerti:empty { display: none; }
-#lista-concerti a { color: inherit; }
+/* concerti: il widget eventi di Facebook */
+.fb-eventi { width: 100%; max-width: 500px; min-height: 430px; border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
+.fb-eventi > iframe { display: block; border: 0; max-width: 100%; }
+.fb-eventi__link { margin-top: var(--s-5); }
+@media (max-width: 639px) { .fb-eventi { min-height: 480px; } }
 
 /* chiusura */
 .closing .mail { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
@@ -62,7 +61,6 @@
 .press a.rows__name { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; transition: text-decoration-color 160ms ease; }
 @media (hover: hover) and (pointer: fine) { .press a.rows__name:hover { text-decoration-color: currentColor; } }
 .press .rows__value { color: var(--muted); white-space: nowrap; }
-#lista-concerti:not(:empty) + .concerti__vuoto { display: none; }
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }

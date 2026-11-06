@@ -1,40 +1,36 @@
-/* audioClaB: lista dei concerti e video TikTok. */
+/* audioClaB: prossimi concerti da Facebook e video TikTok. */
 
 /* ------------------------------------------------------------------ CONCERTI
-   Per aggiungere una data scrivi una riga qui sotto e salva:
-     { data: '2026-12-20', ora: '21:30', locale: 'Nome del locale', citta: 'Catania', link: 'https://...' },
-   Le date già passate spariscono da sole; senza date compare il messaggio "Nessuna data in programma". */
-const CONCERTI = [
-];
+   I prossimi concerti vengono dagli eventi della pagina Facebook audioClaB, con il widget ufficiale
+   di Facebook (Page Plugin, scheda Eventi): basta creare l'evento su Facebook e compare anche qui.
+   Il widget accetta una larghezza da 180 a 500 px: lo creiamo a misura della colonna e lo rifacciamo
+   se la colonna cambia larghezza (telefono girato, finestra ridimensionata). */
+(function concertiFacebook() {
+  const box = document.getElementById('fb-eventi');
+  if (!box) return;
+  let larghezza = 0;
 
-(function concerti() {
-  const lista = document.getElementById('lista-concerti');
-  const vuoto = document.getElementById('concerti-vuoto');
-  if (!lista) return;
-  const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
-  const fmt = new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
-  const prossimi = CONCERTI
-    .map(c => ({ ...c, quando: new Date(c.data + 'T00:00:00') }))
-    .filter(c => !isNaN(c.quando) && c.quando >= oggi)
-    .sort((a, b) => a.quando - b.quando);
-  for (const c of prossimi) {
-    const li = document.createElement('li');
-    const nome = document.createElement('span');
-    nome.className = 'rows__name';
-    if (c.link) {
-      const a = document.createElement('a');
-      a.href = c.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.locale;
-      nome.appendChild(a);
-    } else nome.textContent = c.locale;
-    const dove = document.createElement('p');
-    dove.textContent = c.citta;
-    const val = document.createElement('span');
-    val.className = 'rows__value';
-    val.textContent = fmt.format(c.quando) + (c.ora ? ', ' + c.ora : '');
-    li.append(nome, val, dove);
-    lista.appendChild(li);
+  function monta() {
+    const w = Math.max(180, Math.min(500, Math.floor(box.clientWidth)));
+    if (Math.abs(w - larghezza) < 20) return;
+    larghezza = w;
+    const h = window.innerWidth < 640 ? 480 : 430;
+    const q = new URLSearchParams({
+      href: box.dataset.pagina, tabs: 'events', width: String(w), height: String(h),
+      small_header: 'true', adapt_container_width: 'true', hide_cover: 'true', show_facepile: 'false', locale: 'it_IT',
+    });
+    const f = document.createElement('iframe');
+    f.src = 'https://www.facebook.com/plugins/page.php?' + q.toString();
+    f.width = w; f.height = h;
+    f.title = 'Prossimi concerti degli audioClaB su Facebook';
+    f.loading = 'lazy';
+    f.allow = 'encrypted-media; clipboard-write';
+    box.replaceChildren(f);
   }
-  if (vuoto) vuoto.hidden = prossimi.length > 0;
+
+  monta();
+  let t;
+  window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(monta, 250); });
 })();
 
 /* ------------------------------------------------------------------ TIKTOK

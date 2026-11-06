@@ -149,13 +149,11 @@
         <div class="span-6">
           <div class="section-head">
             <h2 id="concerti-h">Prossimi concerti degli audioClaB</h2>
-            <p>Le date in programma, con il locale e la città.</p>
+            <p>Le date arrivano da sole dagli eventi della pagina Facebook.</p>
           </div>
-          <ul class="rows" id="lista-concerti" aria-label="Prossime date"></ul>
-          <div class="concerti__vuoto" id="concerti-vuoto">
-            <p>Nessuna data in programma al momento. Le nuove date escono qui e sulla pagina Facebook.</p>
-            <a class="link" href="https://www.facebook.com/audioClaB.it" target="_blank" rel="noopener">Segui le date su Facebook</a>
-          </div>
+          <!-- Widget ufficiale di Facebook (Page Plugin, scheda Eventi): lo crea script.js a misura della colonna -->
+          <div class="fb-eventi" id="fb-eventi" data-pagina="https://www.facebook.com/audioClaB.it"></div>
+          <a class="link fb-eventi__link" href="https://www.facebook.com/audioClaB.it/upcoming_hosted_events" target="_blank" rel="noopener">Vedi tutte le date su Facebook</a>
         </div>
         <div class="frame frame--photo span-6 start-7 concerti__photo">
           <img class="frame__img" src="assets/img/concerti-cantante.jpg" alt="Il cantante con il microfono in mano, in primo piano" loading="lazy" width="658" height="662" style="object-position: 40% 40%">
