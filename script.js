@@ -1,4 +1,4 @@
-/* audioClaB: lettore dei brani, video YouTube al clic e lista dei concerti. */
+/* audioClaB: lista dei concerti e video TikTok. */
 
 /* ------------------------------------------------------------------ CONCERTI
    Per aggiungere una data scrivi una riga qui sotto e salva:
@@ -99,86 +99,6 @@ const TIKTOK_VIDEO = [
     io.observe(box);
   } else mount();
 })();
-
-/* ------------------------------------------------------------------ LETTORE */
-(function lettore() {
-  const audio = document.getElementById('audio');
-  const tracks = [...document.querySelectorAll('.track')];
-  const seek = document.querySelector('.player__seek');
-  const now = document.querySelector('.player__now');
-  const time = document.querySelector('.player__time');
-  const heroPlay = document.querySelector('.hero-play');
-  if (!audio || !tracks.length) return;
-  let current = -1;
-
-  const mmss = s => {
-    if (!isFinite(s)) return '0:00';
-    s = Math.max(0, Math.floor(s));
-    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-  };
-
-  function render() {
-    const playing = !audio.paused;
-    tracks.forEach((t, i) => t.setAttribute('aria-pressed', String(i === current && playing)));
-    if (heroPlay) heroPlay.classList.toggle('is-playing', current === 0 && playing);
-    if (current >= 0) now.textContent = tracks[current].querySelector('.rows__name').textContent;
-    seek.disabled = current < 0;
-  }
-
-  function progress() {
-    const d = audio.duration;
-    const p = d ? audio.currentTime / d : 0;
-    seek.value = Math.round(p * 1000);
-    seek.style.setProperty('--pct', (p * 100).toFixed(2) + '%');
-    time.textContent = mmss(audio.currentTime) + ' / ' + mmss(d);
-  }
-
-  function play(i) {
-    if (i === current) {
-      audio.paused ? audio.play() : audio.pause();
-      return;
-    }
-    current = i;
-    audio.src = tracks[i].dataset.src;
-    audio.play().catch(() => {});
-    render();
-  }
-
-  tracks.forEach((t, i) => t.addEventListener('click', () => play(i)));
-  if (heroPlay) heroPlay.addEventListener('click', () => play(Number(heroPlay.dataset.track) || 0));
-
-  seek.addEventListener('input', () => {
-    if (audio.duration) audio.currentTime = (seek.value / 1000) * audio.duration;
-    progress();
-  });
-
-  audio.addEventListener('play', render);
-  audio.addEventListener('pause', render);
-  audio.addEventListener('timeupdate', progress);
-  audio.addEventListener('loadedmetadata', progress);
-  audio.addEventListener('ended', () => {
-    if (current < tracks.length - 1) play(current + 1);
-    else { render(); }
-  });
-})();
-
-/* ------------------------------------------------------------------ YOUTUBE
-   La miniatura resta un'immagine finché non la clicchi: il player di YouTube si carica solo allora. */
-document.querySelectorAll('[data-yt]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const f = document.createElement('iframe');
-    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(btn.dataset.yt) + '?autoplay=1&rel=0';
-    f.title = btn.getAttribute('aria-label') || 'Video YouTube';
-    f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    f.allowFullscreen = true;
-    btn.replaceWith(f);
-  });
-});
-
-/* un solo media alla volta: se parte un video si ferma la musica, e viceversa */
-document.addEventListener('play', e => {
-  document.querySelectorAll('audio, video').forEach(m => { if (m !== e.target && !m.paused) m.pause(); });
-}, true);
 
 /* l'anno nel footer */
 document.querySelectorAll('[data-anno]').forEach(el => { el.textContent = new Date().getFullYear(); });

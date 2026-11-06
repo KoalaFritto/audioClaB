@@ -11,108 +11,15 @@
 .footer .nav__logo .logo-img--footer { height: 40px; }
 @media (max-width: 639px) { .nav__logo .logo-img { height: 18px; } .footer .nav__logo .logo-img--footer { height: 30px; } }
 
-/* l'icona play/pausa disegnata in CSS */
-.play-icon {
-  --sz: 12px;
-  flex: none; display: inline-block; width: var(--sz); height: var(--sz);
-  background: currentColor;
-  clip-path: polygon(15% 0, 100% 50%, 15% 100%);
-  transition: clip-path 160ms var(--ease, ease);
-}
-[aria-pressed="true"] > .play-icon, .is-playing > .play-icon {
-  clip-path: polygon(0 0, 38% 0, 38% 100%, 0 100%, 0 0, 62% 0, 100% 0, 100% 100%, 62% 100%, 62% 0);
-}
-
-/* la carta che galleggia sulla foto dell'hero: un brano da ascoltare subito */
-.hero-play {
-  display: flex; align-items: center; gap: var(--s-3);
-  width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
-}
-.hero-play .play-icon { --sz: 14px; color: var(--action); }
-
-/* i brani */
-.tracks > li { align-items: center; }
-.track {
-  display: flex; align-items: center; gap: var(--s-4);
-  min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink);
-  font: inherit; text-align: left; cursor: pointer;
-  transition: transform 160ms cubic-bezier(.23, 1, .32, 1);
-}
-.track .play-icon {
-  --sz: 40px;
-  clip-path: none; background: none; position: relative;
-  border-radius: 999px; border: 1px solid var(--line-strong, var(--line));
-  transition: background-color 160ms ease, border-color 160ms ease;
-}
-.track .play-icon::after {
-  content: ""; position: absolute; inset: 0; margin: auto; width: 12px; height: 12px;
-  background: var(--ink); clip-path: polygon(20% 0, 100% 50%, 20% 100%);
-  transition: clip-path 160ms ease;
-}
-.track[aria-pressed="true"] .play-icon { background: var(--action); border-color: var(--action); }
-.track[aria-pressed="true"] .play-icon::after {
-  background: var(--action-ink, #fff);
-  clip-path: polygon(0 0, 36% 0, 36% 100%, 0 100%, 0 0, 64% 0, 100% 0, 100% 100%, 64% 100%, 64% 0);
-}
-.track .rows__name { font-size: var(--t-card); }
-.track:active { transform: scale(0.98); }
-@media (hover: hover) and (pointer: fine) {
-  .track:hover .play-icon { border-color: var(--action); }
-}
-.tracks .rows__value { font-variant-numeric: tabular-nums; color: var(--muted); }
-
-/* barra di avanzamento del lettore */
-.player { margin-top: var(--s-6); display: grid; gap: var(--s-2); }
-.player__seek {
-  -webkit-appearance: none; appearance: none; width: 100%; height: 24px; margin: 0; background: none; cursor: pointer;
-  --pct: 0%;
-}
-.player__seek:disabled { cursor: default; }
-.player__seek::-webkit-slider-runnable-track {
-  height: 4px; border-radius: 999px;
-  background: linear-gradient(to right, var(--action) var(--pct), var(--line) var(--pct));
-}
-.player__seek::-moz-range-track { height: 4px; border-radius: 999px; background: var(--line); }
-.player__seek::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--action); }
-.player__seek::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; margin-top: -6px;
-  border-radius: 999px; background: var(--action); border: 0;
-  transition: transform 160ms cubic-bezier(.23, 1, .32, 1);
-}
-.player__seek::-moz-range-thumb { width: 16px; height: 16px; border-radius: 999px; background: var(--action); border: 0; }
-.player__seek:disabled::-webkit-slider-thumb { background: var(--line); }
-.player__seek:active::-webkit-slider-thumb { transform: scale(1.15); }
-.player__meta { display: flex; justify-content: space-between; gap: var(--s-4); color: var(--muted); }
-.player__time { font-variant-numeric: tabular-nums; }
-
 /* foto delle sezioni */
-.musica__photo { --ratio: 100%; }
 .concerti__photo { --ratio: 100%; }
 
 /* la band: un muro di due foto, 2px tra l'una e l'altra */
 .wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: var(--r-lg); overflow: hidden; }
 .wall > img { width: 100%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; }
 
-/* cornici dei video (TikTok e YouTube): senza bordo, fondo nero */
+/* cornici dei video TikTok: senza bordo, fondo nero */
 .frame--video { padding: 0; border: 0; background: #000; overflow: hidden; }
-
-/* YouTube: la miniatura diventa il player solo al clic */
-.yt { --ratio: 56.25%; }
-.yt__more { margin-top: var(--s-5); }
-.frame > .yt__play { position: absolute; inset: 0; padding: 0; border: 0; background: none; cursor: pointer; }
-.yt__play .frame__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.yt__disc {
-  position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px;
-  border-radius: 999px; background: var(--action);
-  transition: transform 160ms cubic-bezier(.23, 1, .32, 1);
-}
-.yt__disc::after {
-  content: ""; position: absolute; inset: 0; margin: auto; width: 22px; height: 22px; transform: translateX(2px);
-  background: var(--action-ink, #fff); clip-path: polygon(15% 0, 100% 50%, 15% 100%);
-}
-@media (hover: hover) and (pointer: fine) { .yt__play:hover .yt__disc { transform: scale(1.06); } }
-.yt__play:active .yt__disc { transform: scale(0.96); }
-.frame.yt > iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* il titolo che apre una colonna: nessuno spostamento */
 .grid--top > div > .section-head:first-child { margin-top: 0; }
@@ -120,13 +27,9 @@
 /* tablet (schermi alti): gli split restano affiancati e le immagini prendono l'altezza dello schermo,
    così ogni sezione riempie il suo schermo senza sforare */
 @media (min-width: 640px) and (max-width: 1023px) {
-  #musica .grid--top > *, #concerti .grid--top > *, .yt-pair > * { grid-column: auto / span 6; }
-  .musica__photo { --ratio: 0px; height: 60svh; align-self: start; }
-  .yt-pair .yt { --ratio: 0px; height: 40svh; }
   .wall > img { aspect-ratio: 3 / 4; }
 }
 @media (max-width: 639px) {
-  .musica__photo { --ratio: 50%; }
   .wall { grid-template-columns: 1fr; }
 }
 
@@ -164,6 +67,7 @@
   .tiktok--video > .tt { grid-column: auto / span 6; }
   .tiktok--video > .tt:nth-child(n+3) { display: none; }
   .band__info > * { grid-column: auto / span 6; }
+  #concerti .grid--top > * { grid-column: auto / span 6; }
 }
 @media (max-width: 639px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }
@@ -198,8 +102,6 @@ main > :is(section, .section) > .wrap > .fill { flex: 1 0 auto; }
   .hero__grid { align-items: start; }
   .hero__media { height: clamp(320px, calc(100svh - 160px), 640px); }
 }
-/* il brano dell'hero: un bersaglio comodo anche per il dito */
-.hero-play { min-height: 44px; }
 
 /* concerti su tablet: le date accanto alla foto, alta quanto lo schermo permette */
 @media (min-width: 640px) and (max-width: 1023px) {
@@ -207,5 +109,5 @@ main > :is(section, .section) > .wrap > .fill { flex: 1 0 auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .play-icon, .track, .yt__disc, .player__seek::-webkit-slider-thumb { transition: none; }
+  .press a.rows__name { transition: none; }
 }
