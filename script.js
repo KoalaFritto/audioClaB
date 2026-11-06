@@ -37,6 +37,69 @@ const CONCERTI = [
   if (vuoto) vuoto.hidden = prossimi.length > 0;
 })();
 
+/* ------------------------------------------------------------------ TIKTOK
+   Incolla qui i link dei video TikTok da mostrare, dal più visto in giù (ne compaiono al massimo 4):
+     'https://www.tiktok.com/@audioclab/video/7xxxxxxxxxxxxxxxxxx',
+   Con l'elenco vuoto la sezione mostra il profilo @audioclab incorporato da TikTok. */
+const TIKTOK_VIDEO = [
+  'https://www.tiktok.com/@audioclab/video/7624145377213697302', // Io dal mare
+  'https://www.tiktok.com/@audioclab/video/7601620674410679575', // Trecastagni, 7 febbraio 2026
+  'https://www.tiktok.com/@audioclab/video/7538869704849476886', // Adesso la pubblicità
+  'https://www.tiktok.com/@audioclab/video/7683078825760017696', // Piedimonte, 12 settembre 2026
+];
+
+(function tiktok() {
+  const box = document.getElementById('tiktok');
+  if (!box) return;
+  const ids = TIKTOK_VIDEO
+    .map(v => String(v).match(/(\d{15,})/))
+    .filter(Boolean)
+    .map(m => m[1])
+    .slice(0, 4);
+
+  function mount() {
+    box.textContent = '';
+    if (ids.length) {
+      box.classList.add('tiktok--video');
+      ids.forEach((id, i) => {
+        const card = document.createElement('div');
+        card.className = 'frame frame--video tt';
+        const f = document.createElement('iframe');
+        f.src = 'https://www.tiktok.com/player/v1/' + id + '?description=1&music_info=1&rel=0';
+        f.title = 'Video TikTok degli audioClaB ' + (i + 1);
+        f.loading = 'lazy';
+        f.allow = 'fullscreen; encrypted-media; picture-in-picture';
+        card.appendChild(f);
+        box.appendChild(card);
+      });
+      return;
+    }
+    // il profilo ufficiale (codice di incorporamento dato da TikTok)
+    const q = document.createElement('blockquote');
+    q.className = 'tiktok-embed';
+    q.cite = 'https://www.tiktok.com/@' + box.dataset.profilo;
+    q.dataset.uniqueId = box.dataset.profilo;
+    q.dataset.embedType = 'creator';
+    const sec = document.createElement('section');
+    const a = document.createElement('a');
+    a.href = q.cite + '?refer=creator_embed'; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = '@' + box.dataset.profilo;
+    sec.appendChild(a); q.appendChild(sec); box.appendChild(q);
+    const s = document.createElement('script');
+    s.async = true; s.src = 'https://www.tiktok.com/embed.js';
+    document.body.appendChild(s);
+  }
+
+  // i video hanno già loading="lazy"; il profilo incorporato si carica solo quando la sezione sta per entrare nello schermo
+  if (ids.length) mount();
+  else if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) { io.disconnect(); mount(); }
+    }, { rootMargin: '600px 0px' });
+    io.observe(box);
+  } else mount();
+})();
+
 /* ------------------------------------------------------------------ LETTORE */
 (function lettore() {
   const audio = document.getElementById('audio');

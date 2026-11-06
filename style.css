@@ -87,17 +87,14 @@
 
 /* foto delle sezioni */
 .musica__photo { --ratio: 100%; }
-.concerti__photo { --ratio: 100%; }
+.concerti__photo { --ratio: 75%; margin-top: var(--s-6); }
 
 /* la band: un muro di due foto, 2px tra l'una e l'altra */
 .wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: var(--r-lg); overflow: hidden; }
 .wall > img { width: 100%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; }
 
-/* video: cornici senza bordo, il film 16:9 accanto alla clip verticale alla stessa altezza */
+/* cornici dei video (TikTok e YouTube): senza bordo, fondo nero */
 .frame--video { padding: 0; border: 0; background: #000; overflow: hidden; }
-.video--wide { --ratio: 56.25%; }
-.video--tall { --ratio: calc(56.25% * 846 / 410); }
-.videos video.frame__img { object-fit: cover; background: #000; }
 
 /* YouTube: la miniatura diventa il player solo al clic */
 .yt { --ratio: 56.25%; }
@@ -124,17 +121,12 @@
    così ogni sezione riempie il suo schermo senza sforare */
 @media (min-width: 640px) and (max-width: 1023px) {
   #musica .grid--top > *, #concerti .grid--top > *, .yt-pair > * { grid-column: auto / span 6; }
-  .musica__photo, .concerti__photo { --ratio: 0px; height: 60svh; align-self: start; }
-  .videos > .video--wide { grid-column: auto / span 8; }
-  .videos > .video--tall { grid-column: auto / span 4; }
-  .videos > * { --ratio: 0px; height: 56svh; }
-  .videos > .video--wide video.frame__img { object-fit: contain; }
+  .musica__photo { --ratio: 0px; height: 60svh; align-self: start; }
   .yt-pair .yt { --ratio: 0px; height: 40svh; }
   .wall > img { aspect-ratio: 3 / 4; }
 }
 @media (max-width: 639px) {
   .musica__photo { --ratio: 50%; }
-  .video--tall { --ratio: 100%; }
   .wall { grid-template-columns: 1fr; }
 }
 
@@ -148,6 +140,73 @@
 /* chiusura */
 .closing .mail { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .socials img { object-fit: contain; }
+
+/* TikTok: i video in 9:16, quattro in fila; senza elenco, il profilo incorporato da TikTok */
+.tiktok { align-content: start; }
+.tiktok:not(.tiktok--video) { min-height: 560px; }
+.tiktok__fallback { align-self: start; }
+.tiktok .tiktok-embed { margin: 0 !important; grid-column: 1 / -1; width: 100%; }
+.tiktok--video > .tt { grid-column: auto / span 3; --ratio: 177.78%; }
+.frame.tt > iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* la band: formazione e articoli */
+.band__h3 { font: var(--display-weight) var(--t-h3)/1.2 var(--font-display); letter-spacing: var(--display-tracking); margin: 0 0 var(--s-5); }
+.rows--compact > li { padding-block: var(--s-3); }
+.rows--compact > li:first-child { padding-top: 0; }
+.rows--compact .rows__value { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.press > li > p { grid-column: 1 / -1; margin: 0; color: var(--muted); }
+.press a.rows__name { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; transition: text-decoration-color 160ms ease; }
+@media (hover: hover) and (pointer: fine) { .press a.rows__name:hover { text-decoration-color: currentColor; } }
+.press .rows__value { color: var(--muted); white-space: nowrap; }
+#lista-concerti:not(:empty) + .concerti__vuoto { display: none; }
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .tiktok--video > .tt { grid-column: auto / span 6; }
+  .tiktok--video > .tt:nth-child(n+3) { display: none; }
+  .band__info > * { grid-column: auto / span 6; }
+}
+@media (max-width: 639px) {
+  .tiktok--video > .tt { grid-column: auto / span 6; }
+  .tiktok--video > .tt:nth-child(n+3) { display: none; }
+  .band__info { row-gap: var(--s-7); }
+  #concerti { --hm: 2; }
+  .concerti__photo { display: none; }
+}
+
+/* ------------------------------------------------------------------ RESPONSIVE SU OGNI SCHERMO
+   Sugli schermi alti ogni sezione occupa uno schermo; su quelli bassi (telefoni in orizzontale,
+   iPhone SE, portatili) o con molto contenuto la sezione cresce invece di far uscire il testo. */
+main > :is(section, .section):not(.hero, .section--hero), footer.closing {
+  height: auto; min-height: calc(var(--h, 1) * 100svh);
+  display: flex; flex-direction: column;
+}
+main > :is(section, .section):not(.hero, .section--hero) > :is(.wrap, .container), footer.closing > .wrap { flex: 1 0 auto; height: auto; min-height: 0; }
+main > :is(section, .section) > .wrap > .fill { flex: 1 0 auto; }
+/* schermi strettissimi (320px): nella barra restano logo e menu, "Prenota" è nell'hero e nel menu */
+@media (max-width: 359px) { .nav:not(.is-open) .nav__actions { display: none; } }
+@media (max-width: 639px) {
+  main > :is(section, .section):not(.hero, .section--hero), footer.closing {
+    height: auto; min-height: calc(var(--hm, var(--h, 1)) * 100svh);
+  }
+}
+/* l'apertura: sugli schermi bassi cresce anche lei, con la foto a un'altezza fissa */
+@media (max-height: 700px), (max-width: 639px) and (max-height: 760px) {
+  main > :is(.hero, .section--hero) { height: auto; min-height: 100svh; }
+  :is(.hero, .section--hero) > .wrap, .hero > .wrap > .hero-text { height: auto; }
+  .hero__media { height: clamp(260px, 62svh, 520px); min-height: 0; flex: none; }
+}
+@media (max-height: 700px) and (min-width: 1024px) {
+  .hero__grid { align-items: start; }
+  .hero__media { height: clamp(320px, calc(100svh - 160px), 640px); }
+}
+/* il brano dell'hero: un bersaglio comodo anche per il dito */
+.hero-play { min-height: 44px; }
+
+/* concerti: sul telefono niente foto, le date vengono prima */
+@media (min-width: 640px) and (max-width: 1023px) {
+  #concerti .concerti__grid > * { grid-column: 1 / -1; }
+  .concerti__photo { display: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .play-icon, .track, .yt__disc, .player__seek::-webkit-slider-thumb { transition: none; }

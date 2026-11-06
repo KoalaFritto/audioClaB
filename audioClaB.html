@@ -53,14 +53,13 @@
             </div>
             <div class="menu-col span-3">
               <p class="t-label">Video</p>
-              <a href="#video">Il film dei concerti<span>Il palco, le luci, la band</span></a>
-              <a href="#video">E adesso<span>Una clip in acustico</span></a>
-              <a href="#youtube">Su YouTube<span>La playlist del canale</span></a>
+              <a href="#video">Su TikTok<span>I video più visti</span></a>
+              <a href="#youtube">Su YouTube<span>I concerti sul canale</span></a>
             </div>
-            <a class="menu-card span-3 start-10" href="#video">
+            <a class="menu-card span-3 start-10" href="#concerti">
               <div class="panel"><img class="frame__img" src="assets/img/menu-film.jpg" alt="Il palco degli audioClaB illuminato di blu durante un concerto" loading="lazy" width="640" height="360"></div>
-              <span class="t-card">Video dei concerti</span>
-              <span class="t-small muted">Il palco visto da vicino</span>
+              <span class="t-card">Concerti in Sicilia</span>
+              <span class="t-small muted">Le piazze dove abbiamo suonato</span>
             </a>
           </div>
         </div>
@@ -83,7 +82,7 @@
     <div class="wrap"><div class="hero-text grid hero__grid">
       <div class="hero__text span-6">
         <h1 id="hero-h">Cover band di Baglioni a Catania</h1>
-        <p class="hero__lead">Suoniamo dal vivo il repertorio di Baglioni, da Dagli il via a Mille giorni di te e di me, nei locali e sui palchi di Catania e provincia. Sul palco dal 2007.</p>
+        <p class="hero__lead">Suoniamo dal vivo le canzoni di Claudio Baglioni nelle piazze e sui palchi della Sicilia, con gli arrangiamenti dei suoi concerti. Sul palco dal 2007.</p>
         <div class="btn-row">
           <a class="btn btn--primary" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">Prenota un concerto<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
           <a class="btn btn--secondary" href="#musica">Ascolta i brani</a>
@@ -144,22 +143,17 @@
 
   <section class="section" id="video" aria-labelledby="video-h">
     <div class="wrap">
-      <div class="section-head">
-          <h2 id="video-h">Video degli audioClaB</h2>
-          <p>Il palco, le luci e la band, e una clip in acustico con E adesso.</p>
+      <div class="section-head section-head--split">
+        <div>
+          <h2 id="video-h">audioClaB su TikTok</h2>
+          <p>I video più visti del profilo @audioclab, da Io dal mare in giù.</p>
         </div>
-        <div class="grid videos">
-          <figure class="frame frame--video span-8 video--wide">
-            <video class="frame__img" controls preload="none" playsinline poster="assets/img/poster-film.jpg" aria-label="Film dei concerti degli audioClaB">
-              <source src="AudioClaB - I vecchi background.mp4" type="video/mp4">
-            </video>
-          </figure>
-          <figure class="frame frame--video span-4 video--tall">
-            <video class="frame__img" controls preload="none" playsinline poster="assets/img/poster-eadesso.jpg" aria-label="E adesso, clip in acustico">
-              <source src="e adesso.mp4" type="video/mp4">
-            </video>
-          </figure>
-        </div>
+        <a class="link" href="https://www.tiktok.com/@audioclab" target="_blank" rel="noopener">Segui su TikTok</a>
+      </div>
+      <!-- I video vengono da script.js (TIKTOK_VIDEO): con l'elenco vuoto compare il profilo TikTok ufficiale incorporato -->
+      <div class="grid tiktok" id="tiktok" data-profilo="audioclab">
+        <a class="tiktok__fallback span-12" href="https://www.tiktok.com/@audioclab" target="_blank" rel="noopener">Guarda i video su TikTok</a>
+      </div>
     </div>
   </section>
 
@@ -187,35 +181,87 @@
     </div>
   </section>
 
-  <section class="section" id="band" aria-labelledby="band-h">
+  <section class="section g2" id="band" aria-labelledby="band-h">
     <div class="wrap">
-      <div class="section-head band__head">
-        <h2 id="band-h">La band, dal 2007</h2>
-        <p>Siamo musicisti di Catania uniti dalla musica di Claudio Baglioni. Ognuno porta le sue influenze, e insieme suoniamo il suo repertorio con gli arrangiamenti dei dischi.</p>
+      <div class="group">
+        <div class="section-head band__head">
+          <h2 id="band-h">La band, dal 2007</h2>
+          <p>Siamo nati a Catania all'inizio del 2007. Il repertorio viene dai grandi concerti di Claudio Baglioni e lo suoniamo con gli arrangiamenti originali, senza riletture personali.</p>
+        </div>
+        <div class="wall">
+          <img src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 640px) 44vw, 100vw" width="883" height="1024" alt="Tre musicisti degli audioClaB: chitarra, voce e basso" loading="lazy" style="object-position: 50% 22%">
+          <img src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 640px) 44vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
+        </div>
       </div>
-      <div class="wall">
-        <img src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 640px) 44vw, 100vw" width="883" height="1024" alt="Tre musicisti degli audioClaB: chitarra, voce e basso" loading="lazy" style="object-position: 50% 22%">
-        <img src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 640px) 44vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
+      <div class="group">
+        <div class="grid grid--top band__info">
+          <div class="span-6">
+            <h3 class="band__h3">La formazione</h3>
+            <ul class="rows rows--compact">
+              <li><span class="rows__name">Gianfranco Alberti, in arte Gianco</span><span class="rows__value">voce</span></li>
+              <li><span class="rows__name">Giuseppe Faro</span><span class="rows__value">tastiere</span></li>
+              <li><span class="rows__name">Debora Lombardo</span><span class="rows__value">pianoforte e tastiere</span></li>
+              <li><span class="rows__name">Giuseppe Bertolo</span><span class="rows__value">chitarre</span></li>
+              <li><span class="rows__name">Franco Presti</span><span class="rows__value">chitarre</span></li>
+              <li><span class="rows__name">Luigi Scuderi</span><span class="rows__value">basso elettrico</span></li>
+              <li><span class="rows__name">Andrea Bruno</span><span class="rows__value">batteria</span></li>
+            </ul>
+          </div>
+          <div class="span-6 start-7">
+            <h3 class="band__h3">Ne hanno parlato</h3>
+            <ul class="rows press">
+              <li>
+                <a class="rows__name" href="https://www.sikelian.it/mad-concerti-2025-la-sicilia-torna-a-vibrare-con-la-grande-musica-dal-vivo" target="_blank" rel="noopener">MAD Concerti 2025: la Sicilia torna a vibrare con la grande musica dal vivo</a>
+                <span class="rows__value">22 luglio 2025</span>
+                <p>Sikelian presenta la stagione e gli audioClaB come una delle tribute band più fedeli al repertorio di Baglioni.</p>
+              </li>
+              <li>
+                <a class="rows__name" href="https://www.sikelian.it/lestate-siciliana-di-mad-concerti-si-accende-con-audioclab-claudio-baglioni-live-experience" target="_blank" rel="noopener">L'estate siciliana di MAD Concerti si accende con audioClaB</a>
+                <span class="rows__value">30 giugno 2025</span>
+                <p>Sikelian racconta lo spettacolo Claudio Baglioni Live Experience e la formazione al completo.</p>
+              </li>
+              <li>
+                <span class="rows__name">Radio Studio 90 Italia</span>
+                <span class="rows__value">radio</span>
+                <p>Gli audioClaB ospiti del programma Stelle di giorno, dedicato alle tribute band.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="section" id="concerti" aria-labelledby="concerti-h">
     <div class="wrap">
-      <div class="grid grid--top fill">
-        <div class="span-6">
-          <div class="section-head">
-            <h2 id="concerti-h">Prossimi concerti degli audioClaB</h2>
-            <p>Le date in programma, con il locale e la città.</p>
-          </div>
-          <ul class="rows" id="lista-concerti" aria-label="Date"></ul>
+      <div class="section-head">
+        <h2 id="concerti-h">Concerti degli audioClaB</h2>
+      </div>
+      <div class="grid grid--top concerti__grid">
+        <div class="span-5 concerti__prossimi">
+          <ul class="rows" id="lista-concerti" aria-label="Prossime date"></ul>
           <div class="concerti__vuoto" id="concerti-vuoto">
             <p>Nessuna data in programma al momento. Le nuove date escono qui e sulla pagina Facebook.</p>
             <a class="link" href="https://www.facebook.com/audioClaB.it" target="_blank" rel="noopener">Segui le date su Facebook</a>
           </div>
+          <div class="frame frame--photo concerti__photo">
+            <img class="frame__img" src="assets/img/concerti-cantante.jpg" alt="Il cantante con il microfono in mano, in primo piano" loading="lazy" width="658" height="662" style="object-position: 40% 38%">
+          </div>
         </div>
-        <div class="frame frame--photo span-6 start-7 concerti__photo">
-          <img class="frame__img" src="assets/img/concerti-cantante.jpg" alt="Il cantante con il microfono in mano, in primo piano" loading="lazy" width="658" height="662" style="object-position: 40% 40%">
+        <div class="span-6 start-7">
+          <h3 class="band__h3">Dove abbiamo suonato</h3>
+            <ul class="rows rows--compact passati" aria-label="Concerti passati">
+            <li><span class="rows__name">Augusta, Piazza Duomo</span><span class="rows__value">20 set 2026</span></li>
+            <li><span class="rows__name">Piedimonte Etneo, con MAD Accademia</span><span class="rows__value">12 set 2026</span></li>
+            <li><span class="rows__name">Trecastagni, Spazio Artistico Polifunzionale</span><span class="rows__value">7 feb 2026</span></li>
+            <li><span class="rows__name">Fiumefreddo di Sicilia, sagrato della Chiesa Castello</span><span class="rows__value">7 set 2025</span></li>
+            <li><span class="rows__name">Mascalucia, Parco Trinità Manenti</span><span class="rows__value">21 ago 2025</span></li>
+            <li><span class="rows__name">Trecastagni, Piazza Marconi</span><span class="rows__value">13 ago 2025</span></li>
+            <li><span class="rows__name">Riposto, Piazza San Pietro</span><span class="rows__value">27 lug 2025</span></li>
+            <li><span class="rows__name">Linguaglossa, Piazza Cappuccini</span><span class="rows__value">26 lug 2025</span></li>
+            <li><span class="rows__name">Roccalumera, Piazza Santa Maria del Carmelo</span><span class="rows__value">25 lug 2025</span></li>
+            <li><span class="rows__name">Gravina di Catania e Misterbianco</span><span class="rows__value">2010</span></li>
+          </ul>
         </div>
       </div>
     </div>
