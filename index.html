@@ -34,7 +34,7 @@
 <!-- type: service (una band che si ingaggia)
      deal: hero split, nav nav-mega, close close-photo, footer footer-dark, rhythm space, buttons block, mark: il logo del cliente
      moments: nessuno (kind other: fotografie, tipografia e colore piatto)
-     Piano: hero (1) · video TikTok (1) · band (2) · concerti (1) · footer.closing (1) -->
+     Piano: hero (1) · video TikTok (2) · band (2) · concerti (1) · footer.closing (1) -->
 
 <header class="nav">
   <div class="wrap nav__bar">
@@ -71,18 +71,23 @@
     </div></div>
   </section>
 
-  <section class="section" id="video" aria-labelledby="video-h">
+  <section class="section g2" id="video" aria-labelledby="video-h">
     <div class="wrap">
-      <div class="section-head section-head--split">
-        <div>
-          <h2 id="video-h">audioClaB su TikTok</h2>
-          <p>I video più visti del profilo @audioclab, da Io dal mare in giù.</p>
+      <div class="group">
+        <div class="section-head section-head--split">
+          <div>
+            <h2 id="video-h">audioClaB su TikTok</h2>
+            <p>I video più visti del profilo @audioclab, da Io dal mare in giù.</p>
+          </div>
+          <a class="link" href="https://www.tiktok.com/@audioclab" target="_blank" rel="noopener">Segui su TikTok</a>
         </div>
-        <a class="link" href="https://www.tiktok.com/@audioclab" target="_blank" rel="noopener">Segui su TikTok</a>
+        <!-- I video vengono da script.js (TIKTOK_VIDEO): con l'elenco vuoto compare il profilo TikTok ufficiale incorporato -->
+        <div class="grid tiktok" id="tiktok" data-profilo="audioclab">
+          <a class="tiktok__fallback span-12" href="https://www.tiktok.com/@audioclab" target="_blank" rel="noopener">Guarda i video su TikTok</a>
+        </div>
       </div>
-      <!-- I video vengono da script.js (TIKTOK_VIDEO): con l'elenco vuoto compare il profilo TikTok ufficiale incorporato -->
-      <div class="grid tiktok" id="tiktok" data-profilo="audioclab">
-        <a class="tiktok__fallback span-12" href="https://www.tiktok.com/@audioclab" target="_blank" rel="noopener">Guarda i video su TikTok</a>
+      <div class="group">
+        <div class="grid tiktok" id="tiktok-2" hidden></div>
       </div>
     </div>
   </section>

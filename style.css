@@ -47,6 +47,7 @@
 /* TikTok: i video in 9:16, quattro in fila; senza elenco, il profilo incorporato da TikTok */
 .tiktok { align-content: start; }
 .tiktok:not(.tiktok--video) { min-height: 560px; }
+.tiktok[hidden] { display: none; }
 .tiktok__fallback { align-self: start; }
 .tiktok .tiktok-embed { margin: 0 !important; grid-column: 1 / -1; width: 100%; }
 .tiktok--video > .tt { grid-column: auto / span 3; --ratio: 177.78%; }
@@ -66,12 +67,18 @@
 @media (min-width: 640px) and (max-width: 1023px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }
   .tiktok--video > .tt:nth-child(n+3) { display: none; }
+  #video.g2 { --h: 1; --hm: 1; }
+  main > #video.g2 > .wrap { display: block; }
+  #tiktok-2 { margin-top: var(--gutter); }
   .band__info > * { grid-column: auto / span 6; }
   #concerti .grid--top > * { grid-column: auto / span 6; }
 }
 @media (max-width: 639px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }
   .tiktok--video > .tt:nth-child(n+3) { display: none; }
+  #video.g2 { --h: 1; --hm: 1; }
+  main > #video.g2 > .wrap { display: block; }
+  #tiktok-2 { margin-top: var(--gutter); }
   .band__info { row-gap: var(--s-7); }
   .concerti__photo { --ratio: 75%; }
 }
