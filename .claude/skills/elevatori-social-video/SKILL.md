@@ -15,6 +15,15 @@ license: MIT
 Questa skill è il punto di ingresso. Non sostituisce le skill specialistiche: decide **quale**
 usare, in che ordine, e applica le regole del brand ELEVATORI S.R.L.
 
+## Regola fissa: non usare i contenuti del repository
+
+Questo repository contiene materiale di un altro progetto (AudioClaB: brani `.mp3`, video `.mp4`,
+immagini, loghi, icone, `audioClaB.html`, `script.js`, `style.css`). **Non usarlo mai** per i
+contenuti di ELEVATORI S.R.L.: niente musica, video, immagini, loghi, testi o stili presi da qui,
+nemmeno come segnaposto o esempio. Usa solo materiale fornito dall'utente per ELEVATORI S.R.L.
+o creato ex novo per l'occasione. Le uniche cose del repository da usare sono le skill in
+`.claude/skills/` e il file `brand-profile.md`, quando esiste.
+
 ## 0. Prima di tutto: profilo del brand
 
 1. Cerca `brand-profile.md` nella root del progetto.

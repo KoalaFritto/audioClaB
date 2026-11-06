@@ -8,6 +8,10 @@ Claude Code le carica automaticamente da `.claude/skills/` quando apri questo pr
 ammodernamento prima/dopo"*. La skill `elevatori-social-video` sceglie le skill giuste.
 La prima volta viene lanciata `brand-profile` per compilare i dati reali dell'azienda.
 
+**Importante:** gli altri file di questo repository (musica, video, immagini e codice di AudioClaB)
+non devono essere usati per i contenuti di ELEVATORI S.R.L. La regola è scritta in
+`elevatori-social-video` e si applica a ogni richiesta.
+
 ## Skill incluse
 
 | Skill | Fonte | Licenza | A cosa serve |
