@@ -2,7 +2,7 @@
 const path = require('node:path');
 const { chromium } = require('playwright');
 
-const targetUrl = process.env.TARGET_URL || 'http://127.0.0.1:8765/audioClaB.html';
+const targetUrl = process.env.TARGET_URL || 'http://127.0.0.1:8765/index.html';
 const out = process.env.PW_ARTIFACT_DIR || '/tmp';
 const shots = (process.env.SHOTS || '').split(',').filter(Boolean);
 

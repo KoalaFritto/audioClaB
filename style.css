@@ -87,7 +87,7 @@
 
 /* foto delle sezioni */
 .musica__photo { --ratio: 100%; }
-.concerti__photo { --ratio: 75%; margin-top: var(--s-6); }
+.concerti__photo { --ratio: 100%; }
 
 /* la band: un muro di due foto, 2px tra l'una e l'altra */
 .wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: var(--r-lg); overflow: hidden; }
@@ -169,8 +169,7 @@
   .tiktok--video > .tt { grid-column: auto / span 6; }
   .tiktok--video > .tt:nth-child(n+3) { display: none; }
   .band__info { row-gap: var(--s-7); }
-  #concerti { --hm: 2; }
-  .concerti__photo { display: none; }
+  .concerti__photo { --ratio: 75%; }
 }
 
 /* ------------------------------------------------------------------ RESPONSIVE SU OGNI SCHERMO
@@ -202,10 +201,9 @@ main > :is(section, .section) > .wrap > .fill { flex: 1 0 auto; }
 /* il brano dell'hero: un bersaglio comodo anche per il dito */
 .hero-play { min-height: 44px; }
 
-/* concerti: sul telefono niente foto, le date vengono prima */
+/* concerti su tablet: le date accanto alla foto, alta quanto lo schermo permette */
 @media (min-width: 640px) and (max-width: 1023px) {
-  #concerti .concerti__grid > * { grid-column: 1 / -1; }
-  .concerti__photo { display: none; }
+  .concerti__photo { --ratio: 0px; height: 60svh; align-self: start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
