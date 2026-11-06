@@ -1,381 +1,154 @@
-/* style.css */ 
-body {
-    font-family: ArialFrank Ruhl MF, Bold Italic;
-    margin: 0;
-    padding: 0;
-    margin-bottom: 100px; /* Aggiunge uno spazio di 100 pixel alla fine della pagina */
-    background-color: #000
-  }
-  
-header {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #000;
-    color: #fff;
-    text-align: center;
-    padding: 10px 0 10px 0;
+/* audioClaB: stili propri della pagina.
+   Il sistema (griglia, spaziature, tipografia, pulsanti, nav, footer) arriva da assets/kit
+   (taste-skill, licenza MIT). Qui solo quello che sta dentro le immagini e i controlli del lettore. */
+
+/* link per saltare al contenuto: invisibile finché non riceve il focus */
+.skip { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip:focus { width: auto; height: auto; clip-path: none; padding: var(--s-2) var(--s-3); background: var(--bg); border-radius: var(--r-sm); z-index: 20; }
+
+/* il logo del cliente */
+.nav__logo .logo-img { height: 26px; width: auto; }
+.footer .nav__logo .logo-img--footer { height: 40px; }
+@media (max-width: 639px) { .nav__logo .logo-img { height: 18px; } .footer .nav__logo .logo-img--footer { height: 30px; } }
+
+/* l'icona play/pausa disegnata in CSS */
+.play-icon {
+  --sz: 12px;
+  flex: none; display: inline-block; width: var(--sz); height: var(--sz);
+  background: currentColor;
+  clip-path: polygon(15% 0, 100% 50%, 15% 100%);
+  transition: clip-path 160ms var(--ease, ease);
+}
+[aria-pressed="true"] > .play-icon, .is-playing > .play-icon {
+  clip-path: polygon(0 0, 38% 0, 38% 100%, 0 100%, 0 0, 62% 0, 100% 0, 100% 100%, 62% 100%, 62% 0);
 }
 
-header img {
-    padding: 7px;
-    padding-left: 17px; /* Riduce il padding a destra */
-    max-width: 25%;
-    height: auto;
+/* la carta che galleggia sulla foto dell'hero: un brano da ascoltare subito */
+.hero-play {
+  display: flex; align-items: center; gap: var(--s-3);
+  width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.hero-play .play-icon { --sz: 14px; color: var(--action); }
+
+/* i brani */
+.tracks > li { align-items: center; }
+.track {
+  display: flex; align-items: center; gap: var(--s-4);
+  min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink);
+  font: inherit; text-align: left; cursor: pointer;
+  transition: transform 160ms cubic-bezier(.23, 1, .32, 1);
+}
+.track .play-icon {
+  --sz: 40px;
+  clip-path: none; background: none; position: relative;
+  border-radius: 999px; border: 1px solid var(--line-strong, var(--line));
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+.track .play-icon::after {
+  content: ""; position: absolute; inset: 0; margin: auto; width: 12px; height: 12px;
+  background: var(--ink); clip-path: polygon(20% 0, 100% 50%, 20% 100%);
+  transition: clip-path 160ms ease;
+}
+.track[aria-pressed="true"] .play-icon { background: var(--action); border-color: var(--action); }
+.track[aria-pressed="true"] .play-icon::after {
+  background: var(--action-ink, #fff);
+  clip-path: polygon(0 0, 36% 0, 36% 100%, 0 100%, 0 0, 64% 0, 100% 0, 100% 100%, 64% 100%, 64% 0);
+}
+.track .rows__name { font-size: var(--t-card); }
+.track:active { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) {
+  .track:hover .play-icon { border-color: var(--action); }
+}
+.tracks .rows__value { font-variant-numeric: tabular-nums; color: var(--muted); }
+
+/* barra di avanzamento del lettore */
+.player { margin-top: var(--s-6); display: grid; gap: var(--s-2); }
+.player__seek {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 24px; margin: 0; background: none; cursor: pointer;
+  --pct: 0%;
+}
+.player__seek:disabled { cursor: default; }
+.player__seek::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 999px;
+  background: linear-gradient(to right, var(--action) var(--pct), var(--line) var(--pct));
+}
+.player__seek::-moz-range-track { height: 4px; border-radius: 999px; background: var(--line); }
+.player__seek::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--action); }
+.player__seek::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; margin-top: -6px;
+  border-radius: 999px; background: var(--action); border: 0;
+  transition: transform 160ms cubic-bezier(.23, 1, .32, 1);
+}
+.player__seek::-moz-range-thumb { width: 16px; height: 16px; border-radius: 999px; background: var(--action); border: 0; }
+.player__seek:disabled::-webkit-slider-thumb { background: var(--line); }
+.player__seek:active::-webkit-slider-thumb { transform: scale(1.15); }
+.player__meta { display: flex; justify-content: space-between; gap: var(--s-4); color: var(--muted); }
+.player__time { font-variant-numeric: tabular-nums; }
+
+/* foto delle sezioni */
+.musica__photo { --ratio: 100%; }
+.concerti__photo { --ratio: 100%; }
+
+/* la band: un muro di due foto, 2px tra l'una e l'altra */
+.wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: var(--r-lg); overflow: hidden; }
+.wall > img { width: 100%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; }
+
+/* video: cornici senza bordo, il film 16:9 accanto alla clip verticale alla stessa altezza */
+.frame--video { padding: 0; border: 0; background: #000; overflow: hidden; }
+.video--wide { --ratio: 56.25%; }
+.video--tall { --ratio: calc(56.25% * 846 / 410); }
+.videos video.frame__img { object-fit: cover; background: #000; }
+
+/* YouTube: la miniatura diventa il player solo al clic */
+.yt { --ratio: 56.25%; }
+.yt__more { margin-top: var(--s-5); }
+.frame > .yt__play { position: absolute; inset: 0; padding: 0; border: 0; background: none; cursor: pointer; }
+.yt__play .frame__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.yt__disc {
+  position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px;
+  border-radius: 999px; background: var(--action);
+  transition: transform 160ms cubic-bezier(.23, 1, .32, 1);
+}
+.yt__disc::after {
+  content: ""; position: absolute; inset: 0; margin: auto; width: 22px; height: 22px; transform: translateX(2px);
+  background: var(--action-ink, #fff); clip-path: polygon(15% 0, 100% 50%, 15% 100%);
+}
+@media (hover: hover) and (pointer: fine) { .yt__play:hover .yt__disc { transform: scale(1.06); } }
+.yt__play:active .yt__disc { transform: scale(0.96); }
+.frame.yt > iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* il titolo che apre una colonna: nessuno spostamento */
+.grid--top > div > .section-head:first-child { margin-top: 0; }
+
+/* tablet (schermi alti): gli split restano affiancati e le immagini prendono l'altezza dello schermo,
+   così ogni sezione riempie il suo schermo senza sforare */
+@media (min-width: 640px) and (max-width: 1023px) {
+  #musica .grid--top > *, #concerti .grid--top > *, .yt-pair > * { grid-column: auto / span 6; }
+  .musica__photo, .concerti__photo { --ratio: 0px; height: 60svh; align-self: start; }
+  .videos > .video--wide { grid-column: auto / span 8; }
+  .videos > .video--tall { grid-column: auto / span 4; }
+  .videos > * { --ratio: 0px; height: 56svh; }
+  .videos > .video--wide video.frame__img { object-fit: contain; }
+  .yt-pair .yt { --ratio: 0px; height: 40svh; }
+  .wall > img { aspect-ratio: 3 / 4; }
+}
+@media (max-width: 639px) {
+  .musica__photo { --ratio: 50%; }
+  .video--tall { --ratio: 100%; }
+  .wall { grid-template-columns: 1fr; }
 }
 
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+/* concerti */
+.concerti__vuoto { display: grid; gap: var(--s-4); justify-items: start; }
+.concerti__vuoto p { font-size: var(--t-lead); line-height: 1.5; max-width: 40ch; margin: 0; }
+.concerti__vuoto[hidden] { display: none; }
+#lista-concerti:empty { display: none; }
+#lista-concerti a { color: inherit; }
+
+/* chiusura */
+.closing .mail { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.socials img { object-fit: contain; }
+
+@media (prefers-reduced-motion: reduce) {
+  .play-icon, .track, .yt__disc, .player__seek::-webkit-slider-thumb { transition: none; }
 }
-
-nav ul li {
-    display: inline;
-    margin: 0 25px;
-}
-
-nav ul li a {
-    text-align: contain;
-    padding-right: 57x;
-    font-size: 18px; /* Aggiunto questo per ridurre la dimensione del testo */
-    color: #fff;
-    text-decoration: none;
-}
-
-section {
-    padding: 5px;
-}
-
-section h2 {
-    padding: 0px;
-    padding-left: 52px; /* Riduce il padding a sinistra */
-    padding-right: 30px; /* Riduce il padding a destra */
-    font-size: 40px; /* Aggiunto questo per ridurre la dimensione del testo */
-    color: #ffffff;
-    text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
-}
-
-section h3 {
-  padding-bottom: 450px;
-  padding-left: 52px; /* Riduce il padding a sinistra */
-  padding-right: 30px; /* Riduce il padding a destra */
-  font-size: 40px; /* Aggiunto questo per ridurre la dimensione del testo */
-  color: #ffffff;
-  text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
-}
-
-section p {
-    text-align: left; /* Allinea il testo a sinistra */
-    text-align: center;
-    color: #ffffff;
-    font-size: 25px; /* Aggiunto questo per ridurre la dimensione del testo */
-    padding-left: 50px; /* Riduce il padding a sinistra */
-    margin-right: 850px;
-    text-shadow: 1px 3px 3px rgb(0, 0, 0); /* Ombreggiatura */
-  }
-
-  .music-player {
-    /* Stili per il contenitore principale del lettore audio */
-    max-width: 400px; /* Imposta la larghezza massima del lettore audio */
-    margin: 0 auto; /* Centra il lettore audio nella pagina */
-    text-align: center; /* Allinea il contenuto al centro */
-}
-
-.song-info {
-  font-size: 30px;
-  padding: 12px;
-  color: #fff;
-  text-align: center;
-  text-shadow: 2px 4px 4px rgb(0, 0, 0); /* Ombreggiatura */
-}
-
-#custom-audio {
-    display: none; /* Nasconde il lettore audio */
-}
-
-.controls button {
-  /* Rimuovi il testo e imposta l'immagine come sfondo */ 
-  background-size: cover; /* Adatta l'immagine alla dimensione del pulsante */
-  background-repeat: no-repeat; /* Evita la ripetizione dell'immagine */
-  background-position: center; /* Centra l'immagine all'interno del pulsante */
-  background-color: #00000000;
-  color: #f0f0f0;
-  border: none;
-  width: 60px; /* Imposta la larghezza del pulsante */
-  height: 60px; /* Imposta l'altezza del pulsante */
-  cursor: pointer;
-  padding-right: 8px;
-}
-
-.controls button.pause {
-  background-image: url('pause.png'); /* Immagine per il pulsante Pause */
-}
-
-.controls button.next {
-  background-image: url('next.png'); /* Immagine per il pulsante Next */
-}
-
-.controls button.prev {
-  background-image: url('prev.png'); /* Immagine per il pulsante Previous */
-}
-.controls button:hover {
-    /* Stili per i pulsanti al passaggio del mouse */
-    background-color: #ff0000; /* Cambia il colore di sfondo al passaggio del mouse */
-}
-
-
-.duration {
-  display: block;
-  color: #fff;
-  text-shadow: 2px 4px 4px rgb(0, 0, 0); /* Ombreggiatura */
-  font-size: 14px;
-  margin-right: 6px;
-}
-
-.playlist-container {
-  overflow-y: auto;
-  max-height: 307px; /* Imposta l'altezza massima della playlist */
-  opacity: 1;
-}
-
-.playlist {
-  padding: 0;
-  margin: 0;
-}
-
-.playlist li {
-    /* Stili per l'elenco delle canzoni */
-    position: center;
-    list-style-type: none; /* Rimuove i punti elenco */
-    font-size: 20px; /* Dimensione del testo */
-    color:#f0f0f0;
-    text-shadow: 2px 4px 4px rgb(0, 0, 0); /* Ombreggiatura */
-    padding: 2px 0; /* Spaziatura interna */
-    margin-left: 0px;
-    margin-top: 35px;
-    cursor: pointer;
-}
-
-.playlist li:hover {
-    /* Stili al passaggio del mouse su un elemento della playlist */
-    background-color: #ff0000; /* Cambia il colore di sfondo al passaggio del mouse */
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-
-footer {
-    background-color: #000;
-    color: #fff;
-    text-align: center;
-    padding: 0 0;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
-
-.colored-text {
-    font-family: ArialFrank Ruhl MF, Bold Italic;
-    margin: 0;
-    padding: 0;
-    color: red; /* Specifica il colore desiderato */
-}
-
-.text-overlay {
-    position: relative;
-    height: 0px; /* Imposta l'altezza desiderata */
-    bottom: -410px; /* Posiziona il testo 20px dal basso */
-    left: 50%; /* Centra orizzontalmente */
-    transform: translateX(-50%); /* Centra completamente orizzontalmente */
-    text-align: center;
-    z-index: 2; /* Assicura che il testo sia sopra lo slideshow */
-}
-
-.text-overlay h1 {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em; /* Esempio di dimensione del testo in em */
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.2em; /* Regola la dimensione del testo */
-    color: #fff; /* Colore del testo */
-    text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
-}
-
-.text-overlay h2 {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: -370px;
-  transform: translate(-50%, -50%);
-  font-size: 1.9em; /* Regola la dimensione del testo */
-  color: #fff; /* Colore del testo */
-  text-shadow: 2px 5px 5px rgb(0, 0, 0); /* Ombreggiatura */
-  opacity: 0.5;
-}
-
-.text-overlay img {
-  position: absolute;
-  align-items: center;
-  justify-content: center;
-  top: -400px;
-  transform: translate(-50%, -50%);
-  max-width: 10%;
-  max-height: auto;
-  opacity: 0.5;
-}
-
-.slideshow {
-    position: relative; /* O posizionamento assoluto se necessario */
-    max-width: 100%;
-    max-height: 548px;
-    margin: 0px auto; /* Aggiunto un margine sopra lo slideshow */
-     overflow: hidden;
-  background-image: url('backslide2.jpg'); /* Imposta il percorso dell'immagine */
-  background-size: 40%; /* Imposta la modalità di adattamento dell'immagine */
-  background-position: 50% center; /* Centra l'immagine verticalmente e orizzontalmente */
-  background-position-y: 5%;
-  }
-
-  .slick-dots li button {
-    background-color: #ff0000; /* Colore rosso (cambia con il tuo colore desiderato) */
-    width: 10px; /* Larghezza desiderata */
-    height: 10px; /* Altezza desiderata */
-    background-color: #00ff00; /* Colore verde (cambia con il tuo colore desiderato) */
-}
-
-.slick-dots li {
-  margin-right: 5px; /* Spazio desiderato */
-}
-/* Personalizza lo stile del dot attivo */
-.slick-dots li.slick-active button {
-  background-color: #00ff00; /* Colore verde (cambia con il tuo colore desiderato) */
-}
-
-  .slide {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    height: 100%;
-  }
-
-  .slide video {
-    width: 20.5%;
-    max-height: 100%;
-}
-
-  .mute-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-  .slide img {
-    max-width: 40%;
-    max-height: 50%;
-    margin: auto;
-  }
-
-  .slide::before {
-    content: "";
-    background-color: rgba(0, 0, 0, 0.057); /* Un overlay nero semi-trasparente */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* Colloca l'overlay dietro all'immagine */
-  }
-
-  .fade {
-    animation: fade 3s infinite; /* Cambia immagine ogni 3 secondi */
-  }
-
-  #background-video {
-    position: absolute;
-    top: 705px;
-    right: 0px;
-    min-width: auto;
-    min-height: 175%;
-    z-index: -1; /* Assicura che il video sia dietro a tutti gli altri elementi */
-  }
-
-  .video-container iframe {
-    border: none;
-    width: 480px; /* Imposta la larghezza a 600 pixel */
-    height: 280px; /* Imposta l'altezza a 400 pixel */
-}
-
-  .video-container {
-    display: relative;
-    flex-wrap: wrap;
-}
-
-.video-container2 iframe {
-  border: none;
-  width: 720px; /* Imposta la larghezza a 600 pixel */
-  height: 480px; /* Imposta l'altezza a 400 pixel */
-}
-
-.video-container2 {
-  display: center;
-  flex-wrap: wrap;
-}
-
-.video1 {
-  position: absolute;
-  top: 780px;
-  left: 950px;
-}
-
-.video2 {
-  position: absolute;
-  top: 1140px;
-  left: 950px;
-}
-
-.video3 {
-  position: absolute;
-  top: 2365px;
-  left: 29%;
-  justify-content: center;
-}
-
-  .social-buttons {
-    display: flex;
-    padding-left: 35px;
-    align-items: center;
-}
-
-.social-button {
-    margin: 0 15px;
-}
-
-.social-button img {
-    width: auto; /* Imposta la larghezza dell'immagine del pulsante */
-    height: 50px; /* Imposta l'altezza dell'immagine del pulsante */
-}
-
-  @keyframes fade {
-    0%, 100% {
-      opacity: 0;
-    }
-    25%, 75% {
-      opacity: 1;
-    }
-  }

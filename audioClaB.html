@@ -1,208 +1,262 @@
-<!DOCTYPE html>
-<html lang="it">
+<!doctype html>
+<html lang="it" data-type="service" data-radius="soft" data-buttons="block" data-motion>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" sizes="128x128" href="logoheader.png">
-    <title>audioClaB</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.3/plyr.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.3/tiny-slider.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.3/min/tiny-slider.js"></script>
-    <script src="https://cdn.plyr.io/3.6.3/plyr.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize/5.0.0/autosize.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/simplebar@5.3.4/dist/simplebar.min.css">
-    <script src="https://unpkg.com/simplebar@5.3.4/dist/simplebar.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>audioClaB: cover band di Claudio Baglioni a Catania</title>
+<meta name="description" content="audioClaB suona dal vivo le canzoni di Claudio Baglioni a Catania dal 2007. Ascolta i brani live, guarda i video su YouTube e prenota un concerto.">
+<meta name="site-kind" content="other">
+<meta name="page-type" content="service">
+<link rel="icon" type="image/png" sizes="128x128" href="logoheader.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400..700&family=Figtree:wght@400..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/kit/system.css">
+<link rel="stylesheet" href="assets/kit/ui/cards.css">
+<link rel="stylesheet" href="assets/kit/motion/motion.css">
+<link rel="stylesheet" href="assets/kit/layout/layout.css">
+<style>
+:root {
+  --p-bg: #f4f1ec; --p-surface: #e9e4dd; --p-ink: #1a1716; --p-muted: #64615e;
+  --p-accent: #b3161b; --p-accent-ink: #f4f1ec; --p-action: #b3161b; --p-action-ink: #f4f1ec;
+  --p-inv-bg: #1a1716; --p-inv-surface: #262322; --p-inv-ink: #f4f1ec; --p-inv-muted: #999692;
+  --p-inv-accent: #f4f1ec; --p-inv-accent-ink: #1a1716; --p-inv-action: #f4f1ec; --p-inv-action-ink: #1a1716;
+  --font-display: "Literata", Georgia, serif;
+  --font-text: "Figtree", system-ui, sans-serif;
+  --display-weight: 400;
+  --display-tracking: -0.02em;
+  --display-tracking-xl: -0.026em;
+}
+</style>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>  
-    <header>
-        <img src="audioclablogo.jpg" alt="Logo di AudioClaB">
-        <nav>
-            <ul>
-                <li><a href="#biografia"><span class="colored-text">B</span>iografia</a></li>
-                <li><a href="#musica">Musi<span class="colored-text">c</span>a</a></li>
-                <li><a href="#tour"><span class="colored-text">C</span>oncerti</a></li>
-                <li><a href="#galleria">Video Musi<span class="colored-text">c</span>ali</a></li>
-                <li><a href="#contatti"><span class="colored-text">C</span>ontatti</a></li>
-                <li><a href="#social">So<span class="colored-text">c</span>ial</a></li>
-            </ul>
-        </nav>
-    </header>
+<body>
+<!-- type: service (una band che si ingaggia)
+     deal: hero split, nav nav-mega, close close-photo, footer footer-dark, rhythm space, buttons block, mark: il logo del cliente
+     moments: nessuno (kind other: fotografie, tipografia e colore piatto)
+     Piano: hero (1) · musica (1) · video (2) · band (1) · concerti (1) · footer.closing (1) -->
 
-    <div class="text-overlay">
-        <h1>La CoverBand di Baglioni a Catania</h1>
-    <img src="Black-Left.png"></img><h2>Scorri per altri media</h2>
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip" href="#musica">Vai ai contenuti</a>
+    <a class="nav__logo" href="#top"><img class="logo-img" src="assets/img/logo-chiaro-nome.png" alt="audioClaB" width="316" height="52"></a>
+    <nav class="nav__links" aria-label="Principale">
+      <div class="nav__item">
+        <a class="nav__link" href="#musica">Musica <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Brani dal vivo</p>
+              <a href="#musica">Dagli il via<span>Live a Misterbianco, 2010</span></a>
+              <a href="#musica">Mille giorni di te e di me<span>Live a Misterbianco, 2010</span></a>
+              <a href="#musica">Bolero<span>Live a Misterbianco, 2010</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Video</p>
+              <a href="#video">Il film dei concerti<span>Il palco, le luci, la band</span></a>
+              <a href="#video">E adesso<span>Una clip in acustico</span></a>
+              <a href="#youtube">Su YouTube<span>La playlist del canale</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="#video">
+              <div class="panel"><img class="frame__img" src="assets/img/menu-film.jpg" alt="Il palco degli audioClaB illuminato di blu durante un concerto" loading="lazy" width="640" height="360"></div>
+              <span class="t-card">Video dei concerti</span>
+              <span class="t-small muted">Il palco visto da vicino</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="#video">Video</a></div>
+      <div class="nav__item"><a class="nav__link" href="#band">Band</a></div>
+      <div class="nav__item"><a class="nav__link" href="#concerti">Concerti</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="btn btn--primary" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">Prenota un concerto</a>
     </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
 
-    <div class="slideshow">
-        <div class="slide">
-            <img src="background.jpg" alt="Slide 1">
+<main id="top">
+  <section class="hero hero--split" aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-6">
+        <h1 id="hero-h">Cover band di Baglioni a Catania</h1>
+        <p class="hero__lead">Suoniamo dal vivo il repertorio di Baglioni, da Dagli il via a Mille giorni di te e di me, nei locali e sui palchi di Catania e provincia. Sul palco dal 2007.</p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">Prenota un concerto<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+          <a class="btn btn--secondary" href="#musica">Ascolta i brani</a>
         </div>
-        <div class="slide">
-            <video src="e adesso.mp4" controls></video>
+      </div>
+      <div class="hero__media span-6 start-7">
+        <img src="assets/img/hero-cantante.jpg" srcset="assets/img/hero-cantante-800.jpg 800w, assets/img/hero-cantante.jpg 1400w" sizes="(min-width: 1024px) 44vw, 100vw" alt="Il cantante degli audioClaB in camicia bianca sotto i riflettori" style="--ly-pos: 38% 40%" fetchpriority="high" width="1400" height="1400">
+        <div class="ly-float">
+          <div class="ly-float__row"><span class="ly-live">Dal vivo</span><span>5:45</span></div>
+          <button class="ly-float__title hero-play" type="button" data-track="0" aria-label="Ascolta Dagli il via, dal vivo a Misterbianco">
+            <span class="play-icon" aria-hidden="true"></span>Dagli il via, Misterbianco 2010
+          </button>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="musica" aria-labelledby="musica-h">
+    <div class="wrap">
+      <div class="grid grid--top fill">
+        <div class="span-6 musica__col">
+          <div class="section-head">
+            <h2 id="musica-h">Brani dal vivo, Misterbianco 2010</h2>
+            <p>Tre brani registrati al concerto, così come li suoniamo sul palco.</p>
+          </div>
+          <ul class="rows tracks" aria-label="Brani">
+            <li>
+              <button class="track" type="button" data-track="0" data-src="dagli il via master misterbianco.mp3" aria-pressed="false">
+                <span class="play-icon" aria-hidden="true"></span><span class="rows__name">Dagli il via</span>
+              </button>
+              <span class="rows__value" data-time="0">5:45</span>
+            </li>
+            <li>
+              <button class="track" type="button" data-track="1" data-src="mille g.mp3" aria-pressed="false">
+                <span class="play-icon" aria-hidden="true"></span><span class="rows__name">Mille giorni di te e di me</span>
+              </button>
+              <span class="rows__value" data-time="1">5:20</span>
+            </li>
+            <li>
+              <button class="track" type="button" data-track="2" data-src="bolero master.mp3" aria-pressed="false">
+                <span class="play-icon" aria-hidden="true"></span><span class="rows__name">Bolero</span>
+              </button>
+              <span class="rows__value" data-time="2">5:41</span>
+            </li>
+          </ul>
+          <div class="player" aria-label="Lettore">
+            <input class="player__seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Posizione nel brano" disabled>
+            <div class="player__meta t-small"><span class="player__now">Scegli un brano</span><span class="player__time">0:00</span></div>
+          </div>
+          <audio id="audio" preload="none"></audio>
+        </div>
+        <div class="frame frame--photo span-6 start-7 musica__photo">
+          <img class="frame__img" src="assets/img/musica-cantante.jpg" srcset="assets/img/musica-cantante-700.jpg 700w, assets/img/musica-cantante.jpg 1300w" sizes="(min-width: 640px) 44vw, 100vw" alt="Il cantante canta al microfono su un palco illuminato di blu" loading="lazy" width="1300" height="975">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="video" aria-labelledby="video-h">
+    <div class="wrap">
+      <div class="section-head">
+          <h2 id="video-h">Video degli audioClaB</h2>
+          <p>Il palco, le luci e la band, e una clip in acustico con E adesso.</p>
+        </div>
+        <div class="grid videos">
+          <figure class="frame frame--video span-8 video--wide">
+            <video class="frame__img" controls preload="none" playsinline poster="assets/img/poster-film.jpg" aria-label="Film dei concerti degli audioClaB">
+              <source src="AudioClaB - I vecchi background.mp4" type="video/mp4">
+            </video>
+          </figure>
+          <figure class="frame frame--video span-4 video--tall">
+            <video class="frame__img" controls preload="none" playsinline poster="assets/img/poster-eadesso.jpg" aria-label="E adesso, clip in acustico">
+              <source src="e adesso.mp4" type="video/mp4">
+            </video>
+          </figure>
         </div>
     </div>
+  </section>
 
-    <video id="background-video" autoplay muted loop>
-        <source src="AudioClaB - I vecchi background.mp4" type="video/mp4">
-        <!-- Aggiungi ulteriori source se vuoi supportare altri formati -->
-        <!-- <source src="percorso_al_tuo_video.webm" type="video/webm"> -->
-        <!-- <source src="percorso_al_tuo_video.ogv" type="video/ogg"> -->
-      </video>
-      
-    <section id="biografia">
-        <h2><span class="colored-text">B</span>iografia</h2>
-        <p class="biography-text">
-            Gli AudioClaB sono un gruppo musicale nato dalla passione per Claudio Baglioni. Composto da talentuosi musicisti, riproducono con dedizione e maestria il repertorio dell'artista italiano, offrendo esperienze emozionali uniche. 
-        </p>
-        <p class="biography-text">
-            La band ha iniziato anni fa grazie all'amicizia di membri condivisi dall'amore per la musica di Baglioni. Ognuno porta influenze diverse, arricchendo l'interpretazione dei brani.
-        </p>
-        <p class="biography-text">
-            Hanno conquistato un vasto pubblico con esibizioni che catturano l'anima delle canzoni di Baglioni. Sono considerati uno dei tributi più autentici e talentuosi. 
-        </p>
-        <p class="biography-text">
-            Gli AudioClaB celebrano l'arte di Claudio Baglioni, portando avanti la sua eredità musicale attraverso esibizioni coinvolgenti. La loro musica continua a ispirare e toccare i cuori di chi ama Baglioni, dimostrando che il suo impatto sulla cultura musicale italiana è indelebile, grazie anche al loro straordinario tributo.
-        </p>
-
-        <div class="video-container">
-            <iframe class="video1" src="https://www.youtube.com/embed/ylSFNl9_LRA"></iframe>
+  <section class="section" id="youtube" aria-labelledby="youtube-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="youtube-h">Altri concerti su YouTube</h2>
+        <p>Due esibizioni dal canale della band. Il video parte quando lo apri.</p>
+      </div>
+      <div class="grid yt-pair">
+        <div class="frame frame--video span-6 yt">
+          <button class="yt__play" type="button" data-yt="ylSFNl9_LRA" aria-label="Guarda il primo video su YouTube">
+            <img class="frame__img" src="https://i.ytimg.com/vi/ylSFNl9_LRA/hqdefault.jpg" alt="" loading="lazy">
+            <span class="yt__disc" aria-hidden="true"></span>
+          </button>
         </div>
-        
-        <div class="video-container">
-            <iframe class="video2" src="https://www.youtube.com/embed/d6maA1uokAo"></iframe>
+        <div class="frame frame--video span-6 yt">
+          <button class="yt__play" type="button" data-yt="d6maA1uokAo" aria-label="Guarda il secondo video su YouTube">
+            <img class="frame__img" src="https://i.ytimg.com/vi/d6maA1uokAo/hqdefault.jpg" alt="" loading="lazy">
+            <span class="yt__disc" aria-hidden="true"></span>
+          </button>
         </div>
-    </section>
-    
+      </div>
+      <p class="yt__more"><a class="link" href="https://www.youtube.com/playlist?list=PLZ9YASQIi96hSLc9AZA6r3ET4Qafys9U7" target="_blank" rel="noopener">Guarda la playlist</a></p>
+    </div>
+  </section>
 
-    <section id="musica">
-        <h2>Musi<span class="colored-text">c</span>a</h2>
-        <style>
-            input[type="range"] {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 100%;
-                height: 10px;
-                background: #9a1b1b;
-                outline: none;
-                border-radius: 5px;
-            }
-        
-            input[type="range"]::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 20px;
-                height: 20px;
-                background: #ffffff;
-                border-radius: 50%;
-                cursor: pointer;
-            }
-            
-        </style>
+  <section class="section" id="band" aria-labelledby="band-h">
+    <div class="wrap">
+      <div class="section-head band__head">
+        <h2 id="band-h">La band, dal 2007</h2>
+        <p>Siamo musicisti di Catania uniti dalla musica di Claudio Baglioni. Ognuno porta le sue influenze, e insieme suoniamo il suo repertorio con gli arrangiamenti dei dischi.</p>
+      </div>
+      <div class="wall">
+        <img src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 640px) 44vw, 100vw" width="883" height="1024" alt="Tre musicisti degli audioClaB: chitarra, voce e basso" loading="lazy" style="object-position: 50% 22%">
+        <img src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 640px) 44vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
+      </div>
+    </div>
+  </section>
 
-        <div class="music-player">
-            <div class="song-info"></div>
-            <audio id="custom-audio" controls>
-                <source src="dagli il via master misterbianco.mp3" type="audio/mp3">
-            </audio>
-            <input type="range" id="progress" min="0" max="100" value="0">
-        <div class="duration">-00:00</div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const audio = document.getElementById('custom-audio');
-            const progress = document.getElementById('progress');
-            const durationDisplay = document.querySelector('.duration');
-
-            function updateProgressBar() {
-                const progressPercentage = (audio.currentTime / audio.duration) * 100;
-                progress.value = progressPercentage;
-
-                const remainingTime = audio.duration - audio.currentTime;
-                const minutes = Math.floor(remainingTime / 60);
-                const seconds = Math.floor(remainingTime % 60);
-
-                durationDisplay.textContent = `-${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-
-            audio.addEventListener('timeupdate', updateProgressBar);
-
-            progress.addEventListener('input', () => {
-                const newTime = (progress.value / 100) * audio.duration;
-                audio.currentTime = newTime;
-                updateProgressBar();
-            });
-        });
-    </script>
-
-            <div class="controls button">
-                <button id="prev-track">Prev</button>
-                <button id="play-pause">Play</button>
-                <button id="next-track">Next</button>
-            </div>
-            <div class="progress-container" data-simplebar>
-                <div class="progress"></div>
-                <div class="progress-knob"></div>
-            </div>
-            <div class="playlist-container">
-            <ul class="playlist">
-                <!-- Elenco delle canzoni -->
-                <li data-src="dagli il via master misterbianco.mp3">Dagli il Via (Live Misterbianco 2010)</li>
-                <li data-src="mille g.mp3">Mille giorni di te e di me (Live Misterbianco 2010)</li>
-                <li data-src="bolero master.mp3">Bolero (Live Misterbianco 2010)</li>
-                <li data-src="song4.mp3">Canzone 4</li>
-                <li data-src="song5.mp3">Canzone 5</li>
-                <li data-src="song6.mp3">Canzone 6</li>
-                <!-- Aggiungi altre canzoni secondo necessità -->
-            </ul>
-            </div>
+  <section class="section" id="concerti" aria-labelledby="concerti-h">
+    <div class="wrap">
+      <div class="grid grid--top fill">
+        <div class="span-6">
+          <div class="section-head">
+            <h2 id="concerti-h">Prossimi concerti degli audioClaB</h2>
+            <p>Le date in programma, con il locale e la città.</p>
+          </div>
+          <ul class="rows" id="lista-concerti" aria-label="Date"></ul>
+          <div class="concerti__vuoto" id="concerti-vuoto">
+            <p>Nessuna data in programma al momento. Le nuove date escono qui e sulla pagina Facebook.</p>
+            <a class="link" href="https://www.facebook.com/audioClaB.it" target="_blank" rel="noopener">Segui le date su Facebook</a>
+          </div>
         </div>
-    </section>
+        <div class="frame frame--photo span-6 start-7 concerti__photo">
+          <img class="frame__img" src="assets/img/concerti-cantante.jpg" alt="Il cantante con il microfono in mano, in primo piano" loading="lazy" width="658" height="662" style="object-position: 40% 40%">
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-    <section id="tour">
-        <h2><span class="colored-text">C</span>oncerti</h2>
-        <div id="tour-events">
-            <p id="no-events-message">Non ci sono eventi in programma al momento.</p>
+<footer class="footer closing footer--dark ground-inverse" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--photo">
+      <div class="section-head--split">
+        <div><h2 id="close-h">Porta gli audioClaB sul tuo palco</h2><p class="t-lead">Hai un locale o un palco? Scrivi a <a class="mail" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">galberti4@libero.it</a></p></div>
+        <a class="btn btn--primary" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">Prenota un concerto<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+      </div>
+      <div class="close__media" style="--pos: 50% 45%"><img src="assets/img/chiusura-palco.jpg" srcset="assets/img/chiusura-palco-900.jpg 900w, assets/img/chiusura-palco.jpg 2000w" sizes="(min-width: 1024px) 89vw, 100vw" alt="La band sul palco con le luci verdi e il logo audioClaB alle spalle" loading="lazy" width="2000" height="1500"></div>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top"><img class="logo-img logo-img--footer" src="assets/img/logo-scuro-nome.png" alt="audioClaB" width="486" height="80" loading="lazy"></a>
+          <p class="footer__lede">Cover band di Claudio Baglioni a Catania.</p>
         </div>
-    </section>
-    
-    <section id="galleria">
-        <h3>Video Musi<span class="colored-text">c</span>ali</h3>
-        <div class="video-container2">
-        <iframe class="video3" src="https://www.youtube.com/embed/videoseries?list=PLZ9YASQIi96hSLc9AZA6r3ET4Qafys9U7&enablejsapi=1&origin=http://example.com&key=AIzaSyCRxPUUDGCZ7_kW3FS60plxDKzJPLybm2Q"></iframe>
+        <div class="span-2 footer__col"><h4>Ascolta</h4><ul><li><a href="#musica">Musica</a></li><li><a href="#video">Video</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>La band</h4><ul><li><a href="#band">Band</a></li><li><a href="#concerti">Concerti</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Social</h4><ul><li><a href="https://www.facebook.com/audioClaB.it" target="_blank" rel="noopener">Facebook</a></li><li><a href="https://www.youtube.com/@galberti6" target="_blank" rel="noopener">YouTube</a></li><li><a href="https://www.tiktok.com/@audioclab?lang=it-IT" target="_blank" rel="noopener">TikTok</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Contatti</h4><ul><li><a href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">Scrivici</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2007&ndash;<span data-anno>2026</span> audioClaB</span>
+        <div class="socials">
+          <a href="https://www.facebook.com/audioClaB.it" target="_blank" rel="noopener" aria-label="audioClaB su Facebook"><img src="assets/img/facebook.png" alt="" width="24" height="24" loading="lazy"></a>
+          <a href="https://www.youtube.com/@galberti6" target="_blank" rel="noopener" aria-label="audioClaB su YouTube"><img src="assets/img/youtube.png" alt="" width="28" height="20" loading="lazy"></a>
+          <a href="https://www.tiktok.com/@audioclab?lang=it-IT" target="_blank" rel="noopener" aria-label="audioClaB su TikTok"><img src="assets/img/tiktok.png" alt="" width="24" height="24" loading="lazy"></a>
         </div>
-    </section>
-    
-    <section id="contatti">
-        <h2><span class="colored-text">C</span>ontatti</h2>
-        <p>Se hai un locale oppure un palco, non esitare a inviare un'email su: <a href="mailto:galberti4@libero.it">galberti4@libero.it</a></p>
-    </section>
-    
-    <footer>
-        <p>&copy; 2007 - 2023 audioClaB</p>
-    </footer>
-    <script src="script.js"></script>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="assets/kit/system.js"></script>
+<script type="module" src="assets/kit/motion/motion.js"></script>
+<script type="module" src="assets/kit/layout/layout.js"></script>
+<script src="script.js" defer></script>
 </body>
-
-<section id="social">
-    <h2>Segui<span class="colored-text">c</span>i su:</h2>
-    <div class="social-buttons">
-        <a href="https://www.facebook.com/audioClaB.it" target="_blank" class="social-button">
-            <img src="Facebook.png" alt="Facebook">
-        </a>
-        <a href="https://www.youtube.com/@galberti6" target="_blank" class="social-button">
-            <img src="Youtube.png" alt="YouTube">
-        </a>
-        <a href="https://www.tiktok.com/@audioclab?lang=it-IT" target="_blank" class="social-button">
-            <img src="Tiktok.png" alt="TikTok">
-        </a>
-        <!-- Aggiungi altri pulsanti per altri social media secondo necessità -->
-    </div>
-</section>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-
 </html>

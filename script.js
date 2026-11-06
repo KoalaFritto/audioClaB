@@ -1,261 +1,121 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const simpleBarInstance = new SimpleBar(document.querySelector('.playlist-container'));
- });
- 
-function getPlaylistVideos(playlistId, apiKey, callback) {
-    var apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+/* audioClaB: lettore dei brani, video YouTube al clic e lista dei concerti. */
 
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            var videos = data.items.filter(item => {
-                return item.snippet.title !== "Private video" && item.snippet.status.privacyStatus !== "private";
-            }).map(item => item.snippet.resourceId.videoId);
-            callback(videos);
-        })
-        .catch(error => console.error('Errore nel recupero dei video:', error));
-}
+/* ------------------------------------------------------------------ CONCERTI
+   Per aggiungere una data scrivi una riga qui sotto e salva:
+     { data: '2026-12-20', ora: '21:30', locale: 'Nome del locale', citta: 'Catania', link: 'https://...' },
+   Le date già passate spariscono da sole; senza date compare il messaggio "Nessuna data in programma". */
+const CONCERTI = [
+];
 
-// Funzione per inizializzare il player con la lista dei video
-function initPlayer(playlistVideos) {
-    var player = new YT.Player('player', {
-        height: '480',
-        width: '360',
-        videoId: playlistVideos[0],
-        playerVars: {
-            listType: 'playlist',
-            list: playlistVideos.join(','),
-            controls: 1,
-            showinfo: 1,
-            rel: 0
-        }
-    });
-}
-// Usa la funzione per ottenere i video della playlist
-getPlaylistVideos('PLZ9YASQIi96hSLc9AZA6r3ET4Qafys9U7', 'AIzaSyCRxPUUDGCZ7_kW3FS60plxDKzJPLybm2Q', function(videos) {
-    initPlayer(videos);
-});
-// Funzione per aggiungere un nuovo evento
-function aggiungiEvento(titolo, data, citta, link) {
-    var containerEventi = document.getElementById("tour-events");
+(function concerti() {
+  const lista = document.getElementById('lista-concerti');
+  const vuoto = document.getElementById('concerti-vuoto');
+  if (!lista) return;
+  const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+  const fmt = new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+  const prossimi = CONCERTI
+    .map(c => ({ ...c, quando: new Date(c.data + 'T00:00:00') }))
+    .filter(c => !isNaN(c.quando) && c.quando >= oggi)
+    .sort((a, b) => a.quando - b.quando);
+  for (const c of prossimi) {
+    const li = document.createElement('li');
+    const nome = document.createElement('span');
+    nome.className = 'rows__name';
+    if (c.link) {
+      const a = document.createElement('a');
+      a.href = c.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.locale;
+      nome.appendChild(a);
+    } else nome.textContent = c.locale;
+    const dove = document.createElement('p');
+    dove.textContent = c.citta;
+    const val = document.createElement('span');
+    val.className = 'rows__value';
+    val.textContent = fmt.format(c.quando) + (c.ora ? ', ' + c.ora : '');
+    li.append(nome, val, dove);
+    lista.appendChild(li);
+  }
+  if (vuoto) vuoto.hidden = prossimi.length > 0;
+})();
 
-    // Crea un nuovo elemento per l'evento
-    var nuovoEvento = document.createElement("div");
-    nuovoEvento.className = "evento";
+/* ------------------------------------------------------------------ LETTORE */
+(function lettore() {
+  const audio = document.getElementById('audio');
+  const tracks = [...document.querySelectorAll('.track')];
+  const seek = document.querySelector('.player__seek');
+  const now = document.querySelector('.player__now');
+  const time = document.querySelector('.player__time');
+  const heroPlay = document.querySelector('.hero-play');
+  if (!audio || !tracks.length) return;
+  let current = -1;
 
-    // Costruisci l'HTML dell'evento con titolo, data, città e link
-    nuovoEvento.innerHTML = `
-        <h2>${titolo} - ${citta}</h2>
-        <p>${data} <a href="${link}" target="_blank">(Per maggiori informazioni)</a></p>
-    `;
+  const mmss = s => {
+    if (!isFinite(s)) return '0:00';
+    s = Math.max(0, Math.floor(s));
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  };
 
-    // Aggiungi l'evento al container
-    containerEventi.appendChild(nuovoEvento);
+  function render() {
+    const playing = !audio.paused;
+    tracks.forEach((t, i) => t.setAttribute('aria-pressed', String(i === current && playing)));
+    if (heroPlay) heroPlay.classList.toggle('is-playing', current === 0 && playing);
+    if (current >= 0) now.textContent = tracks[current].querySelector('.rows__name').textContent;
+    seek.disabled = current < 0;
+  }
 
-    // Rimuove il messaggio "Non ci sono eventi in programma" se presente
-    var messaggio = document.getElementById("no-events-message");
-    if (messaggio) {
-        containerEventi.removeChild(messaggio);
+  function progress() {
+    const d = audio.duration;
+    const p = d ? audio.currentTime / d : 0;
+    seek.value = Math.round(p * 1000);
+    seek.style.setProperty('--pct', (p * 100).toFixed(2) + '%');
+    time.textContent = mmss(audio.currentTime) + ' / ' + mmss(d);
+  }
+
+  function play(i) {
+    if (i === current) {
+      audio.paused ? audio.play() : audio.pause();
+      return;
     }
-}
+    current = i;
+    audio.src = tracks[i].dataset.src;
+    audio.play().catch(() => {});
+    render();
+  }
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
+  tracks.forEach((t, i) => t.addEventListener('click', () => play(i)));
+  if (heroPlay) heroPlay.addEventListener('click', () => play(Number(heroPlay.dataset.track) || 0));
 
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
+  seek.addEventListener('input', () => {
+    if (audio.duration) audio.currentTime = (seek.value / 1000) * audio.duration;
+    progress();
+  });
+
+  audio.addEventListener('play', render);
+  audio.addEventListener('pause', render);
+  audio.addEventListener('timeupdate', progress);
+  audio.addEventListener('loadedmetadata', progress);
+  audio.addEventListener('ended', () => {
+    if (current < tracks.length - 1) play(current + 1);
+    else { render(); }
+  });
+})();
+
+/* ------------------------------------------------------------------ YOUTUBE
+   La miniatura resta un'immagine finché non la clicchi: il player di YouTube si carica solo allora. */
+document.querySelectorAll('[data-yt]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(btn.dataset.yt) + '?autoplay=1&rel=0';
+    f.title = btn.getAttribute('aria-label') || 'Video YouTube';
+    f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    f.allowFullscreen = true;
+    btn.replaceWith(f);
+  });
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const player = new Plyr('#plyr-audio');
-});
+/* un solo media alla volta: se parte un video si ferma la musica, e viceversa */
+document.addEventListener('play', e => {
+  document.querySelectorAll('audio, video').forEach(m => { if (m !== e.target && !m.paused) m.pause(); });
+}, true);
 
-window.addEventListener('scroll', function() {
-    const textOverlay = document.querySelector('.text-overlay');
-    const scrollPosition = window.scrollY;
-    const opacity = 1 - scrollPosition / 500; /* Regola il valore 500 per determinare la velocità di decrescimento */
-    textOverlay.style.opacity = opacity;
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    autosize(document.querySelectorAll('.autosize'));
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const audio = document.getElementById('custom-audio');
-    const playPauseButton = document.getElementById('play-pause');
-    const nextTrackButton = document.getElementById('next-track');
-    const prevTrackButton = document.getElementById('prev-track');
-    const progress = document.querySelector('.progress');
-    const progressKnob = document.querySelector('.progress-knob');
-    const durationDisplay = document.querySelector('.duration');
-    const playlist = document.querySelectorAll('.playlist li');
-    const songInfo = document.querySelector('.song-info'); 
-
-    let isDragging = false;
-    let currentTrack = 0;
-    let currentSong = playlist[currentTrack].textContent; 
-    
-    function playTrack(index) {
-        if (currentTrack === null) {
-            alert('Devi selezionare prima un brano!');
-            return;
-        }
-
-        audio.src = playlist[index].getAttribute('data-src');
-        audio.play();
-        playPauseButton.textContent = 'Pause';
-        currentSong = playlist[index].textContent; 
-        updateSongInfo(); 
-    }
-
-    function updateSongInfo() {
-        songInfo.textContent = currentSong;
-    }
-
-    function updateProgressBar() {
-        const progressPercentage = (audio.currentTime / audio.duration) * 100;
-        progress.style.width = `${progressPercentage}%`;
-
-        const knobPosition = (progressPercentage / 100) * (progress.offsetWidth - progressKnob.offsetWidth);
-        progressKnob.style.left = `${knobPosition}px`;
-
-        const remainingTime = audio.duration - audio.currentTime;
-        const minutes = Math.floor(remainingTime / 60);
-        const seconds = Math.floor(remainingTime % 60);
-
-        durationDisplay.textContent = `-${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    audio.addEventListener('timeupdate', updateProgressBar);
-
-    playPauseButton.addEventListener('click', () => {
-        if (audio.paused) {
-            audio.play();
-            playPauseButton.textContent = 'Pause';
-        } else {
-            audio.pause();
-            playPauseButton.textContent = 'Play';
-        }
-    });
-
-    progress.addEventListener('click', (e) => {
-        const clickX = e.clientX - progress.getBoundingClientRect().left;
-        const progressWidth = progress.offsetWidth;
-        const newTime = (clickX / progressWidth) * audio.duration;
-        audio.currentTime = newTime;
-        updateProgressBar();
-    });
-
-    progressKnob.addEventListener('mousedown', () => {
-        isDragging = true;
-
-        document.addEventListener('mousemove', handleDragKnob);
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            document.removeEventListener('mousemove', handleDragKnob);
-        });
-    });
-
-    function handleDragKnob(e) {
-        if (isDragging) {
-            const clickX = e.clientX - progress.getBoundingClientRect().left;
-            const progressWidth = progress.offsetWidth;
-            let knobPosition = clickX - (progressKnob.offsetWidth / 2);
-
-            if (knobPosition < 0) {
-                knobPosition = 0;
-            } else if (knobPosition > progressWidth - progressKnob.offsetWidth) {
-                knobPosition = progressWidth - progressKnob.offsetWidth;
-            }
-
-            const progressPercentage = (knobPosition / (progressWidth - progressKnob.offsetWidth)) * 100;
-            const newTime = (progressPercentage / 100) * audio.duration;
-            audio.currentTime = newTime;
-            progressKnob.style.left = `${knobPosition}px`;
-            updateProgressBar();
-        }
-    }
-
-    nextTrackButton.addEventListener('click', () => {
-        currentTrack = (currentTrack + 1) % playlist.length;
-        playTrack(currentTrack);
-    });
-
-    prevTrackButton.addEventListener('click', () => {
-        currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-        playTrack(currentTrack);
-    });
-
-    playlist.forEach((track, index) => {
-        track.addEventListener('click', () => {
-            currentTrack = index;
-            playTrack(currentTrack);
-        });
-        updateSongInfo();
-    });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const slideshow = document.querySelector('.slideshow');
-    const videos = slideshow.querySelectorAll('video');
-
-    let isVideoPlaying = false;
-
-    videos.forEach(video => {
-        video.addEventListener('Play', () => {
-            isVideoPlaying = true;
-            pauseSlideshow();
-        });
-
-        video.addEventListener('Pause', () => {
-            isVideoPlaying = false;
-            if (!isVideoPlaying) {
-                resumeSlideshow();
-            }
-        });
-
-        let isMuted = false;
-
-        const muteButton = document.createElement('button');
-        muteButton.classList.add('mute-button');
-        muteButton.textContent = 'Mute';
-        muteButton.addEventListener('click', () => {
-            if (isMuted) {
-                video.muted = false;
-                muteButton.textContent = 'Mute';
-            } else {
-                video.muted = true;
-                muteButton.textContent = 'Unmute';
-            }
-            isMuted = !isMuted;
-        });
-
-        video.parentElement.appendChild(muteButton);
-
-        const playPauseButton = video.parentElement.querySelector('.play-pause-button');
-        if (playPauseButton) {
-            playPauseButton.addEventListener('click', () => {
-                if (video.paused) {
-                    video.play();
-                    playPauseButton.textContent = 'Pause';
-                } else {
-                    video.pause();
-                    playPauseButton.textContent = 'Play';
-                }
-            });
-        }
-    });
-
-    $(document).ready(function(){
-        $('.slideshow').slick({
-            autoplay: false,
-            autoplaySpeed: 1000,
-            arrows: false,
-            dots: true
-        });
-    });
-});
+/* l'anno nel footer */
+document.querySelectorAll('[data-anno]').forEach(el => { el.textContent = new Date().getFullYear(); });
