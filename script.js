@@ -14,7 +14,7 @@
     const w = Math.max(180, Math.min(500, Math.floor(box.clientWidth)));
     if (Math.abs(w - larghezza) < 20) return;
     larghezza = w;
-    const h = window.innerWidth < 640 ? 480 : 430;
+    const h = window.innerWidth < 640 ? 480 : 380;
     const q = new URLSearchParams({
       href: box.dataset.pagina, tabs: 'events', width: String(w), height: String(h),
       small_header: 'true', adapt_container_width: 'true', hide_cover: 'true', show_facepile: 'false', locale: 'it_IT',

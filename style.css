@@ -34,9 +34,10 @@
 }
 
 /* concerti: il widget eventi di Facebook */
-.fb-eventi { width: 100%; max-width: 500px; min-height: 430px; border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
+.fb-eventi { width: 100%; max-width: 500px; min-height: 380px; border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
 .fb-eventi > iframe { display: block; border: 0; max-width: 100%; }
-.fb-eventi__link { margin-top: var(--s-5); }
+.fb-eventi__nota { margin: var(--s-4) 0 0; color: var(--muted); max-width: 50ch; }
+.fb-eventi__link { margin-top: var(--s-3); }
 @media (max-width: 639px) { .fb-eventi { min-height: 480px; } }
 
 /* chiusura */
