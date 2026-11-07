@@ -177,7 +177,7 @@ Questo è il video giusto da sponsorizzare tra gennaio e aprile, quando si prepa
 
 ---
 
-## Spot con voce narrante (`video/audioclab-spot-voce.mp4`, 33 s)
+## Spot con voce narrante (`video/audioclab-spot-voce-maschile.mp4` e `-femminile.mp4`, 33 s)
 
 Il video pubblicitario principale, con le scene più forti dei vostri video di Facebook e TikTok:
 Gianco sul palco viola (il video più visto su Facebook, «Il frigo russava…»), «Io dal mare» in studio,
@@ -195,8 +195,9 @@ abbassa da sola quando la voce parla.
 5. Organizzi una festa in piazza, una rassegna o una serata in teatro?
 6. Scrivici: galberti4@libero.it. audioClaB: Baglioni, dal vivo.
 
-La voce è sintetica (Piper, voce italiana "Paola"). Se preferite una voce vera, registrate le sei frasi
-con il telefono in una stanza silenziosa: si sostituiscono senza rifare il montaggio.
+Due versioni, uguali tranne la voce: maschile (Nicola) e femminile (Sara). Le voci sono sintetiche
+(modello Kokoro, voci italiane). Se preferite una voce vera, registrate le sei frasi con il telefono in
+una stanza silenziosa: si sostituiscono senza rifare il montaggio.
 
 **Didascalia** (TikTok, Reels, Facebook)
 
