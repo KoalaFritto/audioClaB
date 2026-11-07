@@ -1,0 +1,401 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;background:#14162e;overflow:hidden}svg{display:block}</style></head>
+<body>
+<svg id="v" width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+// VALSORDA · Parte 1 — Flat Vector (Animation Studio: flatvector) + formato Reel interattivo
+// Regole: forme piene, 2-3 piani di valore per oggetto, niente contorni scuri, palette indaco limitata,
+// un accento focale (arancio Greta / ambra luce / rosso tensione). Personaggi senza volto.
+const C = {
+  sky1:'#121430', sky2:'#22265a', mtn1:'#1b1f45', mtn2:'#242a5a', mtn3:'#2e356c', moon:'#efe6cf', moonD:'#d9cfb4',
+  water:'#2a5f7a', waterL:'#3e7f98', waterD:'#1f4760',
+  mud:'#3c3340', mudL:'#4a3f4e', mudD:'#2c2531', crack:'#1d1822',
+  stone:'#4b4f78', stoneL:'#5e6390', stoneD:'#383b5e', stoneDD:'#2a2c48', roof:'#5a3f55', roofD:'#463145',
+  algae:'#3d5b52', win:'#0e0f22', amber:'#ffb547', amberL:'#ffd27a', orange:'#ff7a1a', orangeD:'#d45f0c',
+  pants:'#1c1f3d', boot:'#2a2233', skin:'#e9b48a', skinD:'#cf9670', hair:'#101024', gear:'#232543', gearL:'#3b3f6e',
+  red:'#ff3b3b', white:'#f5f3ff', fog:'#a8b2e6', wood:'#5b3a4a', woodD:'#45293a', car:'#3f6f8a', carD:'#2d5269',
+  blue:'#2f6bff', go:'#1fa64a', stop:'#e0302f', yellow:'#ffd23f', ui:'#0b0c18', ui2:'#17192e', ui3:'#22253f', green:'#34c759'
+};
+let TL = null, SHOTS = [];
+window.setTimeline = (d) => {
+  TL = d;
+  SHOTS = d.shots.map((s, i) => ({ id: s.id, t0: s.t, t1: i + 1 < d.shots.length ? d.shots[i + 1].t : d.dur }));
+  window.ready = true;
+};
+window.renderFrame = (f) => window.render((f - 1) / TL.fps);
+// ---------------------------------------------------------------- utils
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; };
+const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const R = (x, y, w, h, f, e = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${e}/>`;
+const Ci = (x, y, r, f, e = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${e}/>`;
+const El = (x, y, rx, ry, f, e = '') => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}" ${e}/>`;
+const P = (d, f, e = '') => `<path d="${d}" fill="${f}" ${e}/>`;
+const Poly = (pts, f, e = '') => `<polygon points="${pts.map(p => p.join(',')).join(' ')}" fill="${f}" ${e}/>`;
+const Ln = (x1, y1, x2, y2, c, w, e = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${e}/>`;
+const G = (inner, tr = '', e = '') => `<g transform="${tr}" ${e}>${inner}</g>`;
+const Tx = (x, y, txt, size, fill, e = '', w = 900, anchor = 'middle') => `<text x="${x}" y="${y}" font-family="Inter" font-weight="${w}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" ${e}>${txt}</text>`;
+const DEFS = `<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.sky1}"/><stop offset="1" stop-color="${C.sky2}"/></linearGradient>
+ <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".45"/><stop offset="1" stop-color="${C.amberL}" stop-opacity="0"/></linearGradient>
+ <linearGradient id="beamV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".4"/><stop offset="1" stop-color="${C.amberL}" stop-opacity="0"/></linearGradient>
+ <linearGradient id="spill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.amber}" stop-opacity=".55"/><stop offset="1" stop-color="${C.amber}" stop-opacity="0"/></linearGradient>
+ <radialGradient id="glow"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".8"/><stop offset="1" stop-color="${C.amber}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="moonglow"><stop offset="0" stop-color="${C.moon}" stop-opacity=".22"/><stop offset="1" stop-color="${C.moon}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#05060f" stop-opacity="0"/><stop offset="1" stop-color="#05060f" stop-opacity=".55"/></radialGradient>
+ <radialGradient id="redvig" cx=".5" cy=".5" r=".72"><stop offset=".3" stop-color="#40000a" stop-opacity="0"/><stop offset="1" stop-color="#2b0008" stop-opacity=".92"/></radialGradient>
+ <radialGradient id="redglow" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#5a0d1a" stop-opacity=".9"/><stop offset="1" stop-color="#0a0a16" stop-opacity="1"/></radialGradient>
+ <linearGradient id="fogG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.fog}" stop-opacity="0"/><stop offset=".5" stop-color="${C.fog}" stop-opacity=".14"/><stop offset="1" stop-color="${C.fog}" stop-opacity="0"/></linearGradient>
+ <clipPath id="screen"><rect x="-205" y="-430" width="410" height="860" rx="52"/></clipPath>
+</defs>`;
+// ---------------------------------------------------------------- ambienti
+function skyBG(moon = [820, 330]) {
+  let s = R(0, 0, 1080, 1920, 'url(#sky)');
+  const r = rng(3); for (let i = 0; i < 60; i++) s += Ci(r() * 1080, r() * 900, r() * 2 + .6, C.white, `opacity="${.2 + r() * .45}"`);
+  if (moon) s += Ci(moon[0], moon[1], 240, 'url(#moonglow)') + Ci(moon[0], moon[1], 66, C.moon) + P(`M${moon[0]},${moon[1] - 66} A66,66 0 0 1 ${moon[0]},${moon[1] + 66} A48,66 0 0 0 ${moon[0]},${moon[1] - 66}Z`, C.moonD);
+  return s;
+}
+function mountains(off = 0) {
+  return Poly([[-60, 1000], [160, 560], [330, 760], [520, 470], [700, 720], [880, 520], [1140, 900], [1140, 1150], [-60, 1150]].map(p => [p[0] + off * .2, p[1]]), C.mtn3)
+    + Poly([[-60, 1050], [220, 700], [420, 900], [640, 640], [860, 880], [1140, 700], [1140, 1180], [-60, 1180]].map(p => [p[0] + off * .4, p[1]]), C.mtn2)
+    + Poly([[-60, 1120], [120, 900], [300, 1020], [470, 860], [700, 1040], [930, 880], [1140, 1000], [1140, 1260], [-60, 1260]].map(p => [p[0] + off * .6, p[1]]), C.mtn1);
+}
+function dam(x0, x1, y0, y1) {
+  const h = y1 - y0;
+  let s = Poly([[x0, y1], [x0 + 40, y0], [x1 - 40, y0], [x1, y1]], C.stoneD);
+  s += Poly([[x1 - 260, y0], [x1 - 40, y0], [x1, y1], [x1 - 220, y1]], C.stoneDD);
+  for (let k = 1; k < 7; k++) { const y = y0 + h * k / 7; s += R(x0 + 30, y - 3, x1 - x0 - 60, 6, C.stoneDD, 'opacity=".6"'); }
+  s += R(x0 + 40, y0 - 20, x1 - x0 - 80, 24, C.stone) + R(x0 + 30, y0 + h * .34, x1 - x0 - 60, h * .07, C.waterD, 'opacity=".55"');
+  return s;
+}
+function house(x, base, w, h, o = {}) {
+  const r = rng(Math.floor(x * 7 + h));
+  let s = R(x, base - h, w, h, C.stone) + R(x + w * .7, base - h, w * .3, h, C.stoneD);
+  if (!o.broken) s += Poly([[x - 10, base - h], [x + w / 2, base - h - w * .42], [x + w + 10, base - h]], C.roof) + Poly([[x + w / 2, base - h - w * .42], [x + w + 10, base - h], [x + w * .7, base - h]], C.roofD);
+  else s += Poly([[x, base - h], [x + w * .3, base - h - 24], [x + w * .55, base - h + 18], [x + w * .8, base - h - 12], [x + w, base - h]], C.stoneD);
+  const nw = Math.max(1, Math.floor(w / 70));
+  for (let i = 0; i < nw; i++) for (let j = 0; j < Math.floor(h / 110); j++) s += R(x + 18 + i * (w - 36) / nw, base - h + 30 + j * 100, 26, 40, C.win, 'rx="13"');
+  s += R(x + w * .4, base - 70, 34, 70, C.win, 'rx="17"');
+  for (let i = 0; i < 5; i++) s += R(x + r() * (w - 10), base - h * (.3 + r() * .5), 8, h * (.25 + r() * .35), C.algae, 'rx="4"');
+  return s;
+}
+function tower(x, base, w, h) {
+  let s = R(x, base - h, w, h, C.stone) + R(x + w * .7, base - h, w * .3, h, C.stoneD);
+  s += R(x + w * .18, base - h + 30, w * .26, w * .4, C.win, `rx="${w * .13}"`) + R(x + w * .56, base - h + 30, w * .26, w * .4, C.win, `rx="${w * .13}"`);
+  s += Poly([[x - 12, base - h], [x + w / 2, base - h - w * 1.1], [x + w + 12, base - h]], C.roof) + Poly([[x + w / 2, base - h - w * 1.1], [x + w + 12, base - h], [x + w * .7, base - h]], C.roofD);
+  for (let i = 0; i < 4; i++) s += R(x + 12 + i * w / 4.5, base - h * (.25 + (i % 3) * .15), 8, h * .3, C.algae, 'rx="4"');
+  return s;
+}
+function mudGround(y0, seed = 1) {
+  const r = rng(seed);
+  let s = R(0, y0, 1080, 1920 - y0, C.mud) + R(0, y0, 1080, 16, C.mudL);
+  for (let i = 0; i < 22; i++) {
+    const x = r() * 1080, y = y0 + 40 + r() * (1920 - y0), w = 60 + r() * 140;
+    s += Poly([[x, y], [x + w * .5, y - 4 - r() * 6], [x + w, y + 2], [x + w * .5, y + 5]], C.crack);
+  }
+  for (let i = 0; i < 5; i++) s += El(r() * 1080, y0 + 140 + r() * (1760 - y0), 70 + r() * 60, 13 + r() * 8, C.waterD);
+  return s;
+}
+const fogBand = (y, h, t, k = 1) => G(R(-200, y, 1500, h, 'url(#fogG)'), `translate(${Math.sin(t * .3 * k) * 60},0)`);
+// ---------------------------------------------------------------- Greta (senza volto)
+function gretaSide(x, y, s, o = {}) {
+  const ph = o.phase || 0, walk = o.walk ? 1 : 0;
+  const sw = Math.sin(ph * Math.PI * 2) * 22 * walk, bob = Math.abs(Math.sin(ph * Math.PI * 2)) * 8 * walk;
+  const hipY = -230, shY = -470, hd = [12, -545];
+  const leg = (ang, col) => G(R(-28, 0, 56, 220, col, 'rx="26"') + R(-30, 196, 80, 42, C.boot, 'rx="18"'), `translate(0,${hipY}) rotate(${ang})`);
+  let b = '';
+  if (o.beam) b += Poly([[hd[0] + 50, hd[1] - 30], [900, hd[1] - 260], [900, hd[1] + 260]], 'url(#beam)', `opacity="${o.beam}"`);
+  b += leg(-sw, '#151833') + leg(sw, C.pants);
+  b += P(`M-70,${shY} Q-95,${shY + 120} -105,${hipY + 40} L95,${hipY + 40} Q85,${shY + 120} 70,${shY} Z`, C.orange);
+  b += P(`M-70,${shY} Q-95,${shY + 120} -105,${hipY + 40} L-35,${hipY + 40} L-25,${shY} Z`, C.orangeD);
+  b += El(-48, shY - 8, 46, 34, C.orangeD);
+  if (o.mic !== false) {
+    b += G(R(-22, 0, 44, 150, C.orange, 'rx="22"'), `translate(40,${shY + 40}) rotate(-36)`) + Ci(128, shY + 160, 22, C.skin);
+    b += Ln(128, shY + 160, 330, shY - 230, '#1b1c30', 10);
+    b += El(350, shY - 262, 58, 30, '#8a8fb5', `transform="rotate(-52 350 ${shY - 262})"`) + El(362, shY - 250, 38, 18, '#6f739a', `transform="rotate(-52 350 ${shY - 262})"`);
+  }
+  b += R(-10, shY - 40, 34, 50, C.skinD, 'rx="12"') + Ci(hd[0], hd[1], 66, C.skin) + P(`M${hd[0] + 20},${hd[1] - 60} A66,66 0 0 1 ${hd[0] + 40},${hd[1] + 52} L${hd[0] + 20},${hd[1] + 20}Z`, C.skinD, 'opacity=".5"');
+  b += P(`M${hd[0] - 72},${hd[1] + 40} Q${hd[0] - 88},${hd[1] - 70} ${hd[0] - 10},${hd[1] - 76} Q${hd[0] + 62},${hd[1] - 80} ${hd[0] + 72},${hd[1] - 22} L${hd[0] + 20},${hd[1] - 30} Q${hd[0] - 20},${hd[1] - 10} ${hd[0] - 25},${hd[1] + 56} Z`, C.hair);
+  b += P(`M${hd[0] - 52},${hd[1] + 5} Q${hd[0] - 50},${hd[1] - 92} ${hd[0] + 8},${hd[1] - 88}`, 'none', `stroke="${C.gear}" stroke-width="14" stroke-linecap="round"`);
+  b += El(hd[0] - 34, hd[1] + 8, 30, 38, C.gear) + El(hd[0] - 30, hd[1] + 8, 18, 26, C.gearL) + R(hd[0] + 30, hd[1] - 62, 30, 20, C.amber, 'rx="6"');
+  return G(b, `translate(${x},${y - bob}) scale(${s})`);
+}
+function gretaTop(x, y, s, look = 0) {
+  let b = Poly([[0, 40], [-260, 520], [260, 520]], 'url(#beamV)');
+  b += El(0, 0, 105, 62, C.orange) + El(-62, 0, 42, 52, C.orangeD) + El(62, 0, 42, 52, C.orangeD);
+  b += G(R(-18, 0, 36, 150, C.orange, 'rx="18"'), 'translate(70,10) rotate(-30)') + Ln(150, 140, 230, 300, '#1b1c30', 10) + El(240, 320, 26, 42, '#8a8fb5');
+  b += Ci(0, -6, 58, C.hair) + R(-58, -14, 116, 16, C.gear, 'rx="8"') + El(-58, -6, 18, 30, C.gear) + El(58, -6, 18, 30, C.gear) + R(-16, 40, 32, 18, C.amber, 'rx="6"');
+  return G(b, `translate(${x},${y}) rotate(${look}) scale(${s})`);
+}
+function gretaBust(x, y, s, o = {}) {
+  let b = P('M-260,420 Q-250,120 -60,80 L120,80 Q300,120 320,420 Z', C.orange) + P('M-260,420 Q-250,120 -60,80 L-20,420 Z', C.orangeD) + El(-40, 70, 120, 60, C.orangeD);
+  b += R(-40, -40, 110, 140, C.skinD, 'rx="40"') + Ci(20, -170, 190, C.skin) + P('M60,-355 A190,190 0 0 1 120,10 L60,-60 Z', C.skinD, 'opacity=".45"');
+  b += P('M-200,-60 Q-250,-330 0,-370 Q190,-385 230,-240 L120,-260 Q-10,-220 -40,-40 Q-80,30 -140,40 Z', C.hair);
+  b += P('M-150,-150 Q-120,-410 120,-350', 'none', `stroke="${C.gear}" stroke-width="34" stroke-linecap="round"`);
+  b += El(-100, -140, 90, 110, C.gear) + El(-92, -140, 58, 78, C.gearL) + El(-80, -140, 26, 40, C.amber, `opacity="${o.glow || 0}"`);
+  if (o.hand) b += G(El(0, 0, 70, 95, C.skin) + El(20, 10, 40, 70, C.skinD, 'opacity=".5"'), 'translate(-200,-60) rotate(-20)') + G(R(-40, 0, 80, 260, C.orange, 'rx="40"'), 'translate(-230,20) rotate(12)');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function gretaBack(x, y, s) {
+  let b = P('M-300,520 Q-290,170 -80,120 L80,120 Q290,170 300,520 Z', C.orange) + P('M60,120 L80,120 Q290,170 300,520 L140,520 Z', C.orangeD);
+  b += El(0, 110, 130, 60, C.orangeD) + R(-55, -10, 110, 130, C.skinD, 'rx="40"');
+  b += Ci(0, -150, 175, C.hair) + P('M-175,-150 Q-180,40 -90,60 L90,60 Q180,40 175,-150 Z', C.hair);
+  b += P('M-170,-160 Q0,-400 170,-160', 'none', `stroke="${C.gear}" stroke-width="32" stroke-linecap="round"`) + El(-178, -130, 44, 76, C.gear) + El(178, -130, 44, 76, C.gear);
+  b += R(-190, -250, 380, 18, C.amber, 'rx="9" opacity=".0"');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function footprint(x, y, ang, sc, op) {
+  const k = C.mudD;
+  return G(El(0, 0, 18, 32, k) + El(-4, -4, 10, 18, C.crack) + Ci(-12, -40, 6, k) + Ci(-3, -45, 6.5, k) + Ci(6, -44, 6, k) + Ci(13, -40, 5, k) + Ci(18, -34, 4, k) + El(5, 6, 6, 12, C.waterL, 'opacity=".35"'),
+    `translate(${x},${y}) rotate(${ang}) scale(${sc})`, `opacity="${op}"`);
+}
+function doorScene(t, on) {
+  let s = R(0, 0, 1080, 1920, C.stoneDD);
+  for (let y = 0; y < 1500; y += 90) for (let x = ((y / 90) % 2) * 80 - 80; x < 1080; x += 160) s += R(x + 4, y + 4, 152, 82, C.stoneD, 'rx="8"');
+  const cx = 540, base = 1430, w = 420, h = 820;
+  s += R(cx - w / 2 - 50, base - h - 70, w + 100, h + 70, C.stoneD);
+  s += P(`M${cx - w / 2 - 40},${base} L${cx - w / 2 - 40},${base - h + w / 2} A${w / 2 + 40},${w / 2 + 40} 0 0 1 ${cx + w / 2 + 40},${base - h + w / 2} L${cx + w / 2 + 40},${base} Z`, C.stoneL);
+  s += P(`M${cx - w / 2},${base} L${cx - w / 2},${base - h + w / 2} A${w / 2},${w / 2} 0 0 1 ${cx + w / 2},${base - h + w / 2} L${cx + w / 2},${base} Z`, C.wood);
+  s += P(`M${cx},${base} L${cx},${base - h} A${w / 2},${w / 2} 0 0 1 ${cx + w / 2},${base - h + w / 2} L${cx + w / 2},${base} Z`, C.woodD, 'opacity=".55"');
+  for (let i = 1; i < 5; i++) s += R(cx - w / 2 + i * w / 5 - 3, base - h + (i === 2 || i === 3 ? 12 : 60), 6, h - 70, C.woodD);
+  s += R(cx - w / 2, base - h * .55, w, 18, C.woodD) + R(cx - w / 2, base - h * .2, w, 18, C.woodD) + Ci(cx + w * .3, base - h * .4, 20, '#1d1424');
+  s += R(0, base, 1080, 490, C.mudD) + R(150, base, 780, 40, C.stone) + R(110, base + 40, 860, 40, C.stoneD);
+  if (on > 0) {
+    s += R(cx - w / 2 + 6, base - 12, w - 12, 12, C.amberL, `opacity="${on}"`);
+    s += Poly([[cx - w / 2 + 6, base], [cx + w / 2 - 6, base], [cx + w / 2 + 170, base + 300], [cx - w / 2 - 170, base + 300]], 'url(#spill)', `opacity="${on}"`);
+  }
+  return s;
+}
+function car(x, y, s) {
+  let b = P('M-170,0 L-170,-60 Q-160,-90 -110,-95 L-70,-150 Q-55,-165 -20,-165 L80,-165 Q110,-165 125,-140 L150,-95 Q185,-90 190,-60 L190,0 Z', C.car);
+  b += P('M-60,-140 L-20,-150 L30,-150 L30,-100 L-85,-100 Z', C.win) + P('M45,-150 L85,-150 Q100,-150 110,-130 L125,-100 L45,-100 Z', C.win);
+  b += R(-170, -40, 360, 40, C.carD, 'rx="10"') + Ci(-95, 0, 40, '#0f1020') + Ci(115, 0, 40, '#0f1020') + Ci(-95, 0, 15, '#4a4e72') + Ci(115, 0, 15, '#4a4e72');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function carScene(t, trail) {
+  let s = skyBG([800, 300]) + mountains() + fogBand(1100, 260, t) + mudGround(1180, 61) + car(760, 1330, .9);
+  for (let i = 0; i < 12; i++) {
+    const k = i / 11, x = lerp(300, 700, k) + (i % 2 ? 22 : -22), y = lerp(1880, 1360, k);
+    s += footprint(x, y, 25, lerp(1.6, .5, k), clamp((trail - i * .08) / .1));
+  }
+  return s;
+}
+// ---------------------------------------------------------------- telefono (UI)
+function phone(x, y, s, screen, tilt = 0) {
+  let b = R(-225, -455, 450, 910, '#0a0a14', 'rx="70"') + R(-215, -445, 430, 890, '#1c1d33', 'rx="62"');
+  b += G(R(-205, -430, 410, 860, C.ui) + screen, '', 'clip-path="url(#screen)"');
+  b += R(-62, -418, 124, 34, '#000', 'rx="17"');
+  // mani di Greta
+  const hand = (sx) => G(R(-60, 0, 120, 360, C.orange, 'rx="60"') + El(0, -10, 70, 95, C.skin) + El(sx * 20, -20, 34, 70, C.skinD, 'opacity=".5"'), `translate(${sx * 250},${330}) rotate(${-sx * 14})`);
+  b += hand(-1) + hand(1);
+  return G(b, `translate(${x},${y}) rotate(${tilt}) scale(${s})`);
+}
+function statusBar(time, noSignal) {
+  return Tx(-150, -395, time, 22, C.white, '', 700, 'start') + (noSignal ? Tx(150, -395, 'No Service', 18, '#9aa0c8', '', 600, 'end') : R(105, -410, 6, 12, C.white) + R(115, -414, 6, 16, C.white) + R(125, -418, 6, 20, C.white) + R(140, -414, 30, 14, C.white, 'rx="4"'));
+}
+function lockScreen(t, lt, clock) {
+  let s = R(-205, -430, 410, 860, '#2b2d6e') + Ci(0, -120, 360, '#3a3c8a', 'opacity=".55"') + Ci(-160, 260, 260, '#23255c');
+  s += statusBar(clock, lt > 2.2) + Tx(0, -300, 'Saturday, November 7', 22, '#d9dcff', '', 600) + Tx(0, -205, clock, 104, C.white, '', 800);
+  const k = easeOut((lt - .25) / .35);
+  const n = R(-185, 0, 370, 150, '#f5f3ff', 'rx="26" opacity=".93"') + R(-165, 22, 48, 48, C.green, 'rx="12"') + P('M-152,36 h22 a6,6 0 0 1 6,6 v12 a6,6 0 0 1 -6,6 h-12 l-8,7 v-7 a6,6 0 0 1 -2,-6 v-12 a6,6 0 0 1 6,-6z', C.white)
+    + Tx(-102, 42, 'Client', 22, '#111', '', 800, 'start') + Tx(160, 42, 'now', 18, '#666', '', 600, 'end')
+    + Tx(-102, 76, 'We only need silence.', 20, '#222', '', 500, 'start') + Tx(-102, 104, 'The dam closes at dawn.', 20, '#222', '', 500, 'start') + Tx(-102, 132, 'Read the rules below.', 20, '#222', '', 500, 'start');
+  s += G(n, `translate(0,${lerp(-60, -40, k)}) scale(${lerp(.9, 1, k)})`, `opacity="${k}"`);
+  return s;
+}
+function recApp(t, lt, fi, clock, mode) {
+  let s = R(-205, -430, 410, 860, C.ui) + statusBar(clock, true);
+  s += Tx(0, -320, mode === 'play' ? 'Playback' : 'Recording', 30, C.white, '', 800) + Tx(0, -285, 'Valsorda_01.wav', 20, '#8d92c0', '', 600);
+  const spike = mode === 'rec' && t >= TL.mark.silenzio;
+  const n = 34;
+  if (mode === 'rec') {
+    for (let i = 0; i < n; i++) {
+      const a = TL.amp[Math.max(0, fi - (n - i))] || 0;
+      const hh = Math.max(6, a * (spike ? 330 : 120) + (spike ? ((i * 37) % 11) * 8 : 0));
+      s += R(-180 + i * 10.6, -60 - hh / 2, 6, hh, spike ? C.red : '#7f86ff', 'rx="3"');
+    }
+    s += R(-1, -230, 2, 340, C.red);
+  } else {
+    const t0 = TL.mark.riascolta, prog = clamp((t - t0) / 3.2);
+    const r = rng(9);
+    for (let i = 0; i < n; i++) {
+      const isStep = [5, 9, 12, 16, 19, 23, 26, 30].includes(i);
+      const hh = isStep ? 170 + r() * 90 : 18 + r() * 30;
+      const played = i / n < prog;
+      s += R(-180 + i * 10.6, -60 - hh / 2, 6, hh, played ? (isStep ? C.red : '#c9ccff') : '#3a3d66', 'rx="3"');
+    }
+    s += R(-180 + prog * 360, -230, 3, 340, C.white);
+  }
+  const secs = Math.floor(lt) + (mode === 'play' ? 0 : 41);
+  s += Tx(0, 210, `00:${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`, 54, C.white, '', 800);
+  s += Ci(0, 330, 52, C.ui3) + (mode === 'rec' ? R(-20, 310, 40, 40, C.red, 'rx="8"') : Poly([[-14, 305], [-14, 355], [26, 330]], C.white));
+  return s;
+}
+// ---------------------------------------------------------------- scene
+const S = {};
+S.lago = (lt, d, t) => {
+  const k = ease((t - (TL.mark.stanotte - 1.2)) / 2.4), wy = lerp(980, 1560, k);
+  let s = skyBG() + mountains() + dam(130, 950, 760, 1060) + fogBand(950, 220, t);
+  s += house(40, 1420, 170, 230) + house(230, 1420, 140, 300, { broken: true }) + tower(440, 1420, 120, 430) + house(590, 1420, 180, 250) + house(790, 1420, 150, 200, { broken: true }) + house(950, 1420, 150, 270);
+  s += mudGround(1420, 4);
+  const wave = (y, a, ph) => { let p = `M0,${y}`; for (let x = 0; x <= 1080; x += 40) p += ` L${x},${y + Math.sin(x / 70 + ph) * a}`; return p + ' L1080,1920 L0,1920 Z'; };
+  s += P(wave(wy, 8, t * 2), C.water) + P(wave(wy + 46, 5, t * 2.6 + 1), C.waterD);
+  for (let i = 0; i < 6; i++) s += R(100 + i * 160 + Math.sin(t + i) * 20, wy + 70 + (i % 3) * 90, 70, 7, C.waterL, 'rx="3"');
+  if (k > .6) for (let i = 0; i < 8; i++) { const ph = (t * 1.3 + i * .37) % 1; s += El(80 + i * 130, 1200 + ph * 200, 4, 9, C.waterL, `opacity="${1 - ph}"`); }
+  return s;
+};
+S.camminata = (lt, d, t) => {
+  const off = -lt * 70;
+  let s = skyBG([880, 280]) + mountains(off * .3) + fogBand(1050, 200, t), h = '';
+  for (let i = 0; i < 8; i++) h += house(i * 260 - 260, 1340, 200, 240 + (i % 3) * 60, { broken: i % 2 === 1 });
+  s += G(h, `translate(${off % 520},0)`) + mudGround(1340, 9) + gretaSide(470, 1640, .95, { walk: true, phase: lt * 1.8, beam: .9 });
+  return s;
+};
+S.notifica = (lt, d, t, fi, clock) => R(0, 0, 1080, 1920, '#191b3a') + Ci(540, 900, 640, '#20234a') + phone(540, 930, 1.12 + lt * .02, lockScreen(t, lt, clock), -2);
+S.diga = (lt, d, t) => {
+  let s = skyBG([900, 220]) + dam(-60, 1140, 380, 1260) + fogBand(1150, 240, t) + mudGround(1260, 12) + gretaSide(470, 1560, .42, { beam: .7 });
+  for (let i = 0; i < 4; i++) { const ph = (lt * .8 + i / 4) % 1; s += Ci(470 + 330 * .42, 1560 - 732 * .42, 40 + ph * 330, 'none', `stroke="${C.white}" stroke-width="${6 * (1 - ph)}" opacity="${(1 - ph) * .6}"`); }
+  s += G(R(-250, -48, 500, 96, C.ui, 'rx="48" opacity=".85"') + Tx(0, 14, 'SUNRISE IN 6h 10m', 40, C.amberL, 'letter-spacing="2"'), 'translate(540,420)', `opacity="${clamp((lt - .3) / .4)}"`);
+  return s;
+};
+S.rec = (lt, d, t, fi, clock) => {
+  const sp = t >= TL.mark.silenzio ? clamp(1 - (t - TL.mark.silenzio) * 1.5) : 0;
+  return R(0, 0, 1080, 1920, '#191b3a') + Ci(540, 900, 640, sp ? '#3a1630' : '#20234a') + phone(540 + Math.sin(t * 90) * 10 * sp, 930, 1.12, recApp(t, lt, fi, clock, 'rec'), 2);
+};
+S.riascolto = (lt, d, t, fi, clock) => R(0, 0, 1080, 1920, '#191b3a') + Ci(540, 900, 640, '#20234a') + phone(540, 930, 1.12 + lt * .03, recApp(t, lt, fi, clock, 'play'), -1);
+S.passi = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, C.mud) + mudGround(0, 44);
+  const st = TL.steps, last = st.reduce((a, b) => b[0] > a[0] ? b : a, st[0]);
+  st.forEach((p, i) => {
+    if (t < p[0]) return;
+    const pop = easeOut((t - p[0]) / .15);
+    let ang, r;
+    if (p === last) { ang = -90; r = 150; } else { ang = (p[1] + 1) * 170 + i * 29; r = Math.max(190, 470 - i * 10); }
+    const rad = ang * Math.PI / 180;
+    s += footprint(540 + Math.cos(rad) * r + (i % 2 ? 16 : -16), 900 + Math.sin(rad) * r * 1.1, ang + 270, 1.4 * (1.25 - .25 * pop), pop);
+  });
+  s += gretaTop(540, 900, 1.25, Math.sin(lt * 3) * 4);
+  const fr = t >= TL.mark.fermano ? clamp((t - TL.mark.fermano) / .6) : 0;
+  s += R(0, 0, 1080, 1920, 'url(#redvig)', `opacity="${fr * .75}"`);
+  return G(s, `translate(540,900) scale(${1 + lt * .03}) translate(-540,-900)`);
+};
+S.campanile = (lt, d, t) => {
+  const tb = TL.T.bell, hit = t >= tb ? clamp(1 - (t - tb) * 1.4) : 0;
+  let s = skyBG([300, 380]) + fogBand(1500, 300, t), tw = '';
+  tw += Poly([[330, 2200], [400, 520], [680, 520], [750, 2200]], C.stone) + Poly([[600, 520], [680, 520], [750, 2200], [640, 2200]], C.stoneD);
+  for (let y = 700; y < 2200; y += 120) tw += R(330, y - 3, 420, 6, C.stoneD);
+  tw += P('M440,820 L440,640 A45,45 0 0 1 530,640 L530,820 Z', C.sky1) + P('M555,820 L555,640 A45,45 0 0 1 645,640 L645,820 Z', C.sky1);
+  tw += Poly([[380, 520], [540, 160], [700, 520]], C.roof) + Poly([[540, 160], [700, 520], [600, 520]], C.roofD);
+  for (let i = 0; i < 6; i++) tw += R(360 + i * 62, 1100 + (i % 3) * 140, 10, 400, C.algae, 'rx="5"');
+  const ghost = t > TL.mark.vuoto ? (Math.sin(t * 13) > 0 ? .8 : .25) * clamp(1 - (t - TL.mark.vuoto) / 2.5) : 0;
+  tw += P('M505,700 Q505,640 540,640 Q575,640 575,700 L590,760 L490,760 Z', 'none', `stroke="${C.white}" stroke-width="5" stroke-dasharray="12 10" opacity="${ghost}"`);
+  for (let i = 0; i < 3; i++) { const ph = clamp((t - tb) * 1.2 - i * .25); if (t >= tb && ph < 1) tw += Ci(540, 720, 60 + ph * 900, 'none', `stroke="${C.amberL}" stroke-width="${18 * (1 - ph)}" opacity="${1 - ph}"`); }
+  s += G(tw, `translate(0,${ease(lt / 3) * 220 - 120})`);
+  s = G(s, `translate(${Math.sin(t * 70) * 26 * hit},${Math.cos(t * 53) * 20 * hit})`);
+  if (t >= tb && t - tb < .09) s += R(0, 0, 1080, 1920, C.white, 'opacity=".85"');
+  return s;
+};
+S.porta = (lt, d, t) => {
+  const on = t >= TL.mark.luce ? clamp((t - TL.mark.luce) / .3) * (.8 + .2 * Math.sin(t * 5) + .08 * Math.sin(t * 23)) : 0;
+  return G(doorScene(t, on) + gretaSide(170, 1960, 1.05, { beam: .45 }), `translate(540,1100) scale(${1 + lt * .015}) translate(-540,-1100)`);
+};
+S.cuffie = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#15173a') + Ci(300, 900, 520, '#1d2050') + gretaBust(760, 1250, 2.0 + lt * .05, { glow: .4 + .4 * Math.sin(lt * 8) });
+  for (let i = 0; i < 4; i++) { const ph = (lt * 1.1 + i / 4) % 1, x = 120 + ph * 320; s += P(`M${x},760 Q${x + 60},960 ${x},1160`, 'none', `stroke="${C.amberL}" stroke-width="10" opacity="${(1 - ph) * .9}" stroke-linecap="round"`); }
+  return s;
+};
+S.sussurro = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#08050c') + G(gretaBust(760, 1250, 2.1, { glow: .9 }), '', 'opacity=".2"') + R(0, 0, 1080, 1920, 'url(#redvig)');
+  const a = clamp(lt / .2) * clamp((d - lt) / .4);
+  'Greta…'.split('').forEach((c, i) => {
+    s += `<text x="${250 + i * 108 + Math.sin(t * 40 + i * 2) * 5}" y="${930 + Math.cos(t * 33 + i) * 6}" font-family="DejaVu Serif" font-style="italic" font-size="150" fill="#f2d7d7" opacity="${a * (.7 + .3 * Math.sin(t * 17 + i))}">${c}</text>`;
+  });
+  return s;
+};
+S.bivio = (lt, d, t) => {
+  let s = skyBG([880, 260]) + mountains() + fogBand(1000, 260, t) + mudGround(1240, 71);
+  s += G(doorScene(t, .8 + .2 * Math.sin(t * 5)), 'translate(40,700) scale(.34)') + car(860, 1330, .55);
+  s += gretaBack(540, 1500 + Math.sin(lt * 1.5) * 4, .95);
+  return s;
+};
+S.sceltaA = (lt, d, t) => doorScene(t, .8 + .2 * Math.sin(t * 5)) + choicePill('A', 'ENTER THE CHURCH', C.go, 540, 460, easeOut(lt / .3));
+S.sceltaB = (lt, d, t) => carScene(t, t >= TL.mark.passi7 ? (t - TL.mark.passi7) * 1.5 : 0) + choicePill('B', 'RUN TO THE CAR', C.stop, 540, 460, easeOut(lt / .3));
+S.finale = (lt, d, t) => {
+  const beat = Math.pow(Math.max(0, Math.sin(lt * Math.PI * 2 / .95)), 8);
+  let s = R(0, 0, 1080, 1920, 'url(#redglow)');
+  s += Tx(540, 640, 'VALSORDA  ·  PART 1', 32, '#e8e2ff', 'letter-spacing="4"', 600);
+  s += G(Tx(0, 0, 'PART 2', 190, C.red), `translate(540,850) scale(${1 + beat * .03})`);
+  s += Tx(540, 950, 'SUNRISE IN 6 HOURS', 34, '#e8e2ff', 'letter-spacing="2"', 600);
+  s += R(330, 1010, 420, 76, 'none', `rx="38" stroke="${C.white}" stroke-width="4"`) + Tx(540, 1060, 'FOLLOW FOR PART 2', 30, C.white, 'letter-spacing="1"', 800);
+  s += choicePill('A', 'ENTER THE CHURCH', C.go, 540, 1200, 1, .82) + choicePill('B', 'RUN TO THE CAR', C.stop, 540, 1320, 1, .82);
+  s += G(Tx(0, 0, `COMMENT <tspan fill="${C.red}">A OR B</tspan>`, 64, C.white), `translate(540,${1480 + Math.sin(lt * 6) * 8})`);
+  return s;
+};
+function choicePill(letter, txt, col, x, y, k = 1, sc = 1) {
+  const w = 150 + txt.length * 29;
+  const b = R(-w / 2, -50, w, 100, col, 'rx="50"') + Ci(-w / 2 + 52, 0, 34, C.white) + Tx(-w / 2 + 52, 15, letter, 40, col) + Tx(-w / 2 + 106, 15, txt, 42, C.white, 'letter-spacing="1"', 900, 'start');
+  return G(b, `translate(${x},${y}) scale(${sc * lerp(.85, 1, k)})`, `opacity="${k}"`);
+}
+
+function alertScreen(t) {
+  let s = R(-205, -430, 410, 860, '#4a0b14') + Ci(0, -200, 380, '#5c0f1b') + statusBar('11:39', true);
+  s += Poly([[-150, -300], [-118, -356], [-86, -300]], C.yellow) + R(-121, -340, 6, 22, '#4a0b14') + R(-121, -312, 6, 6, '#4a0b14');
+  s += Tx(-70, -328, 'CLIENT ALERT', 28, C.white, '', 900, 'start') + Tx(-70, -300, 'now · 3 rules', 18, '#f3b9c0', '', 600, 'start');
+  const rules = [[TL.mark.r1, ['RECORD ONLY', 'SILENCE.'], -200], [TL.mark.r2, ['IF SOMEONE SAYS', 'YOUR NAME,', "DON'T ANSWER."], -40], [TL.mark.r3, ['BE GONE BEFORE', 'SUNRISE.'], 170]];
+  rules.forEach(([tm, lines, y], k) => {
+    const a = easeOut((t - tm + .1) / .3);
+    if (a <= 0) return;
+    let b = Tx(-170, 0, `${k + 1}.`, 30, C.yellow, '', 900, 'start');
+    lines.forEach((ln, j) => { b += Tx(-128, j * 40, ln, 30, j === lines.length - 1 ? C.yellow : C.white, '', 900, 'start'); });
+    s += G(b, `translate(${lerp(-30, 0, a)},${y})`, `opacity="${a}"`);
+  });
+  return s;
+}
+S.regole = (lt, d, t) => {
+  const m = TL.mark; let k = 0;
+  if (t >= m.r1 - .1) k = 1; if (t >= m.r2 - .1) k = 2; if (t >= m.r3 - .1) k = 3;
+  let s = R(0, 0, 1080, 1920, '#191b3a') + Ci(540, 1000, 660, '#3a1027') + phone(540, 1050, 1.0, alertScreen(t), -2);
+  if (k) { const tk = [m.r1, m.r2, m.r3][k - 1], pop = easeOut((t - tk + .1) / .2); s += G(R(-140, -40, 280, 80, C.red, 'rx="40"') + Tx(0, 16, `RULE #${k}`, 40, C.white, 'letter-spacing="2"'), `translate(540,380) scale(${lerp(.7, 1, pop)})`); }
+  return s;
+};
+// ---------------------------------------------------------------- HUD e sottotitoli
+function hud(t) {
+  const m = Math.floor(37 + t / 11), clock = `11:${String(m).padStart(2, '0')} PM`;
+  const ks = [[0, 72], [TL.T.N3, 86], [TL.mark.passi, 104], [TL.mark.fermano, 122], [TL.T.bell, 134], [TL.T.W, 148], [TL.dur, 152]];
+  let bpm = 72;
+  for (let i = 0; i < ks.length - 1; i++) if (t >= ks[i][0]) bpm = lerp(ks[i][1], ks[i + 1][1], clamp((t - ks[i][0]) / Math.max(.1, ks[i + 1][0] - ks[i][0])));
+  bpm = Math.round(bpm + Math.sin(t * 1.7) * 1.5);
+  const pulse = Math.pow(Math.max(0, Math.sin(t * Math.PI * bpm / 60)), 6);
+  const s = Ci(78, 112, 7, C.red) + Tx(94, 120, 'PART 1', 22, C.red, 'letter-spacing="2"', 800, 'start')
+    + Tx(66, 186, clock, 60, C.white, '', 900, 'start')
+    + Tx(68, 222, 'SUNRISE IN 6H', 24, C.yellow, 'letter-spacing="1"', 800, 'start')
+    + G(P('M0,6 C-12,-8 -26,4 -14,18 L0,30 L14,18 C26,4 12,-8 0,6Z', C.red), `translate(84,240) scale(${.8 + pulse * .25})`) + Tx(106, 264, `${bpm} bpm`, 24, '#ff9aa6', '', 700, 'start');
+  return { svg: s, clock: clock.replace(' PM', '') };
+}
+const SCARY = new Set(['FOOTSTEPS.', 'FOOTSTEPS...', 'NAME.', 'NAME,', 'EMPTY.', 'BELL', 'WHISPERS', 'STOP...', 'STOPS.', 'UNDERWATER.', "DON'T", 'ANSWER.', 'SILENCE.', "ISN'T", 'THERE.', '1976.']);
+function captions(t) {
+  const c = TL.caps.find((c) => t >= c.s && t < c.e);
+  if (!c) return '';
+  const pop = 1 + .07 * clamp(1 - (t - c.s) * 9);
+  const span = c.w.map((w, i) => `<tspan fill="${i === c.i ? (SCARY.has(w) ? C.red : C.yellow) : C.white}">${w}</tspan>`).join(' ');
+  return G(`<text x="0" y="0" font-family="Inter" font-weight="900" font-size="76" text-anchor="middle" stroke="#0b0c1c" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${span}</text>`, `translate(540,1300) scale(${pop})`);
+}
+window.render = (t) => {
+  const fi = Math.round(t * TL.fps);
+  const sh = SHOTS.find((s) => t >= s.t0 && t < s.t1) || SHOTS[SHOTS.length - 1];
+  const lt = t - sh.t0, d = sh.t1 - sh.t0;
+  const H = hud(t);
+  let s = S[sh.id](lt, d, t, fi, H.clock);
+  s = G(s, `translate(540,960) scale(${1 + .06 * (1 - easeOut(lt / .3))}) translate(-540,-960)`);
+  let o = R(0, 0, 1080, 1920, 'url(#vig)');
+  if (!['finale', 'sussurro'].includes(sh.id)) o += H.svg;
+  if (t < TL.T.N2 - .1) o += G(R(-400, -95, 800, 190, C.white, 'rx="28"') + Tx(0, -12, 'A VILLAGE RESURFACED', 56, '#14163a') + Tx(0, 62, 'AFTER 48 YEARS', 62, C.red), 'translate(540,470)', `opacity="${clamp((TL.T.N2 - .1 - t) / .2)}"`);
+  if (!['finale', 'sussurro', 'regole'].includes(sh.id)) o += captions(t);
+  for (const b of TL.booms) if (t >= b && t - b < .1) o += R(0, 0, 1080, 1920, C.white, `opacity="${.6 * (1 - (t - b) / .1)}"`);
+  document.getElementById('v').innerHTML = DEFS + s + o;
+};
+</script>
+</body></html>
