@@ -1,0 +1,303 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;background:#111329;overflow:hidden}svg{display:block}</style></head>
+<body>
+<svg id="v" width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+// ROOM 9 · Part 1 — Flat Vector (animation-studio) · rule-horror Reel format
+const C = {
+  sky1:'#0f1129', sky2:'#1f2350', ground:'#1a1c33', groundL:'#23264a', line:'#3a3e6a',
+  wall:'#3a3360', wallD:'#2d2850', wallL:'#4a4275', roof:'#24203f', door:'#5a4a8a', doorD:'#4a3c75',
+  neonR:'#ff4d5e', neonT:'#3ee6d2', amber:'#ffc86b', amberL:'#ffe0a3', white:'#f6f3ff', red:'#ff3b3b', yellow:'#ffd23f',
+  uni:'#8c2f45', uniD:'#6d2236', skin:'#e9b48a', skinD:'#cf9670', hair:'#111022', paper:'#efe6cf', paperD:'#d9cdb0', ink:'#2a2140',
+  office:'#2c2f57', officeD:'#23264a', desk:'#5b3a2e', deskD:'#472c22', ui:'#0b0c18', ui2:'#1c1e33', ui3:'#2a2d4a',
+  cctv:'#9fc7a8', cctvD:'#1d2b24', go:'#1fa64a', stop:'#e0302f', car1:'#3f6f8a', car2:'#7a4a6a', car3:'#5f6a3a'
+};
+let TL = null, SHOTS = [], SC = new Set();
+window.setTimeline = (d) => { TL = d; SC = new Set(d.scary); SHOTS = d.shots.map((s, i) => ({ id: s.id, clock: s.clock, t0: s.t, t1: i + 1 < d.shots.length ? d.shots[i + 1].t : d.dur })); window.ready = true; };
+window.renderFrame = (f) => window.render((f - 1) / TL.fps);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; };
+const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const R = (x, y, w, h, f, e = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${e}/>`;
+const Ci = (x, y, r, f, e = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${e}/>`;
+const El = (x, y, rx, ry, f, e = '') => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}" ${e}/>`;
+const P = (d, f, e = '') => `<path d="${d}" fill="${f}" ${e}/>`;
+const Poly = (pts, f, e = '') => `<polygon points="${pts.map(p => p.join(',')).join(' ')}" fill="${f}" ${e}/>`;
+const Ln = (x1, y1, x2, y2, c, w, e = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${e}/>`;
+const G = (inner, tr = '', e = '') => `<g transform="${tr}" ${e}>${inner}</g>`;
+const Tx = (x, y, txt, size, fill, e = '', w = 900, anchor = 'middle', fam = 'Inter') => `<text x="${x}" y="${y}" font-family="${fam}" font-weight="${w}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" ${e}>${txt}</text>`;
+const DEFS = `<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.sky1}"/><stop offset="1" stop-color="${C.sky2}"/></linearGradient>
+ <radialGradient id="glowR"><stop offset="0" stop-color="${C.neonR}" stop-opacity=".45"/><stop offset="1" stop-color="${C.neonR}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="glowT"><stop offset="0" stop-color="${C.neonT}" stop-opacity=".35"/><stop offset="1" stop-color="${C.neonT}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="glowA"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".55"/><stop offset="1" stop-color="${C.amber}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#05060f" stop-opacity="0"/><stop offset="1" stop-color="#05060f" stop-opacity=".6"/></radialGradient>
+ <radialGradient id="redvig" cx=".5" cy=".5" r=".72"><stop offset=".3" stop-color="#40000a" stop-opacity="0"/><stop offset="1" stop-color="#2b0008" stop-opacity=".92"/></radialGradient>
+ <radialGradient id="redglow" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#5a0d1a" stop-opacity=".9"/><stop offset="1" stop-color="#0a0a16" stop-opacity="1"/></radialGradient>
+ <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="2" fill="#000" opacity=".22"/></pattern>
+ <clipPath id="screen"><rect x="-205" y="-430" width="410" height="860" rx="52"/></clipPath>
+ <clipPath id="mon"><rect x="0" y="0" width="900" height="1200" rx="26"/></clipPath>
+</defs>`;
+// ---------------------------------------------------------------- personaggi (senza volto)
+// vista frontale, (x,y) = vita
+function nora(x, y, s, o = {}) {
+  let b = '';
+  b += P('M-150,40 Q-160,-150 -95,-200 L95,-200 Q160,-150 150,40 L150,260 L-150,260 Z', C.uni);
+  b += P('M40,-200 L95,-200 Q160,-150 150,40 L150,260 L70,260 Z', C.uniD);
+  b += Poly([[-45, -200], [0, -140], [45, -200]], '#f2ece0') + Poly([[-12, -160], [0, -140], [12, -160], [0, -110]], C.uniD);
+  if (!o.noTag) b += R(-120, -110, 92, 40, '#f6f3ff', 'rx="8"') + Tx(-74, -82, 'NORA', 22, C.uni, '', 900);
+  b += R(-30, -260, 60, 70, C.skinD, 'rx="22"');
+  if (o.back) {
+    b += El(0, -330, 92, 104, C.hair) + P('M-40,-280 Q0,-150 40,-280 Z', C.hair) + El(0, -190, 30, 70, C.hair);
+  } else {
+    b += El(0, -330, 88, 100, C.skin) + P('M40,-420 A88,100 0 0 1 60,-250 L40,-300 Z', C.skinD, 'opacity=".5"');
+    b += P('M-92,-320 Q-100,-440 0,-438 Q100,-440 92,-320 Q70,-395 0,-392 Q-70,-395 -92,-320 Z', C.hair);
+    b += El(96, -330, 26, 70, C.hair, 'transform="rotate(14 96 -330)"');
+    if (o.smile) b += P('M-30,-300 Q0,-285 30,-300', 'none', `stroke="#3a1a2a" stroke-width="5" stroke-linecap="round" opacity="${o.smile}"`);
+  }
+  if (o.arms !== false) b += P('M-150,-150 Q-210,-40 -180,120 L-130,120 Q-150,-20 -110,-120 Z', C.uniD) + P('M150,-150 Q210,-40 180,120 L130,120 Q150,-20 110,-120 Z', C.uni) + Ci(-155, 130, 30, C.skin) + Ci(155, 130, 30, C.skin);
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+// ---------------------------------------------------------------- ambienti
+function rainLayer(t, n = 70, op = .35) {
+  const r = rng(11); let s = '';
+  for (let i = 0; i < n; i++) { const x = r() * 1180 - 50, sp = 900 + r() * 500, y = ((r() * 2200 + t * sp) % 2200) - 200; s += Ln(x, y, x - 10, y + 40, '#9aa5e6', 3, `opacity="${op}"`); }
+  return s;
+}
+function sky() { let s = R(0, 0, 1080, 1920, 'url(#sky)'); const r = rng(3); for (let i = 0; i < 40; i++) s += Ci(r() * 1080, r() * 700, r() * 2 + .5, C.white, `opacity="${.15 + r() * .3}"`); return s; }
+function car(x, y, s, col) {
+  let b = P('M-170,0 L-170,-60 Q-160,-90 -110,-95 L-70,-150 Q-55,-165 -20,-165 L80,-165 Q110,-165 125,-140 L150,-95 Q185,-90 190,-60 L190,0 Z', col);
+  b += P('M-60,-140 L-20,-150 L30,-150 L30,-100 L-85,-100 Z', '#0e0f22') + P('M45,-150 L85,-150 Q100,-150 110,-130 L125,-100 L45,-100 Z', '#0e0f22');
+  b += R(-170, -40, 360, 40, '#000', 'rx="10" opacity=".25"') + Ci(-95, 0, 40, '#0b0c1a') + Ci(115, 0, 40, '#0b0c1a') + Ci(-95, 0, 15, '#4a4e72') + Ci(115, 0, 15, '#4a4e72');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function motelRow(t, x0) {
+  let s = R(x0, 1040, 2400, 380, C.wall) + R(x0, 1040, 2400, 40, C.wallL) + R(x0 - 20, 1000, 2440, 50, C.roof);
+  for (let i = 0; i < 8; i++) {
+    const dx = x0 + 80 + i * 290;
+    s += R(dx, 1180, 120, 240, C.door) + R(dx + 80, 1180, 40, 240, C.doorD) + Ci(dx + 100, 1305, 7, C.amber);
+    s += R(dx + 35, 1130, 50, 36, '#1b1838', 'rx="6"') + Tx(dx + 60, 1160, String(i + 1), 30, C.amberL, '', 900);
+    const lit = [0, 2, 5].includes(i);
+    s += R(dx + 150, 1190, 100, 90, lit ? C.amber : '#171533', 'rx="6"') + (lit ? R(dx + 150, 1190, 100, 90, 'url(#glowA)') : '');
+    s += R(dx + 255, 1060, 14, 360, C.wallD);
+  }
+  return s;
+}
+function sign(x, y, t) {
+  const flick = (Math.sin(t * 17) + Math.sin(t * 5.3)) > 1.5 ? .25 : 1;
+  let s = R(x - 8, y + 300, 22, 700, '#2a2747') + R(x - 160, y, 330, 330, '#1b1838', 'rx="18"');
+  s += Ci(x, y + 120, 260, 'url(#glowR)') + Tx(x, y + 80, 'THE PINES', 52, C.neonR, '', 900) + Tx(x, y + 140, 'MOTEL', 62, C.neonR, '', 900);
+  s += R(x - 120, y + 170, 240, 70, '#0f0d22', 'rx="10"') + Tx(x, y + 220, '9 ROOMS', 44, C.white, '', 900);
+  s += G(Ci(x, y + 285, 160, 'url(#glowT)') + Tx(x, y + 300, 'VACANCY', 42, C.neonT, '', 900), '', `opacity="${flick}"`);
+  return s;
+}
+function officeBG(t) {
+  let s = R(0, 0, 1080, 1920, C.office) + R(0, 0, 1080, 260, C.officeD);
+  // finestra con pioggia e insegna
+  s += R(620, 330, 380, 420, '#0f1129', 'rx="10"') + Ci(800, 420, 200, 'url(#glowR)') + G(rainLayer(t, 18, .4), 'translate(620,330) scale(.35)') + R(620, 330, 380, 420, 'none', `stroke="${C.wallD}" stroke-width="18" rx="10"`) + R(800, 330, 12, 420, C.wallD);
+  // bacheca chiavi: 1-8 con chiave, 9 vuoto
+  s += R(90, 330, 420, 330, C.desk, 'rx="14"') + R(90, 330, 420, 40, C.deskD, 'rx="14"') + Tx(300, 360, 'KEYS', 26, C.amberL, 'letter-spacing="4"', 900);
+  for (let i = 0; i < 9; i++) {
+    const kx = 140 + (i % 3) * 130, ky = 420 + Math.floor(i / 3) * 80;
+    s += Tx(kx, ky, String(i + 1), 24, i === 8 ? C.red : C.amberL, '', 900) + Ci(kx + 40, ky - 8, 6, '#bba');
+    if (i < 8) s += P(`M${kx + 40},${ky - 2} l-8,30 h16 z`, '#d9c27a');
+  }
+  s += Ci(800, 900, 400, 'url(#glowA)', 'opacity=".5"');
+  return s;
+}
+function deskFront() { return R(-20, 1300, 1120, 640, C.desk) + R(-20, 1300, 1120, 36, '#6e4838') + R(-20, 1336, 1120, 14, C.deskD); }
+function paperNote(t, active) {
+  let s = G(R(-360, -420, 720, 840, C.paper, 'rx="10"') + R(-360, -420, 720, 840, 'none', `stroke="${C.paperD}" stroke-width="6" rx="10"`) + R(220, -420, 140, 840, C.paperD, 'opacity=".35"'), '');
+  for (let y = -300; y < 400; y += 60) s += R(-320, y, 640, 3, '#c9bfa4');
+  s += Tx(0, -340, 'NIGHT SHIFT. READ THIS.', 40, C.ink, '', 900);
+  const rules = [['1. Room 9 doesn\'t exist.', 'If it calls, let it ring.'], ['2. Lock the office at 3.', 'Don\'t open it for anyone.'], ['3. If you see yourself', 'on the cameras, look away.']];
+  rules.forEach((r, i) => {
+    const on = active > i;
+    const y = -220 + i * 200;
+    if (active === i + 1) s += R(-330, y - 50, 660, 130, C.yellow, 'rx="10" opacity=".35"');
+    s += Tx(-310, y, r[0], 40, on ? C.ink : '#b5aa8e', '', 800, 'start', 'Inter') + Tx(-310, y + 52, r[1], 40, on ? (i === 2 ? C.red : C.ink) : '#b5aa8e', '', 600, 'start', 'Inter');
+  });
+  s += Tx(250, 360, '- M.', 34, C.ink, 'font-style="italic"', 600, 'middle', 'DejaVu Serif');
+  return s;
+}
+function phone(x, y, s, screen, tilt = 0) {
+  let b = R(-225, -455, 450, 910, '#0a0a14', 'rx="70"') + R(-215, -445, 430, 890, '#1c1d33', 'rx="62"');
+  b += G(R(-205, -430, 410, 860, C.ui) + screen, '', 'clip-path="url(#screen)"') + R(-62, -418, 124, 34, '#000', 'rx="17"');
+  const hand = (sx) => G(R(-60, 0, 120, 360, C.uni, 'rx="60"') + El(0, -10, 70, 95, C.skin) + El(sx * 20, -20, 34, 70, C.skinD, 'opacity=".5"'), `translate(${sx * 250},330) rotate(${-sx * 14})`);
+  return G(b + hand(-1) + hand(1), `translate(${x},${y}) rotate(${tilt}) scale(${s})`);
+}
+function door(cx, base, w, h, o = {}) {
+  let s = R(cx - w / 2 - 30, base - h - 30, w + 60, h + 30, '#1e1d3a') + R(cx - w / 2, base - h, w, h, C.door) + R(cx + w * .2, base - h, w * .3, h, C.doorD);
+  s += R(cx - w / 2 + 40, base - h + 60, w - 80, h * .35, C.doorD, 'rx="8"') + R(cx - w / 2 + 40, base - h * .5, w - 80, h * .38, C.doorD, 'rx="8"');
+  s += Ci(cx + w * .36, base - h * .48, 18, C.amber);
+  // chiavistello
+  const ang = o.lockAng || 0;
+  s += R(cx + w * .3 - 30, base - h * .62 - 30, 60, 60, '#2a2747', 'rx="14"') + G(R(-8, -26, 16, 52, C.amberL, 'rx="6"'), `translate(${cx + w * .3},${base - h * .62}) rotate(${ang})`);
+  if (o.light) s += R(cx - w / 2, base - 8, w, 8, C.amberL, `opacity="${o.light}"`);
+  return s;
+}
+// ---------------------------------------------------------------- scene
+const S = {};
+S.motel = (lt, d, t) => {
+  const pan = ease((lt - 2.2) / Math.max(.5, d - 2.4)) * 900;
+  let s = sky() + Ci(860, 260, 64, '#efe6cf') + R(0, 1420, 1080, 500, C.ground) + R(0, 1420, 1080, 16, C.groundL);
+  let w = sign(300, 560, t) + motelRow(t, 700);
+  for (let i = 0; i < 6; i++) w += R(760 + i * 380, 1680, 12, 120, C.line);
+  w += car(900, 1760, .8, C.car1) + car(1540, 1760, .8, C.car2) + car(2200, 1760, .8, C.car3);
+  s += G(w, `translate(${-pan},0)`) + rainLayer(t, 80, .35);
+  return s;
+};
+S.desk = (lt, d, t) => officeBG(t) + nora(540, 1220 + Math.sin(lt * 2) * 3, 1.15) + deskFront() + G(R(-90, -60, 180, 120, C.paper, 'rx="6"') + R(-70, -30, 120, 6, '#c9bfa4') + R(-70, -5, 140, 6, '#c9bfa4') + R(-70, 20, 90, 6, '#c9bfa4'), 'translate(540,1410) rotate(-6)') + G(R(-90, -40, 180, 80, '#1d1b33', 'rx="12"') + R(-70, -70, 140, 40, '#2a2747', 'rx="20"'), 'translate(860,1400)');
+S.note = (lt, d, t) => {
+  const M = TL.T; let k = 0; if (t >= M.R1 - .05) k = 1; if (t >= M.R2 - .05) k = 2; if (t >= M.R3 - .05) k = 3;
+  let s = R(0, 0, 1080, 1920, C.desk) + R(0, 0, 1080, 1920, 'url(#glowA)', 'opacity=".35"');
+  s += G(paperNote(t, k), `translate(540,${1000 + (1 - easeOut(lt / .4)) * 200}) rotate(${-3 + Math.sin(lt * .6)})`);
+  if (k) { const tk = [M.R1, M.R2, M.R3][k - 1], pop = easeOut((t - tk + .05) / .2); s += G(R(-150, -44, 300, 88, C.red, 'rx="44"') + Tx(0, 17, `RULE #${k}`, 44, C.white, 'letter-spacing="2"'), `translate(540,430) scale(${lerp(.7, 1, pop)})`); }
+  return s;
+};
+S.switchboard = (lt, d, t) => {
+  const ringing = t >= TL.M.ringStart && t < TL.M.ringStop;
+  const nr = TL.rings.filter((r) => t >= r).length;
+  const on = ringing && Math.floor((t - TL.M.ringStart) * 6) % 2 === 0;
+  const shake = ringing ? Math.sin(t * 80) * 6 : 0;
+  let s = R(0, 0, 1080, 1920, C.office) + R(0, 1300, 1080, 620, C.desk) + R(0, 1300, 1080, 30, '#6e4838');
+  let p = R(-380, -360, 760, 720, '#23213f', 'rx="40"') + R(-380, -360, 760, 70, '#1a1830', 'rx="40"') + Tx(0, -310, 'FRONT DESK · ROOMS', 30, C.amberL, 'letter-spacing="3"', 800);
+  for (let i = 0; i < 9; i++) {
+    const bx = -230 + (i % 3) * 230, by = -180 + Math.floor(i / 3) * 170, nine = i === 8;
+    p += R(bx - 90, by - 60, 180, 120, '#15142a', 'rx="20"') + Ci(bx - 45, by, 22, nine ? (on ? C.red : '#5a1a26') : '#2f2c55') + Tx(bx + 25, by + 16, String(i + 1), 46, nine ? C.white : '#8f8ab8', '', 900);
+    if (nine && ringing) for (let k = 0; k < 2; k++) { const ph = ((t - TL.M.ringStart) * 1.6 + k / 2) % 1; p += Ci(bx - 45, by, 30 + ph * 120, 'none', `stroke="${C.red}" stroke-width="${8 * (1 - ph)}" opacity="${1 - ph}"`); }
+  }
+  s += G(p, 'translate(540,900)');
+  s += G(R(-200, -50, 400, 100, '#1d1b33', 'rx="40"') + R(-170, -110, 340, 70, '#2a2747', 'rx="35"'), `translate(${540 + shake},1460)`);
+  if (nr) s += G(R(-150, -40, 300, 80, '#000', 'rx="40" opacity=".55"') + Tx(0, 15, `RING ${nr}`, 40, nr === 9 ? C.red : C.white, 'letter-spacing="3"'), 'translate(540,430)');
+  return s;
+};
+S.textmsg = (lt, d, t) => {
+  const shown = easeOut((t - TL.M.buzz) / .25), bz = t - TL.M.buzz < .8 ? Math.sin(t * 90) * 8 : 0;
+  let sc = R(-205, -430, 410, 860, C.ui) + Tx(-150, -395, '1:13', 22, C.white, '', 700, 'start');
+  sc += R(-205, -360, 410, 110, C.ui2) + Ci(0, -320, 26, '#3a3d66') + Tx(0, -311, '?', 26, C.white) + Tx(0, -270, 'Unknown', 22, C.white, '', 700);
+  sc += G(R(-185, -40, 330, 80, C.ui3, 'rx="30"') + Tx(-160, 10, "why didn't you pick up", 24, C.white, '', 600, 'start'), `translate(0,${lerp(30, 0, shown)})`, `opacity="${shown}"`);
+  if (t > TL.M.buzz + 1.2) { const k = Math.floor(t * 3) % 3; sc += R(-185, 70, 110, 60, C.ui3, 'rx="30"') + [0, 1, 2].map((i) => Ci(-160 + i * 30, 100, 9, C.white, `opacity="${i === k ? 1 : .35}"`)).join(''); }
+  return R(0, 0, 1080, 1920, C.office) + Ci(540, 950, 620, '#3a1027', `opacity="${shown * .8}"`) + phone(540 + bz, 980, 1.08, sc, -2);
+};
+S.lock = (lt, d, t) => {
+  const k = easeOut((t - TL.M.lock) / .25);
+  let s = R(0, 0, 1080, 1920, C.office) + door(540, 1700, 560, 1250, { lockAng: lerp(0, 90, k) }) + R(0, 1700, 1080, 220, C.officeD);
+  s += G(Ci(0, 0, 90, '#f6f3ff') + Ci(0, 0, 90, 'none', `stroke="#1d1b33" stroke-width="10"`) + Ln(0, 0, 0, -60, '#1d1b33', 9) + Ln(0, 0, 0, -40, '#1d1b33', 9, 'transform="rotate(90)"') + Tx(0, 140, '3:00', 40, C.white), 'translate(900,330)');
+  return s;
+};
+S.knock = (lt, d, t) => {
+  let hit = 0; for (const kt of TL.knocks) if (t >= kt && t - kt < .2) hit = 1 - (t - kt) / .2;
+  let s = R(0, 0, 1080, 1920, C.office) + G(door(540, 1700, 560, 1250, { lockAng: 90 }), `translate(${Math.sin(t * 90) * 10 * hit},0)`) + R(0, 1700, 1080, 220, C.officeD);
+  for (const kt of TL.knocks) { const ph = (t - kt) / .7; if (ph >= 0 && ph < 1) s += Ci(540, 1050, 80 + ph * 500, 'none', `stroke="${C.white}" stroke-width="${10 * (1 - ph)}" opacity="${(1 - ph) * .6}"`); }
+  return s;
+};
+function cctvFeed(t, sel, figure) {
+  // vista dall'alto della porta dell'ufficio, esterno
+  let s = R(0, 0, 900, 1200, '#2c3a33') + R(0, 760, 900, 440, '#25322b') + R(250, 120, 400, 640, '#3d5246') + R(290, 160, 320, 600, '#33463b') + Ci(560, 450, 14, '#9fc7a8');
+  s += Tx(450, 100, 'OFFICE', 36, '#7fa48a', 'letter-spacing="6"', 900);
+  if (figure) s += figure;
+  s += R(0, 0, 900, 1200, 'url(#scan)') + Ci(50, 60, 12, C.red, `opacity="${Math.floor(t * 2) % 2 ? 1 : .3}"`) + Tx(75, 72, 'CAM 2', 32, C.white, '', 800, 'start');
+  const sec = Math.floor(12 + (t % 60)), ts = `03:07:${String(sec % 60).padStart(2, '0')}`;
+  s += Tx(860, 72, ts, 30, C.white, '', 700, 'end');
+  return s;
+}
+function figureCam(t, turnK, lensK) {
+  // la donna davanti alla porta; turnK 0 = di spalle, 1 = guarda in camera
+  const back = turnK < .5;
+  return G(nora(0, 0, 1, { back, arms: true }), `translate(450,${930 - lensK * 0}) scale(${(1 + lensK * 1.6) * (back ? 1 : 1)})`, `opacity=".92"`);
+}
+S.cctv = (lt, d, t) => {
+  const M = TL.M, zoom = ease((t - M.woman + .3) / .8), tag = easeOut((t - M.nametag) / .4);
+  let grid = '';
+  const tiles = [['CAM 1', 'PARKING'], ['CAM 2', 'OFFICE'], ['CAM 3', 'ROOMS 1-8'], ['CAM 4', 'ROOM 9']];
+  tiles.forEach((tl, i) => {
+    const x = (i % 2) * 450, y = Math.floor(i / 2) * 600;
+    grid += R(x + 6, y + 6, 438, 588, i === 3 ? '#181818' : '#2c3a33');
+    if (i === 3) { const r = rng(Math.floor(t * 24)); for (let k = 0; k < 120; k++) grid += R(x + 6 + r() * 430, y + 6 + r() * 580, 8, 3, '#bbb', `opacity="${r()}"`); grid += Tx(x + 225, y + 310, 'NO SIGNAL', 34, C.white); }
+    grid += Tx(x + 24, y + 50, `${tl[0]} · ${tl[1]}`, 24, C.white, '', 800, 'start');
+  });
+  grid += G(nora(0, 0, .42, { back: true }), 'translate(675,420)', 'opacity=".9"');
+  let feed = cctvFeed(t, 2, figureCam(t, 0, 0));
+  let mon = G(grid, '', `opacity="${1 - zoom}"`) + G(feed, '', `opacity="${zoom}"`);
+  if (tag > 0) mon += G(R(-150, -60, 300, 120, 'none', `stroke="${C.red}" stroke-width="8" rx="12"`) + Tx(0, -80, 'NAME TAG', 28, C.red, 'letter-spacing="3"'), `translate(${450 - 74},${930 - 90}) scale(${lerp(1.4, 1, tag)})`, `opacity="${tag}"`);
+  let s = R(0, 0, 1080, 1920, '#14152b') + R(70, 300, 940, 1240, '#0b0b16', 'rx="40"') + G(mon, 'translate(90,320)', 'clip-path="url(#mon)"');
+  return s;
+};
+S.voice = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#15142a') + door(540, 1700, 560, 1250, { lockAng: 90, light: .5 + .3 * Math.sin(t * 7) }) + R(0, 1700, 1080, 220, '#121126');
+  s += nora(540, 1720, 1.6, { back: true, noTag: true });
+  const c = TL.caps.filter((c) => c.v && t >= c.s).pop();
+  return s;
+};
+S.turn = (lt, d, t) => {
+  const M = TL.M, tk = clamp((t - M.turn) / .5), lk = ease((t - M.lens + .1) / .5);
+  let feed = cctvFeed(t, 2, G(nora(0, 0, 1, { back: tk < .5, smile: lk > .6 ? 1 : 0 }), `translate(450,${930 + lk * 260}) scale(${1 + lk * 1.7})`));
+  let mon = feed;
+  if (t >= M.lens) { const r = rng(Math.floor(t * 30)); for (let k = 0; k < 10; k++) mon += R(0, r() * 1200, 900, 4 + r() * 20, '#fff', `opacity="${r() * .35}"`); }
+  return R(0, 0, 1080, 1920, '#14152b') + R(70, 300, 940, 1240, '#0b0b16', 'rx="40"') + G(mon, 'translate(90,320)', 'clip-path="url(#mon)"') + (t >= M.lens ? R(0, 0, 1080, 1920, 'url(#redvig)', 'opacity=".8"') : '');
+};
+function btn(letter, label, col, icon, x, y, k = 1, sc = 1) {
+  const w = 200 + label.length * 30;
+  let b = R(-w / 2, -58, w, 116, col, 'rx="58"') + Ci(-w / 2 + 60, 0, 38, C.white) + Tx(-w / 2 + 60, 15, letter, 42, col) + Tx(-w / 2 + 120, 16, label, 44, C.white, 'letter-spacing="1"', 900, 'start');
+  return G(b, `translate(${x},${y}) scale(${sc * lerp(.85, 1, k)})`, `opacity="${k}"`);
+}
+S.choice = (lt, d, t) => {
+  const M = TL.M;
+  let s = R(0, 0, 1080, 1920, '#100f22') + G(door(540, 1700, 560, 1250, { lockAng: 90, light: .4 }), '', 'opacity=".35"');
+  s += G(Tx(0, 0, 'SHOULD NORA', 84, C.white) + Tx(0, 100, `<tspan fill="${C.red}">OPEN</tspan> THE DOOR?`, 84, C.white), 'translate(540,560)', `opacity="${easeOut(lt / .3)}"`);
+  s += btn('A', 'OPEN IT', C.go, 'open', 540, 900, easeOut((t - M.A) / .3));
+  s += btn('B', 'KEEP IT LOCKED', C.stop, 'lock', 540, 1060, easeOut((t - M.B) / .3));
+  return s;
+};
+S.finale = (lt, d, t) => {
+  const beat = Math.pow(Math.max(0, Math.sin(lt * Math.PI * 2 / .92)), 8);
+  let s = R(0, 0, 1080, 1920, 'url(#redglow)');
+  s += Tx(540, 640, 'ROOM 9  ·  PART 1', 32, '#e8e2ff', 'letter-spacing="4"', 600);
+  s += G(Tx(0, 0, 'PART 2', 190, C.red), `translate(540,850) scale(${1 + beat * .03})`);
+  s += Tx(540, 950, 'NIGHT 1 OF 5', 34, '#e8e2ff', 'letter-spacing="3"', 600);
+  s += R(330, 1010, 420, 76, 'none', `rx="38" stroke="${C.white}" stroke-width="4"`) + Tx(540, 1060, 'FOLLOW FOR PART 2', 30, C.white, 'letter-spacing="1"', 800);
+  s += btn('A', 'OPEN IT', C.go, '', 540, 1200, 1, .78) + btn('B', 'KEEP IT LOCKED', C.stop, '', 540, 1320, 1, .78);
+  s += G(Tx(0, 0, `COMMENT <tspan fill="${C.red}">A OR B</tspan>`, 70, C.white), `translate(540,${1480 + Math.sin(lt * 6) * 8})`);
+  return s;
+};
+// ---------------------------------------------------------------- HUD e sottotitoli
+function hud(t, clock) {
+  const ks = [[0, 70], [TL.T.N3, 84], [TL.M.buzz, 98], [TL.M.knock, 118], [TL.M.nametag, 132], [TL.M.lens, 150], [TL.dur, 152]];
+  let bpm = 70;
+  for (let i = 0; i < ks.length - 1; i++) if (t >= ks[i][0]) bpm = lerp(ks[i][1], ks[i + 1][1], clamp((t - ks[i][0]) / Math.max(.1, ks[i + 1][0] - ks[i][0])));
+  bpm = Math.round(bpm + Math.sin(t * 1.7) * 1.5);
+  const pulse = Math.pow(Math.max(0, Math.sin(t * Math.PI * bpm / 60)), 6);
+  return Ci(78, 112, 7, C.red) + Tx(94, 120, 'NIGHT 1/5', 22, C.red, 'letter-spacing="2"', 800, 'start')
+    + Tx(66, 186, clock, 60, C.white, '', 900, 'start') + Tx(68, 222, 'SHIFT ENDS 6:00 AM', 24, C.yellow, 'letter-spacing="1"', 800, 'start')
+    + G(P('M0,6 C-12,-8 -26,4 -14,18 L0,30 L14,18 C26,4 12,-8 0,6Z', C.red), `translate(84,240) scale(${.8 + pulse * .25})`) + Tx(106, 264, `${bpm} bpm`, 24, '#ff9aa6', '', 700, 'start');
+}
+function captions(t) {
+  const c = TL.caps.find((c) => t >= c.s && t < c.e);
+  if (!c) return '';
+  const pop = 1 + .07 * clamp(1 - (t - c.s) * 9);
+  if (c.v) {
+    const span = c.w.map((w, i) => `<tspan fill="${i === c.i ? '#ffb3bd' : '#d8d2f0'}">${w.toLowerCase()}</tspan>`).join(' ');
+    return G(`<text x="0" y="0" font-family="DejaVu Serif" font-style="italic" font-size="64" text-anchor="middle" stroke="#07060f" stroke-width="12" paint-order="stroke">${span}</text>`, `translate(540,1300)`);
+  }
+  const span = c.w.map((w, i) => `<tspan fill="${i === c.i ? (SC.has(w) ? C.red : C.yellow) : C.white}">${w}</tspan>`).join(' ');
+  return G(`<text x="0" y="0" font-family="Inter" font-weight="900" font-size="76" text-anchor="middle" stroke="#0b0c1c" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${span}</text>`, `translate(540,1300) scale(${pop})`);
+}
+window.render = (t) => {
+  const fi = Math.round(t * TL.fps);
+  const sh = SHOTS.find((s) => t >= s.t0 && t < s.t1) || SHOTS[SHOTS.length - 1];
+  const lt = t - sh.t0, d = sh.t1 - sh.t0;
+  let s = S[sh.id](lt, d, t, fi);
+  s = G(s, `translate(540,960) scale(${1 + .05 * (1 - easeOut(lt / .3))}) translate(-540,-960)`);
+  let o = R(0, 0, 1080, 1920, 'url(#vig)');
+  if (sh.id !== 'finale') o += hud(t, sh.clock);
+  if (t < TL.T.N2 - .1) o += G(R(-420, -95, 840, 190, C.white, 'rx="28"') + Tx(0, -12, '9 ROOMS ON THE SIGN.', 56, '#14163a') + Tx(0, 62, 'ONLY 8 DOORS.', 62, C.red), 'translate(540,470)', `opacity="${clamp((TL.T.N2 - .1 - t) / .2)}"`);
+  if (!['finale', 'note', 'choice'].includes(sh.id)) o += captions(t);
+  for (const b of TL.booms) if (t >= b && t - b < .1) o += R(0, 0, 1080, 1920, C.white, `opacity="${.55 * (1 - (t - b) / .1)}"`);
+  document.getElementById('v').innerHTML = DEFS + s + o;
+};
+</script>
+</body></html>
