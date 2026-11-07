@@ -16,6 +16,7 @@
 
 /* la band: un muro di due foto, 2px tra l'una e l'altra */
 .wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: var(--r-lg); overflow: hidden; }
+.wall__nomi { margin: var(--s-3) 0 0; color: var(--muted); font-size: var(--t-small); }
 .wall > img { width: 100%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; }
 
 /* cornici dei video TikTok: senza bordo, fondo nero */
