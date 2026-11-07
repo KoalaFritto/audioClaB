@@ -181,7 +181,7 @@ Questo è il video giusto da sponsorizzare tra gennaio e aprile, quando si prepa
 
 Il video pubblicitario principale, con le scene più forti dei vostri video di Facebook e TikTok:
 Gianco sul palco viola (il video più visto su Facebook, «Il frigo russava…»), «Io dal mare» in studio,
-l'assolo di Giuseppe Bertolo, la batteria ripresa dal palco con la piazza piena («Ovunque sei»), la serata
+l'assolo di Giuseppe Bertolo, Andrea Bruno alla batteria in studio, la serata
 al Pachamama, la piazza di «Adesso», Piedimonte Etneo e Augusta. Una voce racconta la band, i sottotitoli
 servono a chi guarda senza audio, e alla fine c'è l'email per prenotare. Sotto la voce c'è «Dagli il via» dal vivo, che si
 abbassa da sola quando la voce parla.
@@ -219,7 +219,7 @@ inquadratura cambia sul battito e ogni blocco sulla battuta, come nei video musi
 |---|---|---|
 | 1 | Gianco sul palco viola, Gianco in studio («Io dal mare») | Le canzoni di Claudio Baglioni, dal vivo |
 | 2 | Giuseppe Bertolo, Andrea Bruno, Giuseppe Faro, Gianfranco Alberti (ognuno con nome e strumento), basso e chitarra acustica in studio, la piazza di «Adesso» | Sette musicisti, un solo repertorio |
-| 3 | Piedimonte Etneo, Augusta (Piazza Duomo), la batteria dal palco | Estate 2026, nelle piazze |
+| 3 | Piedimonte Etneo, Augusta (Piazza Duomo, la band sul palco viola e poi al completo) | Estate 2026, nelle piazze |
 | 4 | Chiusura: logo, «Porta gli audioClaB nella tua piazza», email e sito | |
 
 Controllato con le skill video-editing e video-design: tutte le scritte sullo stesso bordo sinistro,
