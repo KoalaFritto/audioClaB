@@ -34,8 +34,10 @@
 })();
 
 /* ------------------------------------------------------------------ TIKTOK
-   Incolla qui i link dei video TikTok da mostrare, dal più visto in giù (ne compaiono al massimo 8:
-   4 per fila sul computer, i primi 4 su tablet e telefono):
+   Incolla qui i link dei video TikTok da mostrare, dal più visto in giù. Sul computer compaiono a file
+   complete di 4 (8 se ce ne sono almeno 8, altrimenti 4); su tablet e telefono i primi 4, due per riga.
+   Usa il link completo del video (apri il video su tiktok.com e copia l'indirizzo), non quello corto
+   vm.tiktok.com che dà il tasto Condividi dell'app:
      'https://www.tiktok.com/@audioclab/video/7xxxxxxxxxxxxxxxxxx',
    Con l'elenco vuoto la sezione mostra il profilo @audioclab incorporato da TikTok. */
 const TIKTOK_VIDEO = [
@@ -52,12 +54,20 @@ const TIKTOK_VIDEO = [
 (function tiktok() {
   const box = document.getElementById('tiktok');
   if (!box) return;
-  const ids = TIKTOK_VIDEO
-    .map(v => String(v).match(/(\d{15,})/))
-    .filter(Boolean)
-    .map(m => m[1])
-    .slice(0, 8);
+  // ogni link deve contenere il numero del video (15 cifre o più); i link corti dell'app
+  // (vm.tiktok.com/...) non lo contengono: vengono saltati con un avviso nella console
+  const validi = [];
+  for (const v of TIKTOK_VIDEO) {
+    const m = String(v).match(/(\d{15,})/);
+    if (m) validi.push(m[1]);
+    else console.warn('TikTok: link saltato, non contiene il numero del video. Apri il video e copia il link completo (tiktok.com/@audioclab/video/...):', v);
+  }
+  // solo file complete da 4 video: 8, oppure 4, oppure quelli che ci sono se meno di 4
+  const ids = validi.slice(0, validi.length >= 8 ? 8 : validi.length >= 4 ? 4 : validi.length);
   const box2 = document.getElementById('tiktok-2');
+  // con 4 video o meno la sezione sta in uno schermo: niente seconda schermata vuota
+  const sezione = box.closest('section');
+  if (sezione) sezione.classList.toggle('g2', ids.length > 4);
 
   function mount() {
     box.textContent = '';

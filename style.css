@@ -74,7 +74,11 @@ html { -webkit-tap-highlight-color: transparent; }
 .mus-p1, .mus-p2, .mus-p3 { height: 100%; }
 .mus-p1 { grid-column: 4; } .mus-p2 { grid-column: 5; } .mus-p3 { grid-column: 6; }
 .mus-nome { grid-row: 2; margin: 0; display: grid; gap: 2px; align-content: start; text-align: center; font-size: var(--t-small); line-height: 1.3; color: var(--muted); }
+.mus-nome { min-width: 0; }
 .mus-nome b { font-weight: 500; color: var(--ink); }
+/* nomi e strumenti lunghi vanno a capo invece di uscire dalla colonna (anche con il testo ingrandito) */
+.mus-nome b, .mus-nome, .rows__name, .rows__value, .stampa__lista a { overflow-wrap: anywhere; }
+.rows > li > .rows__name { min-width: 0; }
 .mus-n1 { grid-column: 1; } .mus-n2 { grid-column: 2; } .mus-n3 { grid-column: 3; }
 .mus-n4 { grid-column: 4; } .mus-n5 { grid-column: 5; } .mus-n6 { grid-column: 6; }
 /* la foto del pubblico accanto, alta come le strisce */
@@ -103,10 +107,11 @@ html { -webkit-tap-highlight-color: transparent; }
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }
-  .tiktok--video > .tt:nth-child(n+3) { display: none; }
+  .tiktok--video > .tt:nth-child(n+5) { display: none; }
+  .tiktok--video > .tt:nth-child(3):last-child { display: none; }
+  #tiktok-2 { display: none !important; }
   #video.g2 { --h: 1; --hm: 1; }
   main > #video.g2 > .wrap { display: block; }
-  #tiktok-2 { margin-top: var(--gutter); }
   .band__info > .band__formazione { grid-column: 1 / -1; }
   .band__formazione .rows--compact { columns: 2; column-gap: var(--gutter); }
   .band__formazione .rows--compact > li { break-inside: avoid; }
@@ -114,12 +119,14 @@ html { -webkit-tap-highlight-color: transparent; }
 }
 @media (max-width: 639px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }
-  .tiktok--video > .tt:nth-child(n+3) { display: none; }
+  .tiktok--video > .tt:nth-child(n+5) { display: none; }
+  .tiktok--video > .tt:nth-child(3):last-child { display: none; }
+  #tiktok-2 { display: none !important; }
   #video.g2 { --h: 1; --hm: 1; }
   main > #video.g2 > .wrap { display: block; }
-  #tiktok-2 { margin-top: var(--gutter); }
   .band__info { row-gap: var(--s-6); }
   .stampa__lista { grid-template-columns: 1fr; }
+  .rows--compact .rows__value { white-space: normal; text-align: right; max-width: 50vw; }
   .concerti__photo { --ratio: 75%; }
 }
 
