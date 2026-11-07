@@ -2,6 +2,23 @@
    Il sistema (griglia, spaziature, tipografia, pulsanti, nav, footer) arriva da assets/kit
    (taste-skill, licenza MIT). Qui solo quello che sta dentro le immagini e i controlli del lettore. */
 
+/* ------------------------------------------------------------------ TELEFONO NATIVO (skill mobile-native)
+   niente lampo grigio/blu al tocco: ogni controllo ha già il suo stato :active */
+html { -webkit-tap-highlight-color: transparent; }
+/* pulsanti e voci di menu: il tocco parte subito (niente attesa del doppio tocco) e una pressione
+   lunga non seleziona l'etichetta; il testo dei contenuti resta selezionabile */
+.btn, .nav__toggle, .nav__link, .nav__logo, .menu-col a, .link {
+  touch-action: manipulation;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+}
+/* sugli schermi touch il colore di :hover del pulsante resterebbe "attaccato" dopo il tocco */
+@media (hover: none) {
+  html:not([data-motion="off"]) .btn--primary:hover { background: var(--action); }
+}
+/* iPhone in orizzontale: il contenuto non finisce sotto la tacca, i margini laterali la scavalcano */
+.wrap { width: min(100% - 2 * max(var(--gut), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)), var(--container)); }
+
 /* link per saltare al contenuto: invisibile finché non riceve il focus */
 .skip { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip:focus { width: auto; height: auto; clip-path: none; padding: var(--s-2) var(--s-3); background: var(--bg); border-radius: var(--r-sm); z-index: 20; }
