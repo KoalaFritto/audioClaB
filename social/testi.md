@@ -206,3 +206,28 @@ una stanza silenziosa: si sostituiscono senza rifare il montaggio.
 > #audioclab #claudiobaglioni #coverband #tributeband #musicadalvivo #piazza #estate #sicilia #catania
 
 È il video da usare per le sponsorizzate (vedi sopra).
+
+---
+
+## Spot senza voce su «Mille giorni di te e di me» (`video/audioclab-spot-millegiorni.mp4`, 36 s)
+
+La versione principale dello spot: niente voce narrante, solo la vostra «Mille giorni di te e di me»
+dal vivo a Misterbianco (il finale, il momento più forte). Il brano va a 76 battiti al minuto: ogni
+inquadratura cambia sul battito e ogni blocco sulla battuta, come nei video musicali.
+
+| Blocco | Inquadrature | Scritta |
+|---|---|---|
+| 1 | Gianco sul palco viola, Gianco in studio («Io dal mare») | Le canzoni di Claudio Baglioni, dal vivo |
+| 2 | Giuseppe Bertolo, Andrea Bruno, Giuseppe Faro, Gianfranco Alberti (ognuno con nome e strumento), basso e chitarra acustica in studio, la piazza di «Adesso» | Sette musicisti, un solo repertorio |
+| 3 | Piedimonte Etneo, Augusta (Piazza Duomo), la batteria dal palco | Estate 2026, nelle piazze |
+| 4 | Chiusura: logo, «Porta gli audioClaB nella tua piazza», email e sito | |
+
+Controllato con le skill video-editing e video-design: tutte le scritte sullo stesso bordo sinistro,
+titoli su due righe al massimo, niente sfumature né ombre, il rosso solo sull'invito a prenotare,
+volume a -14 LUFS.
+
+**Didascalia**
+
+> Le canzoni di Claudio Baglioni, dal vivo 🎶 In sottofondo la nostra «Mille giorni di te e di me», dal vivo a Misterbianco.
+> Per concerti in piazze, rassegne e teatri: galberti4@libero.it
+> #audioclab #claudiobaglioni #millegiornidite #coverband #tributeband #musicadalvivo #sicilia #catania
