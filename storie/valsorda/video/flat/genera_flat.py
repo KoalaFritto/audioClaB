@@ -27,7 +27,7 @@ import genera_ep01 as g  # noqa: E402  sound design condiviso
 import genera_ep01_v2 as v2  # noqa: E402  boom, whoosh, riser, heartbeat
 
 SR, FPS = g.SR, 30
-DISPLAY = {"millenovecentosettantasei.": "1976.", "quarantotto": "48", "Uno:": "1:", "Due:": "2:"}
+DISPLAY = {"millenovecentosettantasei.": "1976.", "quarantotto": "48"}
 RNG = np.random.default_rng(7)
 
 
@@ -95,20 +95,21 @@ def main():
     shots = [
         (0.0, "lago"),
         (T["N2"] - 0.1, "camminata"),
-        (wt("N2", "registrare"), "diga"),
-        (T["N3"] - 0.1, "registratore"),
-        (T["N4"] - 0.15, "ascolto"),
+        (wt("N2", "pagano"), "notifica"),
+        (wt("N2", "prima"), "diga"),
+        (T["N3"] - 0.1, "rec"),
+        (T["N4"] - 0.15, "riascolto"),
         (wt("N4", "passi"), "passi"),
         (T["N5a"] - 0.1, "campanile"),
         (T["N6"] - 0.1, "porta"),
         (wt("N6", "cuffie"), "cuffie"),
         (T["W"] - 0.05, "sussurro"),
-        (T["N7"] - 0.3, "volto"),
-        (wt("N7", "Uno"), "scelta1"),
-        (wt("N7", "Due"), "scelta2"),
+        (T["N7"] - 0.3, "bivio"),
+        (wt("N7", "Opzione", 0), "sceltaA"),
+        (wt("N7", "Opzione", 1), "sceltaB"),
         (T["N8"] - 0.1, "finale"),
     ]
-    booms = [T["N3"] - 0.1, wt("N4", "passi"), T["N6"] - 0.1, wt("N7", "Uno"), wt("N7", "Due"), T["N8"] - 0.1]
+    booms = [T["N3"] - 0.1, wt("N4", "passi"), T["N6"] - 0.1, wt("N7", "Opzione", 0), wt("N7", "Opzione", 1), T["N8"] - 0.1]
     whooshes = [s[0] - 0.25 for s in shots[1:] if s[0] not in booms and s[1] not in ("sussurro",)]
 
     # ---- audio
@@ -230,7 +231,8 @@ def main():
         "mark": {"stanotte": round(wt("N1", "Stanotte"), 3), "silenzio": round(wt("N3", "silenzio"), 3),
                  "intorno": round(wt("N4", "Intorno"), 3), "fermano": round(wt("N4", "fermano"), 3),
                  "vuoto": round(wt("N5b", "vuoto"), 3), "anno": round(wt("N5b", "millenovecento"), 3),
-                 "luce": round(wt("N6", "luce"), 3), "passi7": round(wt("N7", "passi"), 3)},
+                 "luce": round(wt("N6", "luce"), 3), "passi7": round(wt("N7", "passi"), 3),
+                 "riascolta": round(T["N4"], 3), "passi": round(wt("N4", "passi"), 3)},
     }
     tl_path = os.path.join(work, "timeline.json")
     json.dump(tl, open(tl_path, "w"))

@@ -1,0 +1,28 @@
+{
+  "progetto": "VALSORDA – Parte 1",
+  "stile": "flatvector (animation-studio) + formato Reel interattivo",
+  "formato": {"width": 1080, "height": 1920, "fps": 30, "sottotitoli": true},
+  "voce": {"narratore": "ElevenLabs Marco Deep 13Cuh3NuYvWOVQtLbRN8", "sussurro": "ElevenLabs Luna BZc8d1MPTdZkyGbE9Sin", "cartella": "voce-marcodeep", "tempo": 1.05},
+  "continuita": {
+    "Greta": "senza volto, caschetto nero, cuffie blu scuro con frontale ambra, impermeabile arancione, asta microfono con antivento grigio",
+    "palette": "indaco/blu notte, fango viola-bruno, accenti: arancio (Greta), ambra (luce), rosso (tensione/HUD)",
+    "HUD": "PARTE 1 · ora 23:37→23:43 · bpm 72→152"
+  },
+  "storyboard": [
+    {"id": "lago", "battuta": "N1", "azione": "l'acqua del lago si ritira e scopre il paese, la diga e il campanile"},
+    {"id": "camminata", "battuta": "N2", "azione": "Greta cammina nel fango tra le case con la frontale accesa"},
+    {"id": "notifica", "battuta": "N2 'La pagano'", "azione": "telefono in mano: notifica della Produzione, poi 'Nessun servizio'"},
+    {"id": "diga", "battuta": "N2 'prima che all'alba'", "azione": "campo lungo sulla diga, Greta minuscola registra, 'ALBA TRA 6h 10m'"},
+    {"id": "rec", "battuta": "N3", "azione": "app di registrazione: la forma d'onda impazzisce e diventa rossa su 'silenzio non c'è'"},
+    {"id": "riascolto", "battuta": "N4", "azione": "riascolto: la testina scopre picchi rossi, i passi"},
+    {"id": "passi", "battuta": "N4 'passi'", "azione": "vista dall'alto: impronte di piedi nudi compaiono intorno a Greta, l'ultima dietro di lei; vignetta rossa su 'si fermano'"},
+    {"id": "campanile", "battuta": "N5", "azione": "campanile vuoto: rintocco con onde d'urto e flash, contorno tratteggiato della campana che non c'è"},
+    {"id": "porta", "battuta": "N6", "azione": "la luce si accende sotto la porta della chiesa"},
+    {"id": "cuffie", "battuta": "N6 'cuffie'", "azione": "primo piano delle cuffie con onde sonore che entrano"},
+    {"id": "sussurro", "battuta": "W", "azione": "buio rosso, 'Greta…' tremolante"},
+    {"id": "bivio", "battuta": "N7", "azione": "Greta di spalle tra la chiesa illuminata e la macchina"},
+    {"id": "sceltaA", "battuta": "N7 'Opzione A'", "azione": "porta della chiesa + pillola A blu"},
+    {"id": "sceltaB", "battuta": "N7 'Opzione B'", "azione": "macchina + impronte che vanno verso di lei + pillola B arancione"},
+    {"id": "finale", "battuta": "N8", "azione": "PARTE 2, segui per la parte 2, A/B, scrivilo nei commenti"}
+  ]
+}

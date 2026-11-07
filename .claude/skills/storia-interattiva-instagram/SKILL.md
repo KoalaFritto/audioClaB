@@ -78,18 +78,22 @@ Produci sempre questo pacchetto (usa `references/episodio-template.md`):
 Dopo aver scritto l'episodio, aggiorna `storie/<nome-serie>/bibbia.md`
 (stato, bivio aperto, opzioni) e salva il copione in `storie/<nome-serie>/ep-XX.md`.
 
-## Stile video (quello dei Reel horror più visti)
+## Stile video: flat vector interattivo (formato di riferimento dell'utente)
 
-Se l'utente chiede il video, producilo in questo stile:
-- **Immagini:** fotogrammi cinematografici realistici generati con l'AI (9:16), tutti con la stessa palette (es. blu/verde freddo, nebbia, notte). Su ogni immagine va un movimento lento (zoom o pan, effetto Ken Burns) e si taglia ogni 2–3 s. Nei momenti di tensione i tagli arrivano a ogni frase.
-- **Narratore:** una voce maschile profonda in terza persona, con frasi brevi al presente e pause ("Stanotte... è tornato fuori."). La voce più usata per questi video è **Adam di ElevenLabs** (modello `eleven_multilingual_v2`, lingua `it`). Le battute dei personaggi, come i sussurri, vanno con una seconda voce.
-- **Sottotitoli:** grandi, in maiuscolo e bold, al centro, 1–3 parole alla volta, con la parola pronunciata in giallo e un piccolo "pop" quando appare.
-- **Suono:** un colpo di basso (boom) e un flash sui tagli importanti, whoosh sugli altri tagli, un riser prima dello spavento e un drone scuro sotto la voce, abbassato quando parla il narratore. Prima della battuta più spaventosa va un silenzio totale.
-- **Grafica fissa:** in alto l'etichetta "SERIE · PARTE N"; nei primi 2–3 s un riquadro bianco con il gancio scritto.
-- **Finale:** schermo diviso con le due scelte (1 sopra, 2 sotto), "COMMENTA 1 O 2 ↓" che pulsa e il battito cardiaco. Dura 4–5 s, e nella Parte 2 va mostrato di nuovo per primo il risultato.
-- **Durata:** 55–70 s. Nessun testo importante negli ultimi 400 px in basso, coperti dall'interfaccia di Instagram.
+È lo stile scelto dall'utente sul modello di un Reel di riferimento. Per il disegno usa la skill **animation-studio** in stile **Flat Vector** (`references/styles/flatvector.md`). Il formato da rispettare è questo:
+- **Grafica:** flat vector pulito, con palette indaco e blu notte limitata, forme piene a 2-3 piani di colore, niente contorni scuri. I personaggi sono **senza volto** (silhouette, viste di spalle o di profilo) e ognuno ha un colore focale: Greta ha l'impermeabile arancione.
+- **HUD in alto a sinistra:** "● PARTE N" in rosso, l'**ora della storia** in grande (avanza di un minuto ogni 10-12 s) e il **battito cardiaco** ("♥ 72 bpm") che sale con la tensione fino a circa 150 sul colpo di scena.
+- **Il telefono come strumento narrativo:** mani che tengono lo smartphone con l'interfaccia vera (schermata di blocco con notifica, chat, app di registrazione, mappa). Lo status bar mostra "Nessun servizio" quando serve isolamento.
+- **Sottotitoli:** Inter Black in maiuscolo, bianchi, con la parola pronunciata in **rosso**, 1-3 parole alla volta, a circa 2/3 dell'altezza.
+- **Gancio:** un riquadro bianco con il titolo-shock nei primi secondi (es. "IL PAESE RIEMERSO / DOPO 48 ANNI").
+- **Scelta:** "COSA DEVE FARE …?" con due pillole, **A** blu e **B** arancione, ciascuna con la lettera in un cerchio bianco. Il narratore le legge come "Opzione A… Opzione B…".
+- **Finale:** fondo scuro con alone rosso, "PARTE 2" grande in rosso, "SEGUI PER LA PARTE 2" in una pillola con contorno, le pillole A/B piccole e "SCRIVILO **NEI COMMENTI**".
+- **Suono:** drone sotto la voce, colpo di basso e flash sui tagli importanti, whoosh sugli altri, silenzio totale prima del sussurro, battito cardiaco sul finale.
+- **Voce:** **Marco Deep** (ElevenLabs, voice id `13Cuh3NuYvWOVQtLbRN8`, `eleven_multilingual_v2`, lingua `it`), che è la scelta dell'utente. I sussurri dei personaggi si fanno con Luna (`BZc8d1MPTdZkyGbE9Sin`). L'endpoint `with-timestamps` dà i tempi per i sottotitoli.
 
-Il generatore di riferimento è in `storie/valsorda/video/`: `immagini_ai.py` crea le immagini, `voce_elevenlabs.py` crea la voce e i timestamp, `genera_ep01_v2.py` fa il montaggio. Puoi copiarli e adattarli per i nuovi episodi.
+**Procedura per risparmiare crediti:** prima il copione approvato, poi le anteprime dei fotogrammi in locale (gratis). La voce ElevenLabs si genera **una sola volta** per episodio, con tutte le battute insieme. Non rigenerare le battute per prova.
+
+Il motore di riferimento è in `storie/valsorda/video/flat/`: `genera_flat.py` gestisce timeline, sound design e montaggio, `scene.html` contiene le scene SVG deterministiche (`renderFrame`) e `render.js` cattura i fotogrammi con Chromium. Per un nuovo episodio si copia la cartella, si riscrivono le battute e le scene di `scene.html`, e si lascia invariato il resto (HUD, sottotitoli, pillole, finale).
 
 ## Dopo la pubblicazione: contare i voti
 

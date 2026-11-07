@@ -22,7 +22,7 @@ LINES = [
     ("N5b", NARR, "Ma il campanile è vuoto. La campana l'hanno portata via nel millenovecentosettantasei."),
     ("N6", NARR, "Sotto la porta della chiesa, si accende una luce. E nelle cuffie, una voce sussurra il suo nome."),
     ("W", WHISP, "Greta..."),
-    ("N7", NARR, "Cosa deve fare Greta? Uno: entrare in chiesa. Due: tornare alla macchina. Ma i passi... vengono da lì."),
+    ("N7", NARR, "Cosa deve fare Greta? Opzione A: entrare in chiesa. Opzione B: tornare alla macchina. Ma i passi... vengono da lì."),
     ("N8", NARR, "Scrivilo nei commenti. Nella parte due, farà quello che sceglie la maggioranza."),
 ]
 
