@@ -58,7 +58,8 @@
 .rows--compact > li { padding-block: var(--s-3); }
 .rows--compact > li:first-child { padding-top: 0; }
 .rows--compact .rows__value { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-/* i ritratti dei musicisti */
+/* i ritratti dei musicisti: tre in fila accanto alla formazione */
+.ritratti { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); align-content: start; }
 .ritratto { margin: 0; display: grid; gap: var(--s-3); align-content: start; }
 .ritratto > img { width: 100%; aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: var(--r-lg); display: block; transition: transform 300ms cubic-bezier(.23, 1, .32, 1); }
 .ritratto figcaption { display: grid; gap: 2px; }
@@ -82,7 +83,7 @@
   .band__info > .band__formazione { grid-column: 1 / -1; }
   .band__formazione .rows--compact { columns: 2; column-gap: var(--gutter); }
   .band__formazione .rows--compact > li { break-inside: avoid; }
-  .grid.band__info > .ritratto { grid-column: auto / span 6; }
+  .grid.band__info > .ritratti { grid-column: 1 / -1; }
   #concerti .grid--top > * { grid-column: auto / span 6; }
 }
 @media (max-width: 639px) {
@@ -92,7 +93,7 @@
   main > #video.g2 > .wrap { display: block; }
   #tiktok-2 { margin-top: var(--gutter); }
   .band__info { row-gap: var(--s-6); }
-  .band__info > .ritratto { grid-column: auto / span 6; }
+  .ritratti { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stampa__lista { grid-template-columns: 1fr; }
   .concerti__photo { --ratio: 75%; }
 }
