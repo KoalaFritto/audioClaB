@@ -68,7 +68,8 @@ const TIKTOK_VIDEO = [
         const card = document.createElement('div');
         card.className = 'frame frame--video tt';
         const f = document.createElement('iframe');
-        f.src = 'https://www.tiktok.com/player/v1/' + id + '?description=1&music_info=1&rel=0';
+        // niente partenza automatica né disco che gira: il video si muove solo quando lo avvii
+        f.src = 'https://www.tiktok.com/player/v1/' + id + '?autoplay=0&loop=0&music_info=0&description=1&rel=0';
         f.title = 'Video TikTok degli audioClaB ' + (i + 1);
         f.loading = 'lazy';
         f.allow = 'fullscreen; encrypted-media; picture-in-picture';

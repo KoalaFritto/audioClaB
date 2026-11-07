@@ -100,33 +100,29 @@
           <p>Siamo nati a Catania all'inizio del 2007. Il repertorio viene dai grandi concerti di Claudio Baglioni e lo suoniamo con gli arrangiamenti originali, senza riletture personali.</p>
         </div>
         <!-- i musicisti uno accanto all'altro, ognuno con il nome sotto -->
-        <div class="grid musicisti">
-          <figure class="musicista musicista--trio span-3">
-            <img src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 640px) 23vw, 100vw" width="883" height="1024" alt="Da sinistra: Franco Presti alla chitarra, Gianfranco Alberti alla voce e Luigi Scuderi al basso" loading="lazy">
-            <figcaption class="musicista__trio-nomi">
-              <span><b>Franco Presti</b>chitarre</span>
-              <span><b>Gianfranco Alberti</b>voce</span>
-              <span><b>Luigi Scuderi</b>basso</span>
-            </figcaption>
-          </figure>
-          <figure class="musicista span-3">
-            <img src="assets/img/faro-621.jpg" srcset="assets/img/faro-450.jpg 450w, assets/img/faro-621.jpg 621w" sizes="(min-width: 640px) 23vw, 50vw" width="621" height="720" alt="Giuseppe Faro alle tastiere sul palco, davanti al pubblico" loading="lazy">
-            <figcaption><b>Giuseppe Faro</b>tastiere</figcaption>
-          </figure>
-          <figure class="musicista span-3">
-            <img src="assets/img/bertolo-800.jpg" srcset="assets/img/bertolo-480.jpg 480w, assets/img/bertolo-800.jpg 800w" sizes="(min-width: 640px) 23vw, 50vw" width="800" height="928" alt="Giuseppe Bertolo suona la chitarra elettrica in un campo" loading="lazy">
-            <figcaption><b>Giuseppe Bertolo</b>chitarre</figcaption>
-          </figure>
-          <figure class="musicista span-3">
-            <img src="assets/img/bruno-800.jpg" srcset="assets/img/bruno-480.jpg 480w, assets/img/bruno-800.jpg 800w" sizes="(min-width: 640px) 23vw, 50vw" width="800" height="928" alt="Andrea Bruno alla batteria sul palco, sotto le luci blu" loading="lazy">
-            <figcaption><b>Andrea Bruno</b>batteria</figcaption>
-          </figure>
+        <!-- I sei musicisti in strisce verticali tutte uguali, ognuno con il nome sotto; accanto la foto del pubblico -->
+        <div class="grid band__fila">
+          <div class="musicisti span-7">
+            <img class="mus-img mus-trio" src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" width="883" height="1024" alt="Da sinistra: Franco Presti alla chitarra, Gianfranco Alberti alla voce e Luigi Scuderi al basso" loading="lazy">
+            <p class="mus-nome mus-n1"><b>Franco Presti</b>chitarre</p>
+            <p class="mus-nome mus-n2"><b>Gianfranco Alberti</b>voce</p>
+            <p class="mus-nome mus-n3"><b>Luigi Scuderi</b>basso</p>
+            <img class="mus-img mus-p1" src="assets/img/faro-621.jpg" srcset="assets/img/faro-450.jpg 450w, assets/img/faro-621.jpg 621w" sizes="(min-width: 640px) 25vw, 50vw" width="621" height="720" alt="Giuseppe Faro alle tastiere sul palco, davanti al pubblico" loading="lazy" style="object-position: 30% 50%">
+            <p class="mus-nome mus-n4"><b>Giuseppe Faro</b>tastiere</p>
+            <img class="mus-img mus-p2" src="assets/img/bertolo-800.jpg" srcset="assets/img/bertolo-480.jpg 480w, assets/img/bertolo-800.jpg 800w" sizes="(min-width: 640px) 25vw, 50vw" width="800" height="928" alt="Giuseppe Bertolo suona la chitarra elettrica in un campo" loading="lazy" style="object-position: 52% 50%">
+            <p class="mus-nome mus-n5"><b>Giuseppe Bertolo</b>chitarre</p>
+            <img class="mus-img mus-p3" src="assets/img/bruno-800.jpg" srcset="assets/img/bruno-480.jpg 480w, assets/img/bruno-800.jpg 800w" sizes="(min-width: 640px) 25vw, 50vw" width="800" height="928" alt="Andrea Bruno alla batteria sul palco, sotto le luci blu" loading="lazy" style="object-position: 82% 50%">
+            <p class="mus-nome mus-n6"><b>Andrea Bruno</b>batteria</p>
+          </div>
+          <div class="span-5 start-8 band__pubblico">
+            <img src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 1024px) 50vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
+          </div>
         </div>
       </div>
       <div class="group">
         <div class="grid grid--top band__info">
           <div class="span-6 band__formazione">
-            <h3 class="band__h3">La formazione</h3>
+            <h3 class="band__h3">La formazione degli audioClaB</h3>
             <ul class="rows rows--compact">
               <li><span class="rows__name">Gianfranco Alberti</span><span class="rows__value">voce</span></li>
               <li><span class="rows__name">Giuseppe Faro</span><span class="rows__value">tastiere</span></li>
@@ -137,17 +133,14 @@
               <li><span class="rows__name">Andrea Bruno</span><span class="rows__value">batteria</span></li>
             </ul>
           </div>
-          <div class="frame frame--photo span-6 start-7 band__pubblico">
-            <img class="frame__img" src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 640px) 44vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
+          <div class="span-6 start-7 stampa">
+            <h3 class="band__h3">Gli audioClaB sulla stampa</h3>
+            <ul class="stampa__lista">
+              <li><a href="https://www.sikelian.it/mad-concerti-2025-la-sicilia-torna-a-vibrare-con-la-grande-musica-dal-vivo" target="_blank" rel="noopener">MAD Concerti 2025: la Sicilia torna a vibrare con la grande musica dal vivo</a><span>Sikelian, 22 luglio 2025</span></li>
+              <li><a href="https://www.sikelian.it/lestate-siciliana-di-mad-concerti-si-accende-con-audioclab-claudio-baglioni-live-experience" target="_blank" rel="noopener">L'estate siciliana di MAD Concerti si accende con audioClaB</a><span>Sikelian, 30 giugno 2025</span></li>
+              <li><span class="stampa__titolo">Ospiti del programma Stelle di giorno</span><span>Radio Studio 90 Italia</span></li>
+            </ul>
           </div>
-        </div>
-        <div class="stampa">
-          <h3 class="band__h3">Ne hanno parlato</h3>
-          <ul class="stampa__lista">
-            <li><a href="https://www.sikelian.it/mad-concerti-2025-la-sicilia-torna-a-vibrare-con-la-grande-musica-dal-vivo" target="_blank" rel="noopener">MAD Concerti 2025: la Sicilia torna a vibrare con la grande musica dal vivo</a><span>Sikelian, 22 luglio 2025</span></li>
-            <li><a href="https://www.sikelian.it/lestate-siciliana-di-mad-concerti-si-accende-con-audioclab-claudio-baglioni-live-experience" target="_blank" rel="noopener">L'estate siciliana di MAD Concerti si accende con audioClaB</a><span>Sikelian, 30 giugno 2025</span></li>
-            <li><span class="stampa__titolo">Ospiti del programma Stelle di giorno</span><span>Radio Studio 90 Italia</span></li>
-          </ul>
         </div>
       </div>
     </div>
@@ -181,7 +174,7 @@
         <div><h2 id="close-h">Porta gli audioClaB sul tuo palco</h2><p class="t-lead">Hai un locale o un palco? Scrivi a <a class="mail" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">galberti4@libero.it</a></p></div>
         <a class="btn btn--primary" href="mailto:galberti4@libero.it?subject=Richiesta%20concerto%20audioClaB">Prenota un concerto<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
       </div>
-      <div class="close__media" style="--pos: 50% 45%"><img src="assets/img/chiusura-palco.jpg" srcset="assets/img/chiusura-palco-900.jpg 900w, assets/img/chiusura-palco.jpg 2000w" sizes="(min-width: 1024px) 89vw, 100vw" alt="La band sul palco con le luci verdi e il logo audioClaB alle spalle" loading="lazy" width="2000" height="1500"></div>
+      <div class="close__media" style="--pos: 50% 45%"><img src="assets/img/chiusura-palco.jpg" srcset="assets/img/chiusura-palco-900.jpg 900w, assets/img/chiusura-palco.jpg 2000w" sizes="(min-width: 1024px) 89vw, 170vw" alt="La band sul palco con le luci verdi e il logo audioClaB alle spalle" loading="lazy" width="2000" height="1500"></div>
     </div>
     <div class="closing__links">
       <div class="grid">

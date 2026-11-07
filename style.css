@@ -26,7 +26,7 @@
 /* concerti: il widget eventi di Facebook */
 .fb-eventi { width: 100%; max-width: 500px; min-height: 380px; border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
 .fb-eventi > iframe { display: block; border: 0; max-width: 100%; }
-.fb-eventi__nota { margin: var(--s-4) 0 0; color: var(--muted); max-width: 50ch; }
+.fb-eventi__nota { margin: var(--s-4) 0 0; color: var(--ink); max-width: 50ch; }
 .fb-eventi__link { margin-top: var(--s-3); }
 @media (max-width: 639px) { .fb-eventi { min-height: 480px; } }
 
@@ -48,31 +48,41 @@
 .rows--compact > li { padding-block: var(--s-3); }
 .rows--compact > li:first-child { padding-top: 0; }
 .rows--compact .rows__value { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-/* i musicisti uno accanto all'altro: la foto dei tre, poi Faro e Bertolo, tutte alte uguali */
-.musicisti { align-items: start; }
-.musicista { margin: 0; display: grid; gap: var(--s-3); }
-.musicista > img { width: 100%; height: auto; aspect-ratio: 883 / 1024; object-fit: cover; border-radius: var(--r-lg); display: block; }
-.musicista figcaption, .musicista__trio-nomi > span { display: grid; gap: 2px; color: var(--muted); font-size: var(--t-small); }
-.musicista b { font-weight: 500; font-size: var(--t-body); color: var(--ink); }
-.musicista__trio-nomi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; }
-.musicista__trio-nomi > span { justify-items: center; }
-.band__pubblico { --ratio: 75%; }
-/* tablet: due per riga (la foto dei tre accanto a Faro, poi Bertolo e Bruno), così i tre nomi stanno larghi */
-@media (min-width: 640px) and (max-width: 1023px) { .grid.musicisti > .musicista { grid-column: auto / span 6; } .grid.musicisti { row-gap: var(--s-5); } }
+/* i sei musicisti in strisce verticali tutte uguali: la foto dei tre occupa tre colonne,
+   Faro, Bertolo e Bruno una colonna ciascuno, alte come la foto dei tre; i nomi sotto ognuno */
+.band__fila { align-items: start; }
+.musicisti { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--s-2); row-gap: var(--s-3); }
+.mus-img { display: block; width: 100%; min-height: 0; border-radius: var(--r-md); object-fit: cover; grid-row: 1; }
+.mus-trio { grid-column: 1 / 4; height: auto; aspect-ratio: 883 / 1024; }
+.mus-p1, .mus-p2, .mus-p3 { height: 100%; }
+.mus-p1 { grid-column: 4; } .mus-p2 { grid-column: 5; } .mus-p3 { grid-column: 6; }
+.mus-nome { grid-row: 2; margin: 0; display: grid; gap: 2px; align-content: start; text-align: center; font-size: var(--t-small); line-height: 1.3; color: var(--muted); }
+.mus-nome b { font-weight: 500; color: var(--ink); }
+.mus-n1 { grid-column: 1; } .mus-n2 { grid-column: 2; } .mus-n3 { grid-column: 3; }
+.mus-n4 { grid-column: 4; } .mus-n5 { grid-column: 5; } .mus-n6 { grid-column: 6; }
+/* la foto del pubblico accanto, alta come le strisce */
+.band__pubblico > img { display: block; width: 100%; aspect-ratio: 519 / 422; height: auto; object-fit: cover; border-radius: var(--r-md); }
+@media (max-width: 1023px) {
+  .grid.band__fila > .musicisti { grid-column: 1 / -1; }
+  .grid.band__fila > .band__pubblico { grid-column: 1 / -1; }
+  .band__pubblico > img { aspect-ratio: 16 / 9; }
+}
 @media (max-width: 639px) {
   #band .group + .group { margin-top: var(--s-7); }
-  .grid.musicisti { row-gap: var(--s-5); }
-  .grid.musicisti > .musicista { grid-column: auto / span 6; }
-  .grid.musicisti > .musicista--trio { grid-column: 1 / -1; }
+  .musicisti { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mus-trio { grid-column: 1 / -1; }
+  .mus-p1, .mus-p2, .mus-p3 { grid-row: 3; height: auto; aspect-ratio: 3 / 5; }
+  .mus-p1, .mus-n4 { grid-column: 1; } .mus-p2, .mus-n5 { grid-column: 2; } .mus-p3, .mus-n6 { grid-column: 3; }
+  .mus-n4, .mus-n5, .mus-n6 { grid-row: 4; }
 }
-/* gli articoli: tre colonne sotto la formazione */
-.stampa { margin-top: var(--s-7); }
-.stampa__lista { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
-.stampa__lista > li { display: grid; gap: var(--s-2); align-content: start; padding-top: var(--s-4); border-top: 1px solid var(--line); }
+/* gli articoli: accanto alla formazione */
+.stampa { align-self: start; }
+.stampa__lista { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); }
+.stampa__lista > li { display: grid; gap: var(--s-2); align-content: start; padding-bottom: var(--s-4); border-bottom: 1px solid var(--line); }
 .stampa__lista a, .stampa__titolo { color: var(--ink); font-weight: 500; line-height: 1.4; }
 .stampa__lista a { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; transition: text-decoration-color 160ms ease; }
 @media (hover: hover) and (pointer: fine) { .stampa__lista a:hover { text-decoration-color: currentColor; } }
-.stampa__lista span:last-child { color: var(--muted); font-size: var(--t-small); }
+.stampa__lista span:last-child { color: var(--ink); font-size: var(--t-small); }
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .tiktok--video > .tt { grid-column: auto / span 6; }
@@ -83,7 +93,6 @@
   .band__info > .band__formazione { grid-column: 1 / -1; }
   .band__formazione .rows--compact { columns: 2; column-gap: var(--gutter); }
   .band__formazione .rows--compact > li { break-inside: avoid; }
-  .grid.band__info > .band__pubblico { grid-column: 1 / -1; }
   #concerti .grid--top > * { grid-column: auto / span 6; }
 }
 @media (max-width: 639px) {
@@ -130,4 +139,5 @@ main > :is(section, .section) > .wrap > .fill { flex: 1 0 auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stampa__lista a, }
+  .stampa__lista a { transition: none; }
+}
