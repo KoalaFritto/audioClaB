@@ -179,9 +179,11 @@ Questo è il video giusto da sponsorizzare tra gennaio e aprile, quando si prepa
 
 ## Spot con voce narrante (`video/audioclab-spot-voce.mp4`, 33 s)
 
-Il video pubblicitario principale: le scene più forti dei vostri video (la piazza di «Adesso», «Io dal mare»
-in studio, i sei musicisti, Piedimonte Etneo e Augusta), una voce che racconta la band, i sottotitoli
-per chi guarda senza audio e la chiusura con l'email. Sotto la voce c'è «Dagli il via» dal vivo, che si
+Il video pubblicitario principale, con le scene più forti dei vostri video di Facebook e TikTok:
+Gianco sul palco viola (il video più visto su Facebook, «Il frigo russava…»), «Io dal mare» in studio,
+l'assolo di Giuseppe Bertolo, la batteria ripresa dal palco con la piazza piena («Ovunque sei»), la serata
+al Pachamama, la piazza di «Adesso», Piedimonte Etneo e Augusta. Una voce racconta la band, i sottotitoli
+servono a chi guarda senza audio, e alla fine c'è l'email per prenotare. Sotto la voce c'è «Dagli il via» dal vivo, che si
 abbassa da sola quando la voce parla.
 
 **Testo della voce**
