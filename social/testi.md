@@ -174,3 +174,32 @@ Le serate di Piedimonte Etneo e Augusta (Piazza Duomo), con «Dagli il via» dal
 > #audioclab #claudiobaglioni #dagliilvia #estate #piazza #augusta #piedimonteetneo #sicilia #livemusic
 
 Questo è il video giusto da sponsorizzare tra gennaio e aprile, quando si preparano i cartelloni estivi.
+
+---
+
+## Spot con voce narrante (`video/audioclab-spot-voce.mp4`, 33 s)
+
+Il video pubblicitario principale: le scene più forti dei vostri video (la piazza di «Adesso», «Io dal mare»
+in studio, i sei musicisti, Piedimonte Etneo e Augusta), una voce che racconta la band, i sottotitoli
+per chi guarda senza audio e la chiusura con l'email. Sotto la voce c'è «Dagli il via» dal vivo, che si
+abbassa da sola quando la voce parla.
+
+**Testo della voce**
+
+1. Le canzoni di Claudio Baglioni, dal vivo, nella tua piazza.
+2. Siamo gli audioClaB, cover band di Catania. Dal 2007 portiamo sul palco il suo repertorio.
+3. Sette musicisti: voce, chitarre, tastiere, basso e batteria.
+4. Quest'estate abbiamo fatto cantare le piazze, da Piedimonte Etneo ad Augusta.
+5. Organizzi una festa in piazza, una rassegna o una serata in teatro?
+6. Scrivici: galberti4@libero.it. audioClaB: Baglioni, dal vivo.
+
+La voce è sintetica (Piper, voce italiana "Paola"). Se preferite una voce vera, registrate le sei frasi
+con il telefono in una stanza silenziosa: si sostituiscono senza rifare il montaggio.
+
+**Didascalia** (TikTok, Reels, Facebook)
+
+> Le canzoni di Claudio Baglioni, dal vivo, nella tua piazza 🎶
+> Siamo gli audioClaB, cover band da Catania. Per concerti in piazze, rassegne e teatri: galberti4@libero.it
+> #audioclab #claudiobaglioni #coverband #tributeband #musicadalvivo #piazza #estate #sicilia #catania
+
+È il video da usare per le sponsorizzate (vedi sopra).
