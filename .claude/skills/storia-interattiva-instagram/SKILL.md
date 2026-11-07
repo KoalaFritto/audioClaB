@@ -78,6 +78,19 @@ Produci sempre questo pacchetto (usa `references/episodio-template.md`):
 Dopo aver scritto l'episodio, aggiorna `storie/<nome-serie>/bibbia.md`
 (stato, bivio aperto, opzioni) e salva il copione in `storie/<nome-serie>/ep-XX.md`.
 
+## Stile video (quello dei Reel horror più visti)
+
+Se l'utente chiede il video, producilo in questo stile:
+- **Immagini:** fotogrammi cinematografici realistici generati con l'AI (9:16), tutti con la stessa palette (es. blu/verde freddo, nebbia, notte). Su ogni immagine va un movimento lento (zoom o pan, effetto Ken Burns) e si taglia ogni 2–3 s. Nei momenti di tensione i tagli arrivano a ogni frase.
+- **Narratore:** una voce maschile profonda in terza persona, con frasi brevi al presente e pause ("Stanotte... è tornato fuori."). La voce più usata per questi video è **Adam di ElevenLabs** (modello `eleven_multilingual_v2`, lingua `it`). Le battute dei personaggi, come i sussurri, vanno con una seconda voce.
+- **Sottotitoli:** grandi, in maiuscolo e bold, al centro, 1–3 parole alla volta, con la parola pronunciata in giallo e un piccolo "pop" quando appare.
+- **Suono:** un colpo di basso (boom) e un flash sui tagli importanti, whoosh sugli altri tagli, un riser prima dello spavento e un drone scuro sotto la voce, abbassato quando parla il narratore. Prima della battuta più spaventosa va un silenzio totale.
+- **Grafica fissa:** in alto l'etichetta "SERIE · PARTE N"; nei primi 2–3 s un riquadro bianco con il gancio scritto.
+- **Finale:** schermo diviso con le due scelte (1 sopra, 2 sotto), "COMMENTA 1 O 2 ↓" che pulsa e il battito cardiaco. Dura 4–5 s, e nella Parte 2 va mostrato di nuovo per primo il risultato.
+- **Durata:** 55–70 s. Nessun testo importante negli ultimi 400 px in basso, coperti dall'interfaccia di Instagram.
+
+Il generatore di riferimento è in `storie/valsorda/video/`: `immagini_ai.py` crea le immagini, `voce_elevenlabs.py` crea la voce e i timestamp, `genera_ep01_v2.py` fa il montaggio. Puoi copiarli e adattarli per i nuovi episodi.
+
 ## Dopo la pubblicazione: contare i voti
 
 Quando l'utente incolla o esporta i commenti, conta i voti con lo script:
