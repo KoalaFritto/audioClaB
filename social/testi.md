@@ -135,3 +135,42 @@ Su Facebook e Instagram si sponsorizza da "Metti in evidenza il post". Per trova
 - **Pubblico**: Sicilia orientale (Catania, Messina, Siracusa), dai 35 ai 65 anni, interessi "Claudio Baglioni" e "Musica dal vivo".
 - **Obiettivo**: "Messaggi", così chi è interessato vi scrive direttamente.
 - **Budget di prova**: 3–5 € al giorno per una settimana, poi guardate quanti messaggi sono arrivati.
+
+---
+
+## Video pronti (cartella `video/`)
+
+Tre video verticali 1080×1920, da 20 a 24 secondi, già con le scritte e la chiusura per prenotare.
+Vanno bene per TikTok, Reels di Instagram e Facebook e Storie. Le scritte stanno lontane dai bordi
+dove l'app mette i pulsanti. L'audio è sempre degli audioClaB, a volume da social (-14 LUFS).
+
+Quando li pubblicate su TikTok o Instagram **non aggiungete musica dall'app**: lasciate il loro audio.
+
+### `audioclab-1-io-dal-mare.mp4` (20 s)
+
+Dal vostro TikTok più visto (43.500 visualizzazioni), il momento più forte del brano in studio.
+
+> «Io dal mare» di Claudio Baglioni, suonata da noi 🌊🎶
+> Il brano è del 1990, dall'album "Oltre". Volete sentirla dal vivo nella vostra piazza? Info e prenotazioni nel link in bio.
+> #audioclab #claudiobaglioni #iodalmare #coverband #tributeband #musicadalvivo #perte
+
+### `audioclab-2-chi-suona.mp4` (22 s)
+
+Un musicista alla volta, con il finale di «Mille giorni di te e di me» dal vivo a Misterbianco.
+
+> Ecco chi suona negli audioClaB 🎤🎸🎹🥁
+> In sottofondo: «Mille giorni di te e di me», dal vivo a Misterbianco.
+> Taggate il vostro preferito 👇
+> #audioclab #claudiobaglioni #millegiornidite #band #coverband #catania #sicilia
+
+Su Instagram tagga ogni musicista nel Reel, così compare anche sui loro profili.
+
+### `audioclab-3-serate-in-piazza.mp4` (24 s)
+
+Le serate di Piedimonte Etneo e Augusta (Piazza Duomo), con «Dagli il via» dal vivo.
+
+> Le nostre serate in piazza ✨ Piedimonte Etneo e Augusta, estate 2026.
+> Stai organizzando l'estate della tua piazza? Scrivici: galberti4@libero.it
+> #audioclab #claudiobaglioni #dagliilvia #estate #piazza #augusta #piedimonteetneo #sicilia #livemusic
+
+Questo è il video giusto da sponsorizzare tra gennaio e aprile, quando si preparano i cartelloni estivi.
