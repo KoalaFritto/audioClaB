@@ -1,0 +1,406 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;padding:0;background:#0b1426;overflow:hidden}
+  svg{display:block}
+</style></head>
+<body>
+<svg id="v" width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+// =============================================================== palette flat
+const C = {
+  sky1:'#0a1324', sky2:'#142640', mtn1:'#16294a', mtn2:'#1d3558', mtn3:'#27456c', moon:'#f6ecc9',
+  water:'#1d6a74', waterL:'#2f8c95', waterD:'#154f57', mud:'#4b3a2d', mudL:'#5c4838', mudD:'#3a2c22', crack:'#22180f',
+  stone:'#5d6678', stoneL:'#737d91', stoneD:'#434b5b', stoneDD:'#323846', roof:'#6e4b3b', roofD:'#563a2e',
+  algae:'#40603f', win:'#0b1120', amber:'#ffb703', amberL:'#ffd166', orange:'#f77f00', orangeD:'#c76400',
+  navy:'#14213d', pants:'#1f2a44', boot:'#3d2b1f', skin:'#f1c27d', skinD:'#d9a25f', hair:'#17161c',
+  gear:'#2b2d42', gearL:'#4a4e69', red:'#e63946', white:'#f4f1e8', fog:'#a9c1d1', wood:'#6b4226', woodD:'#4e2f1b',
+  car:'#3d6b7a', carD:'#2c4f5a'
+};
+let TL = null, SHOTS = [];
+window.setTimeline = (d) => {
+  TL = d;
+  SHOTS = d.shots.map((s, i) => ({ id: s.id, t0: s.t, t1: i + 1 < d.shots.length ? d.shots[i + 1].t : d.dur }));
+};
+// =============================================================== utils
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; };
+const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const R = (x, y, w, h, f, extra = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${extra}/>`;
+const Ci = (x, y, r, f, extra = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${extra}/>`;
+const El = (x, y, rx, ry, f, extra = '') => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}" ${extra}/>`;
+const P = (d, f, extra = '') => `<path d="${d}" fill="${f}" ${extra}/>`;
+const Poly = (pts, f, extra = '') => `<polygon points="${pts.map(p => p.join(',')).join(' ')}" fill="${f}" ${extra}/>`;
+const Line = (x1, y1, x2, y2, c, w, extra = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
+const G = (inner, tr = '', extra = '') => `<g transform="${tr}" ${extra}>${inner}</g>`;
+const T = (x, y, txt, size, fill, extra = '') => `<text x="${x}" y="${y}" font-family="Inter" font-weight="900" font-size="${size}" fill="${fill}" text-anchor="middle" ${extra}>${txt}</text>`;
+
+const DEFS = `<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.sky1}"/><stop offset="1" stop-color="${C.sky2}"/></linearGradient>
+  <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".55"/><stop offset="1" stop-color="${C.amberL}" stop-opacity="0"/></linearGradient>
+  <linearGradient id="beamV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".5"/><stop offset="1" stop-color="${C.amberL}" stop-opacity="0"/></linearGradient>
+  <radialGradient id="glow"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".9"/><stop offset=".4" stop-color="${C.amber}" stop-opacity=".35"/><stop offset="1" stop-color="${C.amber}" stop-opacity="0"/></radialGradient>
+  <radialGradient id="moonglow"><stop offset="0" stop-color="${C.moon}" stop-opacity=".35"/><stop offset="1" stop-color="${C.moon}" stop-opacity="0"/></radialGradient>
+  <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+  <radialGradient id="redvig" cx=".5" cy=".5" r=".7"><stop offset="0" stop-color="#3a0000" stop-opacity="0"/><stop offset="1" stop-color="#2a0000" stop-opacity=".9"/></radialGradient>
+  <linearGradient id="fogG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.fog}" stop-opacity="0"/><stop offset=".5" stop-color="${C.fog}" stop-opacity=".18"/><stop offset="1" stop-color="${C.fog}" stop-opacity="0"/></linearGradient>
+</defs>`;
+
+// =============================================================== elementi comuni
+function skyBG(stars = true, moon = [820, 300]) {
+  let s = R(0, 0, 1080, 1920, 'url(#sky)');
+  if (stars) { const r = rng(3); for (let i = 0; i < 70; i++) s += Ci(r() * 1080, r() * 900, r() * 2.2 + .6, C.white, `opacity="${.25 + r() * .5}"`); }
+  if (moon) s += Ci(moon[0], moon[1], 260, 'url(#moonglow)') + Ci(moon[0], moon[1], 70, C.moon) + Ci(moon[0] - 22, moon[1] - 12, 14, '#e6dab3') + Ci(moon[0] + 20, moon[1] + 22, 9, '#e6dab3');
+  return s;
+}
+function mountains(off = 0) {
+  return Poly([[-50, 1000], [160, 560], [330, 760], [520, 470], [700, 720], [880, 520], [1130, 900], [1130, 1100], [-50, 1100]].map(p => [p[0] + off * .2, p[1]]), C.mtn3)
+    + Poly([[-50, 1050], [220, 700], [420, 900], [640, 640], [860, 880], [1130, 700], [1130, 1150], [-50, 1150]].map(p => [p[0] + off * .4, p[1]]), C.mtn2)
+    + Poly([[-50, 1120], [120, 900], [300, 1020], [470, 860], [700, 1040], [930, 880], [1130, 1000], [1130, 1250], [-50, 1250]].map(p => [p[0] + off * .6, p[1]]), C.mtn1);
+}
+function dam(x0, x1, y0, y1) {
+  let s = Poly([[x0, y1], [x0 + 40, y0], [x1 - 40, y0], [x1, y1]], C.stoneD);
+  for (let y = y0 + 40; y < y1; y += 46) s += Line(x0 + 40 * (1 - (y - y0) / (y1 - y0)) + 6, y, x1 - 40 * (1 - (y - y0) / (y1 - y0)) - 6, y, C.stoneDD, 4);
+  s += R(x0 + 40, y0 - 18, x1 - x0 - 80, 22, C.stone);
+  s += Poly([[x0 + 30, y0 + (y1 - y0) * .35], [x1 - 30, y0 + (y1 - y0) * .35], [x1 - 10, y0 + (y1 - y0) * .4], [x0 + 10, y0 + (y1 - y0) * .4]], C.waterD, 'opacity=".55"');
+  return s;
+}
+function house(x, base, w, h, opt = {}) {
+  const r = rng(Math.floor(x * 7 + h));
+  let s = R(x, base - h, w, h, opt.col || C.stone);
+  s += R(x + w * .72, base - h, w * .28, h, opt.shade || C.stoneD);
+  if (!opt.broken) s += Poly([[x - 10, base - h], [x + w / 2, base - h - w * .42], [x + w + 10, base - h]], C.roof) + Poly([[x + w / 2, base - h - w * .42], [x + w + 10, base - h], [x + w * .72, base - h]], C.roofD);
+  else s += Poly([[x, base - h], [x + w * .3, base - h - 24], [x + w * .55, base - h + 18], [x + w * .8, base - h - 12], [x + w, base - h]], C.stoneD);
+  const nw = Math.max(1, Math.floor(w / 70));
+  for (let i = 0; i < nw; i++) for (let j = 0; j < Math.floor(h / 110); j++) s += R(x + 18 + i * (w - 36) / nw, base - h + 30 + j * 100, 26, 40, C.win, 'rx="13"');
+  s += R(x + w * .4, base - 70, 34, 70, C.win, 'rx="17"');
+  if (opt.algae !== false) for (let i = 0; i < 6; i++) { const ax = x + r() * w; s += R(ax, base - h * (.3 + r() * .5), 6 + r() * 6, h * (.3 + r() * .4), C.algae, 'rx="4" opacity=".75"'); }
+  return s;
+}
+function tower(x, base, w, h, opt = {}) {
+  let s = R(x, base - h, w, h, opt.col || C.stone) + R(x + w * .7, base - h, w * .3, h, C.stoneD);
+  const by = base - h + 30;
+  s += R(x + w * .18, by, w * .26, w * .4, C.win, 'rx="' + w * .13 + '"') + R(x + w * .56, by, w * .26, w * .4, C.win, 'rx="' + w * .13 + '"');
+  s += Poly([[x - 12, base - h], [x + w / 2, base - h - w * 1.1], [x + w + 12, base - h]], C.roof) + Poly([[x + w / 2, base - h - w * 1.1], [x + w + 12, base - h], [x + w * .7, base - h]], C.roofD);
+  for (let i = 0; i < 5; i++) s += R(x + 10 + i * w / 5, base - h * (.2 + (i % 3) * .15), 7, h * .35, C.algae, 'rx="4" opacity=".7"');
+  return s;
+}
+function mudGround(y0, seed = 1, cr = true) {
+  const r = rng(seed);
+  let s = R(0, y0, 1080, 1920 - y0, C.mud) + R(0, y0, 1080, 14, C.mudL);
+  if (cr) for (let i = 0; i < 26; i++) {
+    let x = r() * 1080, y = y0 + 40 + r() * (1920 - y0), d = `M${x},${y}`;
+    for (let k = 0; k < 4; k++) { x += (r() - .5) * 160; y += (r() - .3) * 60; d += ` L${x},${y}`; }
+    s += `<path d="${d}" stroke="${C.crack}" stroke-width="${3 + r() * 4}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+  for (let i = 0; i < 6; i++) s += El(r() * 1080, y0 + 120 + r() * (1800 - y0), 60 + r() * 70, 12 + r() * 10, C.waterD, 'opacity=".7"');
+  return s;
+}
+function fogBand(y, h, t, k = 1) {
+  return G(R(-200, y, 1500, h, 'url(#fogG)'), `translate(${Math.sin(t * .3 * k) * 60},0)`);
+}
+// =============================================================== Greta
+// figura di profilo verso destra; (x,y) = punto tra i piedi; s = scala
+function gretaSide(x, y, s, o = {}) {
+  const ph = o.phase || 0, walk = o.walk ? 1 : 0;
+  const sw = Math.sin(ph * Math.PI * 2) * 22 * walk, bob = Math.abs(Math.sin(ph * Math.PI * 2)) * 8 * walk;
+  const hipY = -230, shY = -470, hd = [12, -545];
+  const leg = (ang, col) => G(Line(0, 0, 0, 220, col, 56) + R(-30, 200, 78, 40, C.boot, 'rx="18"'), `translate(0,${hipY}) rotate(${ang})`);
+  let b = '';
+  if (o.beam) b += Poly([[hd[0] + 50, hd[1] - 30], [900, hd[1] - 260], [900, hd[1] + 260]], 'url(#beam)', `opacity="${o.beam}"`);
+  b += leg(-sw, '#18213a') + leg(sw, C.pants);
+  // impermeabile
+  b += P(`M-70,${shY} Q-95,${shY + 120} -105,${hipY + 40} L95,${hipY + 40} Q85,${shY + 120} 70,${shY} Z`, C.orange);
+  b += P(`M-70,${shY} Q-95,${shY + 120} -105,${hipY + 40} L-40,${hipY + 40} L-30,${shY} Z`, C.orangeD);
+  b += R(-6, shY + 30, 10, 220, C.orangeD, 'rx="5" opacity=".6"');
+  // cappuccio dietro il collo
+  b += El(-48, shY - 8, 46, 34, C.orangeD);
+  // braccio con asta del microfono
+  if (o.mic !== false) {
+    b += Line(40, shY + 40, 120, shY + 150, C.orange, 44) + Ci(128, shY + 160, 22, C.skin);
+    b += Line(128, shY + 160, 330, shY - 230, '#2a2a33', 10);
+    b += El(350, shY - 262, 58, 30, '#8d939c', `transform="rotate(-52 350 ${shY - 262})"`);
+    for (let i = 0; i < 9; i++) b += Line(320 + i * 7, shY - 280 + (i % 2) * 20, 330 + i * 7, shY - 300 + (i % 3) * 18, '#6f757e', 4);
+  } else {
+    b += Line(30, shY + 40, 70, shY + 200, C.orange, 44) + Ci(72, shY + 215, 22, C.skin);
+  }
+  // testa
+  b += R(-10, shY - 40, 34, 50, C.skinD, 'rx="12"');
+  b += Ci(hd[0], hd[1], 66, C.skin);
+  b += P(`M${hd[0] - 70},${hd[1] + 30} Q${hd[0] - 85},${hd[1] - 70} ${hd[0] - 10},${hd[1] - 74} Q${hd[0] + 60},${hd[1] - 78} ${hd[0] + 70},${hd[1] - 20} L${hd[0] + 20},${hd[1] - 30} Q${hd[0] - 20},${hd[1] - 10} ${hd[0] - 25},${hd[1] + 50} Z`, C.hair);
+  b += P(`M${hd[0] - 70},${hd[1] + 30} L${hd[0] - 25},${hd[1] + 50} L${hd[0] - 40},${hd[1] + 62} L${hd[0] - 78},${hd[1] + 48} Z`, C.hair);
+  b += Ci(hd[0] + 42, hd[1] - 2, 6, C.hair) + Ci(hd[0] + 66, hd[1] + 10, 7, C.skinD);
+  // cuffie + frontale
+  b += P(`M${hd[0] - 52},${hd[1] + 5} Q${hd[0] - 50},${hd[1] - 92} ${hd[0] + 8},${hd[1] - 88}`, 'none', `stroke="${C.gear}" stroke-width="14" stroke-linecap="round"`);
+  b += El(hd[0] - 34, hd[1] + 8, 30, 38, C.gear) + El(hd[0] - 34, hd[1] + 8, 18, 26, C.gearL);
+  b += R(hd[0] + 30, hd[1] - 62, 30, 20, C.amber, 'rx="6"');
+  return G(b, `translate(${x},${y - bob}) scale(${s})`);
+}
+// vista dall'alto, Greta guarda verso il basso
+function gretaTop(x, y, s, look = 0) {
+  let b = Poly([[0, 40], [-260, 520], [260, 520]], 'url(#beamV)', 'opacity=".8"');
+  b += El(0, 0, 105, 62, C.orange) + El(-60, 0, 40, 50, C.orangeD) + El(60, 0, 40, 50, C.orangeD);
+  b += Line(70, 10, 150, 140, C.orange, 36) + Line(150, 140, 230, 300, '#2a2a33', 10) + El(240, 320, 26, 42, '#8d939c');
+  b += Ci(0, -6, 58, C.hair) + P('M-58,-6 A58,58 0 0 1 58,-6', 'none', `stroke="${C.gear}" stroke-width="16"`);
+  b += El(-58, -6, 18, 30, C.gear) + El(58, -6, 18, 30, C.gear) + R(-16, 40, 32, 18, C.amber, 'rx="6"');
+  return G(b, `translate(${x},${y}) rotate(${look}) scale(${s})`);
+}
+// busto di profilo grande (ascolto / cuffie)
+function gretaBust(x, y, s, o = {}) {
+  let b = P('M-260,420 Q-250,120 -60,80 L120,80 Q300,120 320,420 Z', C.orange) + P('M-260,420 Q-250,120 -60,80 L-20,420 Z', C.orangeD);
+  b += El(-40, 70, 120, 60, C.orangeD);
+  b += R(-40, -40, 110, 140, C.skinD, 'rx="40"');
+  b += Ci(20, -170, 190, C.skin);
+  // naso, bocca, occhio
+  b += P('M200,-190 Q245,-150 205,-120 Z', C.skinD) + R(150, -80, 40, 9, '#b5774a', 'rx="4"');
+  const eo = o.eye || 1;
+  b += El(120, -205, 16 * eo, 22 * eo, C.white) + Ci(128, -205, 11, C.hair) + Line(95, -248 - (eo - 1) * 20, 150, -258 - (eo - 1) * 20, C.hair, 9);
+  // capelli
+  b += P('M-200,-60 Q-250,-330 0,-370 Q190,-385 230,-240 L120,-260 Q-10,-220 -40,-40 Q-80,30 -140,40 Z', C.hair);
+  // cuffie
+  b += P('M-150,-150 Q-120,-410 120,-350', 'none', `stroke="${C.gear}" stroke-width="34" stroke-linecap="round"`);
+  b += El(-100, -140, 90, 110, C.gear) + El(-100, -140, 58, 78, C.gearL) + El(-100, -140, 90, 110, 'none', `stroke="${C.amber}" stroke-width="6" opacity=".7"`);
+  if (o.hand) b += El(-200, -60, 70, 95, C.skin, 'transform="rotate(-20 -200 -60)"') + Line(-230, 40, -280, 260, C.orange, 80);
+  if (o.sweat) b += P('M205,-280 Q220,-250 205,-238 Q190,-250 205,-280 Z', '#bfe3ff');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function gretaFace(x, y, s, lt) {
+  const look = Math.sin(lt * 2.2) * 10;
+  let b = P('M-330,620 Q-320,330 -90,280 L90,280 Q320,330 330,620 Z', C.orange) + R(-70, 150, 140, 160, C.skinD, 'rx="50"');
+  b += P('M-235,40 Q-260,-330 0,-345 Q260,-330 235,40 L235,170 L-235,170 Z', C.hair);
+  b += El(0, -20, 200, 235, C.skin);
+  b += P('M-200,-120 Q-160,-300 0,-290 Q150,-300 210,-110 Q120,-220 -10,-215 Q-120,-215 -200,-120 Z', C.hair);
+  b += El(-80 + look, -40, 34, 40, C.white) + El(80 + look, -40, 34, 40, C.white) + Ci(-80 + look * 1.6, -36, 20, C.hair) + Ci(80 + look * 1.6, -36, 20, C.hair);
+  b += Line(-125, -110, -40, -98, C.hair, 12) + Line(40, -98, 125, -110, C.hair, 12);
+  b += P('M-10,10 Q20,60 -15,80', 'none', `stroke="${C.skinD}" stroke-width="10" stroke-linecap="round"`);
+  b += El(0, 130, 28, 18, '#9b4f3a');
+  b += P('M150,-150 Q168,-115 150,-100 Q132,-115 150,-150 Z', '#bfe3ff');
+  b += P('M-245,0 Q-250,-400 0,-395 Q250,-400 245,0', 'none', `stroke="${C.gear}" stroke-width="30"`);
+  b += El(-230, 20, 52, 88, C.gear) + El(230, 20, 52, 88, C.gear) + R(-45, -330, 90, 38, C.amber, 'rx="12"');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function footprint(x, y, ang, sc, op) {
+  const sole = El(0, 0, 18, 32, C.mudD) + El(0, -6, 12, 20, C.crack, 'opacity=".5"');
+  const toes = Ci(-12, -40, 6, C.mudD) + Ci(-3, -45, 6.5, C.mudD) + Ci(6, -44, 6, C.mudD) + Ci(13, -40, 5, C.mudD) + Ci(18, -34, 4, C.mudD);
+  return G(sole + toes + El(4, 4, 8, 14, C.waterL, 'opacity=".35"'), `translate(${x},${y}) rotate(${ang}) scale(${sc})`, `opacity="${op}"`);
+}
+function door(cx, base, w, h, light) {
+  let s = R(cx - w / 2 - 50, base - h - 80, w + 100, h + 80, C.stoneD) + P(`M${cx - w / 2 - 40},${base} L${cx - w / 2 - 40},${base - h + w / 2} A${w / 2 + 40},${w / 2 + 40} 0 0 1 ${cx + w / 2 + 40},${base - h + w / 2} L${cx + w / 2 + 40},${base} Z`, C.stoneL);
+  s += P(`M${cx - w / 2},${base} L${cx - w / 2},${base - h + w / 2} A${w / 2},${w / 2} 0 0 1 ${cx + w / 2},${base - h + w / 2} L${cx + w / 2},${base} Z`, C.wood);
+  for (let i = 1; i < 5; i++) s += Line(cx - w / 2 + i * w / 5, base - h + (i === 2 || i === 3 ? 10 : 50), cx - w / 2 + i * w / 5, base - 4, C.woodD, 6);
+  s += R(cx - w / 2, base - h * .55, w, 18, C.woodD) + R(cx - w / 2, base - h * .2, w, 18, C.woodD);
+  s += Ci(cx + w * .3, base - h * .4, 22, 'none', `stroke="#2a2a2a" stroke-width="7"`);
+  if (light > 0) {
+    s += R(cx - w / 2 + 6, base - 10, w - 12, 12, C.amberL, `opacity="${light}"`);
+    s += Poly([[cx - w / 2 + 6, base], [cx + w / 2 - 6, base], [cx + w / 2 + 160, base + 260], [cx - w / 2 - 160, base + 260]], C.amber, `opacity="${.28 * light}"`);
+    s += El(cx, base, w * .9, 70, 'url(#glow)', `opacity="${light}"`);
+  }
+  return s;
+}
+function car(x, y, s) {
+  let b = P('M-170,0 L-170,-60 Q-160,-90 -110,-95 L-70,-150 Q-55,-165 -20,-165 L80,-165 Q110,-165 125,-140 L150,-95 Q185,-90 190,-60 L190,0 Z', C.car);
+  b += P('M-60,-140 L-20,-150 L30,-150 L30,-100 L-85,-100 Z', C.win) + P('M45,-150 L85,-150 Q100,-150 110,-130 L125,-100 L45,-100 Z', C.win);
+  b += R(-170, -40, 360, 40, C.carD, 'rx="10"') + Ci(-95, 0, 40, '#15151b') + Ci(115, 0, 40, '#15151b') + Ci(-95, 0, 16, '#555') + Ci(115, 0, 16, '#555');
+  b += R(170, -75, 20, 18, '#ffe8a3', 'rx="5" opacity=".25"');
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function pill(txt, x, y, bg, fg, size = 46) {
+  const w = txt.length * size * .62 + 70;
+  return R(x - w / 2, y - size * 1.05, w, size * 1.6, bg, `rx="${size * .8}"`) + T(x, y + size * .1, txt, size, fg, 'letter-spacing="1"');
+}
+// =============================================================== scene
+const S = {};
+S.lago = (lt, d, t) => {
+  const m = TL.mark;
+  const k = ease((t - (m.stanotte - 1.2)) / 2.4);
+  const wy = lerp(980, 1560, k);
+  let s = skyBG(true) + mountains() + dam(130, 950, 760, 1060);
+  s += fogBand(950, 220, t);
+  // paese sommerso
+  let v = '';
+  v += house(40, 1420, 170, 230) + house(230, 1420, 140, 300, { broken: true }) + tower(440, 1420, 120, 430) + house(590, 1420, 180, 250) + house(790, 1420, 150, 200, { broken: true }) + house(950, 1420, 150, 270);
+  s += v + mudGround(1420, 4);
+  // acqua che si ritira
+  const wave = (y, a, ph) => { let d = `M0,${y}`; for (let x = 0; x <= 1080; x += 40) d += ` L${x},${y + Math.sin(x / 70 + ph) * a}`; return d + ' L1080,1920 L0,1920 Z'; };
+  s += P(wave(wy, 8, t * 2), C.water, 'opacity=".93"') + P(wave(wy + 40, 5, t * 2.6 + 1), C.waterD, 'opacity=".6"');
+  for (let i = 0; i < 6; i++) s += R(100 + i * 160 + Math.sin(t + i) * 20, wy + 60 + (i % 3) * 90, 70, 6, C.waterL, 'rx="3" opacity=".5"');
+  // gocce che cadono dai tetti dopo l'emersione
+  if (k > .6) for (let i = 0; i < 8; i++) { const ph = (t * 1.3 + i * .37) % 1; s += El(80 + i * 130, 1200 + ph * 200, 4, 9, C.waterL, `opacity="${1 - ph}"`); }
+  return s;
+};
+S.camminata = (lt, d, t) => {
+  const off = -lt * 70;
+  let s = skyBG(true, [880, 260]) + mountains(off * .3) + fogBand(1050, 200, t);
+  let h = '';
+  for (let i = 0; i < 7; i++) h += house(i * 260 - 120, 1340, 200, 240 + (i % 3) * 60, { broken: i % 2 === 1 });
+  s += G(h, `translate(${(off % 260)},0)`) + mudGround(1340, 9);
+  s += G(El(0, 0, 200, 30, C.waterD, 'opacity=".6"'), `translate(${(off * 1.4) % 1400 + 1200},1700)`);
+  s += gretaSide(470, 1640, .95, { walk: true, phase: lt * 1.8, beam: .9 });
+  return s;
+};
+S.diga = (lt, d, t) => {
+  let s = skyBG(true, [900, 200]) + dam(-60, 1140, 380, 1260) + fogBand(1150, 240, t) + mudGround(1260, 12);
+  s += gretaSide(470, 1560, .42, { beam: .7 });
+  for (let i = 0; i < 4; i++) {
+    const ph = (lt * .8 + i / 4) % 1;
+    s += Ci(470 + 330 * .42, 1560 - 732 * .42, 40 + ph * 330, 'none', `stroke="${C.white}" stroke-width="${6 * (1 - ph)}" opacity="${(1 - ph) * .7}"`);
+  }
+  const ca = clamp((lt - .4) / .4);
+  s += G(R(-240, -50, 480, 96, '#0c1426', 'rx="48" opacity=".85"') + Ci(-180, -2, 26, 'none', `stroke="${C.amber}" stroke-width="6"`) + Line(-180, -2, -180, -18, C.amber, 5) + Line(-180, -2, -168, 4, C.amber, 5) + T(30, 14, 'ALBA TRA 6h 10m', 40, C.white, 'letter-spacing="2"'), `translate(540,360)`, `opacity="${ca}"`);
+  return s;
+};
+S.registratore = (lt, d, t, fi) => {
+  const m = TL.mark, spike = t >= m.silenzio ? 1 : 0;
+  const jx = spike ? Math.sin(t * 90) * 8 * clamp(1 - (t - m.silenzio) * 1.5) : 0;
+  let s = R(0, 0, 1080, 1920, '#101b2e') + mudGround(1500, 21) + Ci(540, 900, 600, 'url(#glow)', 'opacity=".12"');
+  let b = R(-300, -420, 600, 900, C.gear, 'rx="70"') + R(-300, -420, 120, 900, '#25263a', 'rx="60"') + R(-240, -350, 480, 340, '#0d2b22', 'rx="26"');
+  const n = 30;
+  for (let i = 0; i < n; i++) {
+    const a = TL.amp[Math.max(0, fi - (n - i))] || 0;
+    const hh = Math.max(6, a * 260 * (spike ? 1.3 : .7) + (spike ? (i * 37 % 11) * 6 : 0));
+    b += R(-215 + i * 14.6, -180 - hh / 2, 9, hh, spike ? '#ff6b5b' : '#5af0a6', 'rx="4"');
+  }
+  b += Ci(-195, -315, 13, C.red, `opacity="${Math.floor(t * 2) % 2 ? 1 : .25}"`) + `<text x="-170" y="-302" font-family="Inter" font-weight="800" font-size="34" fill="${C.red}">REC</text>`;
+  b += `<text x="200" y="-302" font-family="Inter" font-weight="700" font-size="30" fill="#5af0a6" text-anchor="end">23:37:${String(Math.floor(lt) % 60).padStart(2, '0')}</text>`;
+  for (const [bx, by, c] of [[-150, 130, C.gearL], [0, 130, C.red], [150, 130, C.gearL], [-75, 290, C.gearL], [75, 290, C.gearL]]) b += Ci(bx, by, 52, c);
+  b += El(-330, 160, 70, 130, C.skin) + El(330, 160, 70, 130, C.skin) + R(-470, 230, 170, 330, C.orange, 'rx="60"') + R(300, 230, 170, 330, C.orange, 'rx="60"');
+  s += G(b, `translate(${540 + jx},950)`);
+  return s;
+};
+S.ascolto = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#0e1a2d') + G(house(-60, 1300, 300, 600, { algae: true }) + house(780, 1300, 360, 520), 'translate(0,0)', 'opacity=".5"') + mudGround(1300, 30, false);
+  s += gretaBust(560, 1200, 1.15 + lt * .02, { hand: true, eye: 1 + clamp((lt - 1) / .5) * .35 });
+  for (let i = 0; i < 3; i++) { const ph = (lt * 1.2 + i / 3) % 1; s += P(`M${300 - ph * 160},${980 - 120} Q${240 - ph * 160},${980 - 40} ${300 - ph * 160},${980 + 40}`, 'none', `stroke="${C.amberL}" stroke-width="8" opacity="${1 - ph}" stroke-linecap="round"`); }
+  return s;
+};
+S.passi = (lt, d, t) => {
+  const z = 1 + lt * .03;
+  let s = R(0, 0, 1080, 1920, C.mud) + mudGround(0, 44);
+  const steps = TL.steps, last = steps.reduce((a, b) => b[0] > a[0] ? b : a, steps[0]);
+  let fp = '';
+  steps.forEach((st, i) => {
+    if (t < st[0]) return;
+    const age = t - st[0], pop = easeOut(age / .15);
+    let ang, r;
+    if (st === last) { ang = -90; r = 150; } else { ang = (st[1] + 1) * 170 + i * 29; r = Math.max(190, 470 - i * 10); }
+    const rad = ang * Math.PI / 180, x = 540 + Math.cos(rad) * r, y = 900 + Math.sin(rad) * r * 1.1;
+    fp += footprint(x + (i % 2 ? 16 : -16), y, ang + 90 + 180, 1.4 * (1.25 - .25 * pop), pop);
+  });
+  s += fp + gretaTop(540, 900, 1.25, Math.sin(lt * 3) * 4);
+  // si ferma: alone rosso
+  const fr = t >= TL.mark.fermano ? clamp((t - TL.mark.fermano) / .6) : 0;
+  s += R(0, 0, 1080, 1920, 'url(#redvig)', `opacity="${fr * .7}"`);
+  return G(s, `translate(540,900) scale(${z}) translate(-540,-900)`);
+};
+S.campanile = (lt, d, t) => {
+  const tb = TL.T.bell, hit = t >= tb ? clamp(1 - (t - tb) * 1.4) : 0;
+  const tilt = ease(lt / 3) * 220;
+  let s = skyBG(true, [300, 380]) + fogBand(1500, 300, t);
+  let tw = '';
+  tw += Poly([[330, 2200], [400, 520], [680, 520], [750, 2200]], C.stone) + Poly([[600, 520], [680, 520], [750, 2200], [640, 2200]], C.stoneD);
+  for (let y = 700; y < 2200; y += 120) tw += Line(330 + (2200 - y) * .0, y, 750, y, C.stoneD, 4, 'opacity=".5"');
+  tw += P('M440,820 L440,640 A45,45 0 0 1 530,640 L530,820 Z', C.sky1) + P('M555,820 L555,640 A45,45 0 0 1 645,640 L645,820 Z', C.sky1);
+  tw += Poly([[380, 520], [540, 160], [700, 520]], C.roof) + Poly([[540, 160], [700, 520], [600, 520]], C.roofD);
+  for (let i = 0; i < 6; i++) tw += R(360 + i * 62, 1100 + (i % 3) * 140, 9, 400, C.algae, 'rx="5" opacity=".7"');
+  // campana fantasma tratteggiata
+  const ghost = t > TL.mark.vuoto ? (Math.sin(t * 13) > 0 ? .8 : .25) * clamp(1 - (t - TL.mark.vuoto) / 2.5) : 0;
+  tw += P('M505,700 Q505,640 540,640 Q575,640 575,700 L590,760 L490,760 Z', 'none', `stroke="${C.white}" stroke-width="5" stroke-dasharray="12 10" opacity="${ghost}"`);
+  for (let i = 0; i < 3; i++) { const ph = clamp((t - tb) * 1.2 - i * .25); if (t >= tb && ph < 1) tw += Ci(540, 720, 60 + ph * 900, 'none', `stroke="${C.amberL}" stroke-width="${18 * (1 - ph)}" opacity="${1 - ph}"`); }
+  s += G(tw, `translate(0,${tilt - 120})`);
+  const sx = Math.sin(t * 70) * 26 * hit, sy = Math.cos(t * 53) * 20 * hit;
+  s = G(s, `translate(${sx},${sy})`);
+  if (t >= tb && t - tb < .09) s += R(0, 0, 1080, 1920, C.white, 'opacity=".85"');
+  return s;
+};
+S.porta = (lt, d, t) => {
+  const on = t >= TL.mark.luce ? clamp((t - TL.mark.luce) / .3) * (.75 + .25 * Math.sin(t * 5) + .1 * Math.sin(t * 23)) : 0;
+  let s = R(0, 0, 1080, 1920, C.stoneDD);
+  for (let y = 0; y < 1500; y += 90) for (let x = (y / 90 % 2) * 80; x < 1080; x += 160) s += R(x + 4, y + 4, 152, 82, C.stoneD, 'rx="8"');
+  s += door(540, 1430, 420, 820, on) + R(0, 1430, 1080, 490, C.mudD) + R(150, 1430, 780, 40, C.stone) + R(110, 1470, 860, 40, C.stoneD);
+  s += gretaSide(170, 1960, 1.05, { beam: .5 });
+  return G(s, `translate(540,1100) scale(${1 + lt * .015}) translate(-540,-1100)`);
+};
+S.cuffie = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#0d1626') + Ci(540, 900, 700, 'url(#glow)', 'opacity=".08"');
+  s += gretaBust(760, 1250, 2.0 + lt * .05, { eye: 1.2 });
+  for (let i = 0; i < 4; i++) { const ph = (lt * 1.1 + i / 4) % 1; const x = 120 + ph * 320; s += P(`M${x},760 Q${x + 60},960 ${x},1160`, 'none', `stroke="${C.amberL}" stroke-width="10" opacity="${(1 - ph) * .9}" stroke-linecap="round"`); }
+  return s;
+};
+S.sussurro = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#070308') + G(gretaBust(760, 1250, 2.1, { eye: 1.4 }), '', 'opacity=".22"') + R(0, 0, 1080, 1920, 'url(#redvig)');
+  const a = clamp(lt / .25) * clamp((d - lt) / .4);
+  const letters = 'Greta…'.split('');
+  let tx = '';
+  letters.forEach((c, i) => {
+    const jx = Math.sin(t * 40 + i * 2) * 5, jy = Math.cos(t * 33 + i) * 6;
+    tx += `<text x="${250 + i * 108 + jx}" y="${930 + jy}" font-family="DejaVu Serif" font-style="italic" font-size="150" fill="#f2d7d7" opacity="${a * (.7 + .3 * Math.sin(t * 17 + i))}">${c}</text>`;
+  });
+  return s + tx;
+};
+S.volto = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#0f1b2e') + Ci(540, 820, 520, 'url(#glow)', 'opacity=".12"');
+  s += gretaFace(540, 1000, 1.05 + lt * .02, lt);
+  return s;
+};
+function sceneDoor(t, lt) {
+  const on = .75 + .25 * Math.sin(t * 5);
+  let s = R(0, 0, 1080, 1920, C.stoneDD);
+  for (let y = 0; y < 1500; y += 90) for (let x = (y / 90 % 2) * 80; x < 1080; x += 160) s += R(x + 4, y + 4, 152, 82, C.stoneD, 'rx="8"');
+  return s + door(540, 1430, 420, 820, on) + R(0, 1430, 1080, 490, C.mudD) + R(150, 1430, 780, 40, C.stone) + R(110, 1470, 860, 40, C.stoneD);
+}
+function sceneCar(t, lt, trail) {
+  let s = skyBG(true, [800, 300]) + mountains() + fogBand(1100, 260, t) + mudGround(1180, 61);
+  s += car(760, 1330, .9);
+  // impronte verso la macchina
+  for (let i = 0; i < 12; i++) {
+    const k = i / 11, x = lerp(300, 700, k) + (i % 2 ? 22 : -22), y = lerp(1880, 1360, k);
+    const op = clamp((trail - i * .08) / .1);
+    s += footprint(x, y, 25, lerp(1.6, .5, k), op);
+  }
+  return s;
+}
+S.scelta1 = (lt, d, t) => sceneDoor(t, lt) + pill('1 · ENTRA IN CHIESA', 540, 430, '#a65f12', C.white, 54);
+S.scelta2 = (lt, d, t) => sceneCar(t, lt, t >= TL.mark.passi7 ? (t - TL.mark.passi7) * 1.5 : 0) + pill('2 · TORNA ALLA MACCHINA', 540, 430, '#1f4f8a', C.white, 54);
+S.finale = (lt, d, t) => {
+  const beat = Math.pow(Math.max(0, Math.sin(lt * Math.PI * 2 / .95)), 8);
+  let top = G(sceneDoor(t, lt), 'translate(0,-480) ');
+  let bot = G(sceneCar(t, lt, 1), 'translate(0,-160)');
+  let s = `<clipPath id="ct"><rect x="0" y="0" width="1080" height="960"/></clipPath><clipPath id="cb"><rect x="0" y="960" width="1080" height="960"/></clipPath>`;
+  s += G(top, '', 'clip-path="url(#ct)"') + G(G(bot, 'translate(0,800)'), '', 'clip-path="url(#cb)"') + R(0, 952, 1080, 16, '#05080f');
+  s += R(0, 0, 1080, 1920, '#000', 'opacity=".25"');
+  s += T(540, 230, 'COSA DEVE FARE GRETA?', 72, C.white, `stroke="${C.navy}" stroke-width="14" paint-order="stroke"`);
+  s += G(pill('1 · ENTRA IN CHIESA', 0, 0, '#a65f12', C.white, 54), `translate(540,820) scale(${1 + beat * .04})`);
+  s += G(pill('2 · TORNA ALLA MACCHINA', 0, 0, '#1f4f8a', C.white, 54), `translate(540,1130) scale(${1 + beat * .04})`);
+  s += T(540, 1420 + Math.sin(lt * 6) * 12, 'COMMENTA 1 O 2 ↓', 74, C.amber, `stroke="${C.navy}" stroke-width="14" paint-order="stroke"`);
+  return s;
+};
+// =============================================================== overlay
+function captions(t) {
+  if (!TL) return '';
+  const c = TL.caps.find((c) => t >= c.s && t < c.e);
+  if (!c) return '';
+  const pop = 1 + .07 * clamp(1 - (t - c.s) * 9);
+  const span = c.w.map((w, i) => `<tspan fill="${i === c.i ? C.amber : C.white}">${w}</tspan>`).join(' ');
+  return G(`<text x="0" y="0" font-family="Inter" font-weight="900" font-size="78" text-anchor="middle" stroke="${C.navy}" stroke-width="16" stroke-linejoin="round" paint-order="stroke" letter-spacing="1">${span}</text>`, `translate(540,1290) scale(${pop})`);
+}
+window.render = (t) => {
+  const fi = Math.round(t * TL.fps);
+  const sh = SHOTS.find((s) => t >= s.t0 && t < s.t1) || SHOTS[SHOTS.length - 1];
+  const lt = t - sh.t0, d = sh.t1 - sh.t0;
+  let s = S[sh.id](lt, d, t, fi);
+  // ingresso scena: piccolo zoom
+  const zin = 1 + .06 * (1 - easeOut(lt / .3));
+  s = G(s, `translate(540,960) scale(${zin}) translate(-540,-960)`);
+  let o = R(0, 0, 1080, 1920, 'url(#vig)');
+  if (sh.id !== 'finale' && sh.id !== 'sussurro') o += pill('VALSORDA · PARTE 1', 540, 175, 'rgba(5,10,20,.65)', C.white, 30);
+  if (t < TL.T.N2 - .1) o += G(R(-330, -95, 660, 190, C.white, 'rx="28"') + T(0, -12, 'IL PAESE RIEMERSO', 62, C.navy) + T(0, 62, 'DOPO 48 ANNI', 62, C.red), 'translate(540,430)', `opacity="${clamp((TL.T.N2 - .1 - t) / .2)}"`);
+  if (!['finale', 'sussurro'].includes(sh.id)) o += captions(t);
+  for (const b of TL.booms) if (t >= b && t - b < .1) o += R(0, 0, 1080, 1920, C.white, `opacity="${.7 * (1 - (t - b) / .1)}"`);
+  const fadeEnd = clamp((t - (TL.dur - .6)) / .6);
+  if (fadeEnd > 0) o += R(0, 0, 1080, 1920, '#000', `opacity="${fadeEnd}"`);
+  document.getElementById('v').innerHTML = DEFS + s + o;
+};
+</script>
+</body></html>
