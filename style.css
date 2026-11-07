@@ -15,9 +15,12 @@
 .concerti__photo { --ratio: 100%; }
 
 /* la band: un muro di due foto, 2px tra l'una e l'altra */
-.wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; border-radius: var(--r-lg); overflow: hidden; }
-.wall__nomi { margin: var(--s-3) 0 0; color: var(--muted); font-size: var(--t-small); }
+.wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "trio pubblico" "nomi ."; column-gap: 2px; }
 .wall > img { width: 100%; aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; }
+.wall__trio { grid-area: trio; border-radius: var(--r-lg) 0 0 var(--r-lg); }
+.wall__pubblico { grid-area: pubblico; border-radius: 0 var(--r-lg) var(--r-lg) 0; }
+/* i nomi sotto ciascuno dei tre musicisti della prima foto */
+.wall__nomi { grid-area: nomi; margin: var(--s-3) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; font-size: var(--t-small); font-weight: 500; color: var(--ink); }
 
 /* cornici dei video TikTok: senza bordo, fondo nero */
 .frame--video { padding: 0; border: 0; background: #000; overflow: hidden; }
@@ -28,10 +31,14 @@
 /* tablet (schermi alti): gli split restano affiancati e le immagini prendono l'altezza dello schermo,
    così ogni sezione riempie il suo schermo senza sforare */
 @media (min-width: 640px) and (max-width: 1023px) {
-  .wall > img { aspect-ratio: 3 / 4; }
+  .wall > img { aspect-ratio: 883 / 1024; }
 }
 @media (max-width: 639px) {
-  .wall { grid-template-columns: 1fr; }
+  .wall { grid-template-columns: 1fr; grid-template-areas: "trio" "nomi" "pubblico"; row-gap: 2px; }
+  .wall__trio { border-radius: var(--r-lg); }
+  .wall__pubblico { margin-top: var(--s-4); border-radius: var(--r-lg); }
+  .wall__nomi { margin-bottom: 0; }
+  #band .group + .group { margin-top: var(--s-7); }
 }
 
 /* concerti: il widget eventi di Facebook */
@@ -59,8 +66,8 @@
 .rows--compact > li { padding-block: var(--s-3); }
 .rows--compact > li:first-child { padding-top: 0; }
 .rows--compact .rows__value { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-/* i ritratti dei musicisti: tre in fila accanto alla formazione */
-.ritratti { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); align-content: start; }
+/* i ritratti dei musicisti: due affiancati accanto alla formazione */
+.ritratti { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); align-content: start; }
 .ritratto { margin: 0; display: grid; gap: var(--s-3); align-content: start; }
 .ritratto > img { width: 100%; aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: var(--r-lg); display: block; transition: transform 300ms cubic-bezier(.23, 1, .32, 1); }
 .ritratto figcaption { display: grid; gap: 2px; }
