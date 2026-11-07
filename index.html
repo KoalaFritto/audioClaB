@@ -99,10 +99,24 @@
           <h2 id="band-h">La band, dal 2007</h2>
           <p>Siamo nati a Catania all'inizio del 2007. Il repertorio viene dai grandi concerti di Claudio Baglioni e lo suoniamo con gli arrangiamenti originali, senza riletture personali.</p>
         </div>
-        <div class="wall">
-          <img class="wall__trio" src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 640px) 44vw, 100vw" width="883" height="1024" alt="Da sinistra: Franco Presti alla chitarra, Gianfranco Alberti alla voce e Luigi Scuderi al basso" loading="lazy" style="object-position: 50% 22%">
-          <img class="wall__pubblico" src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 640px) 44vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
-          <p class="wall__nomi" aria-hidden="true"><span>Franco Presti</span><span>Gianfranco Alberti</span><span>Luigi Scuderi</span></p>
+        <!-- i musicisti uno accanto all'altro, ognuno con il nome sotto -->
+        <div class="grid musicisti">
+          <figure class="musicista musicista--trio span-4">
+            <img src="assets/img/band-musicisti.jpg" srcset="assets/img/band-musicisti-600.jpg 600w, assets/img/band-musicisti.jpg 883w" sizes="(min-width: 640px) 30vw, 100vw" width="883" height="1024" alt="Da sinistra: Franco Presti alla chitarra, Gianfranco Alberti alla voce e Luigi Scuderi al basso" loading="lazy">
+            <figcaption class="musicista__trio-nomi">
+              <span><b>Franco Presti</b>chitarre</span>
+              <span><b>Gianfranco Alberti</b>voce</span>
+              <span><b>Luigi Scuderi</b>basso</span>
+            </figcaption>
+          </figure>
+          <figure class="musicista span-4">
+            <img src="assets/img/faro-621.jpg" srcset="assets/img/faro-450.jpg 450w, assets/img/faro-621.jpg 621w" sizes="(min-width: 640px) 30vw, 50vw" width="621" height="720" alt="Giuseppe Faro alle tastiere sul palco, davanti al pubblico" loading="lazy">
+            <figcaption><b>Giuseppe Faro</b>tastiere</figcaption>
+          </figure>
+          <figure class="musicista span-4">
+            <img src="assets/img/bertolo-800.jpg" srcset="assets/img/bertolo-480.jpg 480w, assets/img/bertolo-800.jpg 800w" sizes="(min-width: 640px) 30vw, 50vw" width="800" height="928" alt="Giuseppe Bertolo suona la chitarra elettrica in un campo" loading="lazy">
+            <figcaption><b>Giuseppe Bertolo</b>chitarre</figcaption>
+          </figure>
         </div>
       </div>
       <div class="group">
@@ -119,15 +133,8 @@
               <li><span class="rows__name">Andrea Bruno</span><span class="rows__value">batteria</span></li>
             </ul>
           </div>
-          <div class="span-6 start-7 ritratti">
-            <figure class="ritratto">
-              <img src="assets/img/faro-576.jpg" srcset="assets/img/faro-480.jpg 480w, assets/img/faro-576.jpg 576w" sizes="(min-width: 1024px) 15vw, (min-width: 640px) 30vw, 50vw" width="576" height="720" alt="Giuseppe Faro alle tastiere sul palco, davanti al pubblico" loading="lazy">
-              <figcaption><span class="ritratto__nome">Giuseppe Faro</span><span class="ritratto__ruolo">tastiere, dal vivo</span></figcaption>
-            </figure>
-            <figure class="ritratto">
-              <img src="assets/img/bertolo-800.jpg" srcset="assets/img/bertolo-480.jpg 480w, assets/img/bertolo-800.jpg 800w" sizes="(min-width: 1024px) 15vw, (min-width: 640px) 30vw, 50vw" width="800" height="1000" alt="Giuseppe Bertolo suona la chitarra elettrica in un campo" loading="lazy">
-              <figcaption><span class="ritratto__nome">Giuseppe Bertolo</span><span class="ritratto__ruolo">chitarre</span></figcaption>
-            </figure>
+          <div class="frame frame--photo span-6 start-7 band__pubblico">
+            <img class="frame__img" src="assets/img/concerti-pubblico.jpg" srcset="assets/img/concerti-pubblico-600.jpg 600w, assets/img/concerti-pubblico.jpg 960w" sizes="(min-width: 640px) 44vw, 100vw" width="960" height="728" alt="Il pubblico davanti al palco durante un concerto degli audioClaB" loading="lazy">
           </div>
         </div>
         <div class="stampa">
