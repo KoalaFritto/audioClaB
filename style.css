@@ -57,7 +57,8 @@
 .musicista__trio-nomi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; }
 .musicista__trio-nomi > span { justify-items: center; }
 .band__pubblico { --ratio: 75%; }
-@media (min-width: 640px) and (max-width: 1023px) { .grid.musicisti > .musicista { grid-column: auto / span 4; } }
+/* tablet: due per riga (la foto dei tre accanto a Faro, poi Bertolo e Bruno), così i tre nomi stanno larghi */
+@media (min-width: 640px) and (max-width: 1023px) { .grid.musicisti > .musicista { grid-column: auto / span 6; } .grid.musicisti { row-gap: var(--s-5); } }
 @media (max-width: 639px) {
   #band .group + .group { margin-top: var(--s-7); }
   .grid.musicisti { row-gap: var(--s-5); }
