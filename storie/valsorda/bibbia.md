@@ -33,7 +33,7 @@
 
 ## Eventi chiave pianificati (colli di bottiglia)
 1. **Ep. 1–2:** il primo contatto, con passi nella registrazione e la campana che suona da un campanile vuoto.
-2. **Ep. 3:** Greta trova il registro parrocchiale. L'ultima pagina, datata 1976, contiene un nome scritto a mano: *Greta Lanzi*.
+2. **Ep. 3:** Greta trova il registro parrocchiale. L'ultima pagina, datata 1976, contiene un nome scritto a mano: *Greta Lanzi*. Dove lo trova dipende dal ramo: sacrestia, canonica o sedile dell'auto. I dettagli sono nella sezione "Come prosegue" dei file dell'Ep. 2.
 3. **Ep. 4:** Greta trova un nastro magnetico del 1976 con la voce di Ada che registra l'evacuazione: "Qualcuno deve restare a tenere il silenzio."
 4. **Ep. 5:** la mail della "produzione" viene da un indirizzo intestato ad A. Lanzi. Ottavio smette di rispondere, oppure risponde con una voce che non è la sua.
 5. **Ep. 6, finale, che cambia in base allo stato:**
@@ -57,6 +57,19 @@
 - **Opzione 2:** spegnere tutto e tornare all'auto. Però la registrazione dice che i passi si trovano proprio tra lei e l'auto.
 - **Scadenza voto:** 24 h dopo la pubblicazione.
 - **Regola di pareggio:** vince l'opzione più rischiosa (1).
+
+## Episodio 2: pronto in due versioni (in attesa del voto sull'Ep. 1)
+| Se vince | File | Bivio dell'Ep. 2 |
+|---|---|---|
+| 1 – Entro in chiesa 🔔 | `ep-02-versione-1-chiesa.md` | 1 = Resto immobile e registro 🎙️ · 2 = Corro fuori dalla porta laterale 🏃‍♀️ |
+| 2 – Torno all'auto 🚗 | `ep-02-versione-2-auto.md` | 1 = Apro la portiera 🚪 · 2 = Corro nella canonica 🏠 |
+
+**Quando chiudono le votazioni dell'Ep. 1:**
+1. Esporta o incolla i commenti in un file, una riga per commento (`utente: testo`).
+2. Conta i voti con `python3 .claude/skills/storia-interattiva-instagram/scripts/conta_voti.py commenti.txt --opzioni 1 2`.
+3. Pubblica la versione vincente, sostituendo `[XX%]` con la percentuale vera.
+4. Riporta in questa bibbia lo "Stato attuale" e il "Bivio aperto" presi dalle note di continuità del file pubblicato, e aggiungi una riga allo storico qui sotto.
+5. Pubblica una Storia con scritto "Avete scelto X" e il link al nuovo Reel.
 
 ## Storico delle scelte
 | Ep. | Bivio | Opzioni | Voti (n / %) | Vincitore | Conseguenza |
