@@ -1,0 +1,246 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;background:#0b1a2a;overflow:hidden}svg{display:block}</style></head>
+<body>
+<svg id="v" width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+// MAYDAY · Part 1 — Flat Vector (animation-studio) · survival-adventure Reel
+const C = {
+  sky1:'#0c1b33', sky2:'#2a4a6e', dusk:'#c98a6a', sea1:'#123a52', sea2:'#0e2d42', sea3:'#0a2233', foam:'#d8eef2',
+  hull:'#eef2f5', hullD:'#c9d3db', sail:'#f4efe4', sailD:'#d9d1c0', mast:'#3a4250', yellow:'#ffc531', yellowD:'#d9a21a',
+  skin:'#e9b48a', hair:'#151522', white:'#f6f3ff', red:'#ff3b3b', amber:'#ffc86b', amberL:'#ffe0a3', green:'#46f29a', greenD:'#0d2a1e',
+  rust:'#5a2a2a', rustD:'#432020', rustL:'#7a3a32', wood:'#8a6340', woodD:'#6b4a2e', ui:'#0b0c18', ui2:'#1c1e33', ui3:'#2a2d4a',
+  map:'#e8dcc0', mapSea:'#a9c8d6', mapLand:'#cdb98f', go:'#1fa64a', stop:'#e0302f', blue:'#2f6bff', cabin:'#1a2236', cabinD:'#141a2a'
+};
+let TL = null, SHOTS = [];
+window.setTimeline = (d) => { TL = d; SHOTS = d.shots.map((s, i) => ({ id: s.id, clock: s.clock, t0: s.t, t1: i + 1 < d.shots.length ? d.shots[i + 1].t : d.dur })); window.ready = true; };
+window.renderFrame = (f) => window.render((f - 1) / TL.fps);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; };
+const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const R = (x, y, w, h, f, e = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${e}/>`;
+const Ci = (x, y, r, f, e = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${e}/>`;
+const El = (x, y, rx, ry, f, e = '') => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}" ${e}/>`;
+const P = (d, f, e = '') => `<path d="${d}" fill="${f}" ${e}/>`;
+const Poly = (pts, f, e = '') => `<polygon points="${pts.map(p => p.join(',')).join(' ')}" fill="${f}" ${e}/>`;
+const Ln = (x1, y1, x2, y2, c, w, e = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${e}/>`;
+const G = (inner, tr = '', e = '') => `<g transform="${tr}" ${e}>${inner}</g>`;
+const Tx = (x, y, txt, size, fill, e = '', w = 900, anchor = 'middle', fam = 'Inter') => `<text x="${x}" y="${y}" font-family="${fam}" font-weight="${w}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" ${e}>${txt}</text>`;
+const DEFS = `<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.sky1}"/><stop offset="1" stop-color="${C.sky2}"/></linearGradient>
+ <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a4a6e"/><stop offset=".8" stop-color="#7b8fa6"/><stop offset="1" stop-color="${C.dusk}"/></linearGradient>
+ <radialGradient id="glowA"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".6"/><stop offset="1" stop-color="${C.amber}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="glowG"><stop offset="0" stop-color="${C.green}" stop-opacity=".35"/><stop offset="1" stop-color="${C.green}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#03060c" stop-opacity="0"/><stop offset="1" stop-color="#03060c" stop-opacity=".6"/></radialGradient>
+ <radialGradient id="redglow" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#5a0d1a" stop-opacity=".9"/><stop offset="1" stop-color="#07101a" stop-opacity="1"/></radialGradient>
+ <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.amberL}" stop-opacity=".5"/><stop offset="1" stop-color="${C.amberL}" stop-opacity="0"/></linearGradient>
+ <clipPath id="screen"><rect x="-205" y="-430" width="410" height="860" rx="52"/></clipPath>
+ <clipPath id="radarC"><circle cx="0" cy="0" r="380"/></clipPath>
+</defs>`;
+// ---------------------------------------------------------------- elementi
+function waves(t, y, amp, col, sp, ph = 0, len = 140) {
+  let d = `M-40,1920 L-40,${y}`;
+  for (let x = -40; x <= 1120; x += 20) d += ` L${x},${y + Math.sin((x / len) + t * sp + ph) * amp + Math.sin(x / (len * .43) - t * sp * 1.3) * amp * .3}`;
+  return P(d + ' L1120,1920 Z', col);
+}
+function rain(t, n = 90, op = .35, ang = 18) {
+  const r = rng(5); let s = '';
+  for (let i = 0; i < n; i++) { const x = r() * 1300 - 100, sp = 1100 + r() * 600, y = ((r() * 2300 + t * sp) % 2300) - 200; s += Ln(x, y, x - ang, y + 50, '#a9c3d9', 3, `opacity="${op}"`); }
+  return s;
+}
+function sailboat(x, y, s, t, o = {}) {
+  let b = P('M-260,0 L260,0 L200,90 L-200,90 Z', C.hull) + P('M60,0 L260,0 L200,90 L40,90 Z', C.hullD) + R(-200, 40, 400, 12, '#2f6bff');
+  b += R(-6, -520, 12, 520, C.mast) + Poly([[0, -500], [0, -40], [230, -40]], C.sail) + Poly([[0, -500], [0, -40], [70, -40]], C.sailD) + Poly([[-12, -460], [-12, -60], [-190, -60]], C.sail);
+  b += R(-150, -30, 130, 30, C.hullD, 'rx="8"');
+  if (o.mara !== false) b += G(R(-24, -60, 48, 70, C.yellow, 'rx="16"') + Ci(0, -80, 22, C.skin) + P('M-22,-82 Q0,-112 22,-82 Z', C.hair) + R(-26, -96, 52, 14, C.yellowD, 'rx="7"'), 'translate(-110,-30)');
+  if (o.lamp) b += Ci(0, -520, 8, C.amberL) + Ci(0, -520, 60, 'url(#glowA)');
+  return G(b, `translate(${x},${y + Math.sin(t * 1.6) * 10}) rotate(${Math.sin(t * 1.2) * 3}) scale(${s})`);
+}
+function tank(level, cracked, t) {
+  let s = R(-170, -230, 340, 460, '#dbe4ea', 'rx="40"') + R(-170, -230, 80, 460, '#c2ccd4', 'rx="40"');
+  const h = 400 * level;
+  s += R(-140, 200 - h, 280, h, '#3e9ec4', 'rx="20"') + R(-140, 200 - h, 280, 18, '#6cc0df', 'rx="9"');
+  if (cracked) {
+    s += P('M60,-120 L30,-60 L70,-10 L35,50 L60,110', 'none', `stroke="#20303c" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"`);
+    for (let i = 0; i < 6; i++) { const ph = (t * 2.2 + i / 6) % 1; s += El(70 + ph * 60, 50 + ph * 260, 9, 16, '#3e9ec4', `opacity="${1 - ph}"`); }
+  }
+  return s;
+}
+function phone(x, y, s, screen, tilt = 0) {
+  let b = R(-225, -455, 450, 910, '#0a0a14', 'rx="70"') + R(-215, -445, 430, 890, '#1c1d33', 'rx="62"');
+  b += G(R(-205, -430, 410, 860, C.ui) + screen, '', 'clip-path="url(#screen)"') + R(-62, -418, 124, 34, '#000', 'rx="17"');
+  const hand = (sx) => G(R(-60, 0, 120, 360, C.yellow, 'rx="60"') + El(0, -10, 70, 95, C.skin), `translate(${sx * 250},330) rotate(${-sx * 14})`);
+  return G(b + hand(-1) + hand(1), `translate(${x},${y}) rotate(${tilt}) scale(${s})`);
+}
+function freighter(x, y, s, lights) {
+  let b = P('M-520,0 L520,0 L460,180 L-470,180 Z', C.rust) + P('M120,0 L520,0 L460,180 L100,180 Z', C.rustD);
+  b += R(-470, 150, 930, 30, C.rustD);
+  for (let i = 0; i < 9; i++) b += R(-430 + i * 100, 60 + (i % 3) * 30, 10, 90, C.rustL, 'opacity=".5"');
+  b += R(180, -260, 260, 260, C.rust) + R(330, -260, 110, 260, C.rustD) + R(220, -330, 180, 70, C.rust) + R(330, -420, 40, 90, '#2a1a1a');
+  for (let i = 0; i < 4; i++) b += R(205 + i * 58, -210, 40, 40, lights ? C.amber : '#1a1010', 'rx="8"');
+  for (let i = 0; i < 8; i++) b += Ci(-400 + i * 70, 90, 14, lights ? C.amberL : '#1a1010');
+  if (lights) b += Ci(310, -180, 260, 'url(#glowA)', `opacity="${lights}"`) + Ci(-150, 90, 300, 'url(#glowA)', `opacity="${lights * .6}"`);
+  b += Tx(-300, 60, 'ELSA MARIE', 46, '#d9c9b0', 'letter-spacing="4"', 900);
+  b += R(-460, -20, 640, 20, C.rustD) + Ln(-300, -20, -300, -200, '#2a1a1a', 8) + Ln(-300, -200, -150, -20, '#2a1a1a', 4);
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+function btn(letter, label, col, x, y, k = 1, sc = 1) {
+  const w = 200 + label.length * 30;
+  const b = R(-w / 2, -58, w, 116, col, 'rx="58"') + Ci(-w / 2 + 60, 0, 38, C.white) + Tx(-w / 2 + 60, 15, letter, 42, col) + Tx(-w / 2 + 120, 16, label, 44, C.white, 'letter-spacing="1"', 900, 'start');
+  return G(b, `translate(${x},${y}) scale(${sc * lerp(.85, 1, k)})`, `opacity="${k}"`);
+}
+// ---------------------------------------------------------------- scene
+const S = {};
+S.sea = (lt, d, t) => {
+  const M = TL.M, hit = clamp((t - M.wave + .6) / .9), cr = t >= M.crack;
+  let s = R(0, 0, 1080, 1920, 'url(#skyDay)') + Ci(800, 700, 200, '#f0c9a0', 'opacity=".35"');
+  s += waves(t, 1150, 18, C.sea1, 1.2) + sailboat(540, 1180, 1.05, t) + waves(t, 1260, 24, C.sea2, 1.6, 2) + waves(t, 1400, 30, C.sea3, 2, 4);
+  // l'onda grande
+  if (t > M.wave - .9 && t < M.crack + .6) {
+    const k = ease(hit);
+    s += G(P('M-100,1920 L-100,900 Q200,600 520,760 Q700,850 760,1000 Q560,900 400,1050 L1180,1920 Z', C.sea2) + P('M200,700 Q420,640 560,780 Q480,730 320,780 Z', C.foam), `translate(${lerp(-1200, 0, k)},${lerp(200, 0, k)})`, `opacity="${t < M.crack + .2 ? 1 : 1 - (t - M.crack - .2) / .4}"`);
+  }
+  if (cr) {
+    const k = easeOut((t - M.crack) / .3), lvl = lerp(1, 9 / 40, ease((t - M.crack - .2) / 1.4));
+    s += G(R(-220, -300, 440, 600, '#0b1a2a', 'rx="40" opacity=".88"') + tank(lvl, true, t) + Tx(0, 270, `${(lvl * 40).toFixed(1)} L`, 54, lvl < .5 ? C.red : C.white), `translate(540,780) scale(${lerp(.7, 1, k)})`, `opacity="${k}"`);
+  }
+  return s;
+};
+S.chart = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#1a2236') + G(R(-430, -620, 860, 1240, C.mapSea, 'rx="16"') + P('M-430,-620 L-250,-620 Q-200,-300 -300,-100 Q-380,100 -250,350 Q-300,500 -430,620 Z', C.mapLand) + P('M430,-620 L300,-620 Q240,-400 300,-200 Q350,-50 260,150 Q300,400 430,620 Z', C.mapLand), 'translate(540,980)');
+  for (let i = 0; i < 6; i++) s += Ln(110 + i * 172, 360, 110 + i * 172, 1600, '#8fb0c0', 2, 'opacity=".5"');
+  const k = ease(lt / 1.4);
+  s += `<path d="M820,820 Q600,900 470,1000 Q330,1110 250,1180" fill="none" stroke="${C.red}" stroke-width="8" stroke-dasharray="20 16" stroke-dashoffset="${-t * 30}" opacity=".9"/>`;
+  s += G(Poly([[0, -26], [18, 20], [-18, 20]], C.yellow) + Ci(0, 0, 40 + 10 * Math.sin(t * 4), 'none', `stroke="${C.yellow}" stroke-width="4"`), 'translate(560,930) rotate(-120)');
+  s += G(R(-200, -46, 400, 92, '#0b1a2a', 'rx="46"') + Tx(0, 15, '21 DAYS TO LAND', 40, C.yellow, 'letter-spacing="2"'), `translate(540,470) scale(${lerp(.7, 1, k)})`, `opacity="${k}"`);
+  s += Tx(820, 790, 'EUROPE', 26, '#6b5a3a', 'letter-spacing="4"', 800) + Tx(250, 1150, 'AMERICAS', 26, '#6b5a3a', 'letter-spacing="4"', 800);
+  return s;
+};
+S.cabin = (lt, d, t) => {
+  const blink = Math.floor(t * 3) % 2 === 0 && t >= TL.M.radio - .2;
+  let s = R(0, 0, 1080, 1920, C.cabin) + R(0, 1300, 1080, 620, C.cabinD) + Ci(800, 520, 70, '#0e1424') + Ci(800, 520, 54, '#20304a') + G(rain(t, 12, .5), 'translate(746,466) scale(.1)');
+  s += R(120, 1080, 840, 200, '#2a3248', 'rx="30"') + R(160, 1040, 760, 80, '#3a4560', 'rx="30"');
+  s += G(El(0, 0, 260, 70, C.yellow) + Ci(300, -30, 60, C.skin) + P('M260,-40 Q300,-110 360,-40 Z', C.hair), `translate(420,${1040 - (t > TL.M.radio ? easeOut((t - TL.M.radio) / .4) * 30 : 0)})`);
+  s += R(620, 700, 300, 160, '#11161f', 'rx="16"') + R(650, 730, 140, 60, blink ? C.red : '#3a1010', 'rx="8"') + Ci(860, 780, 30, '#2a2f3c');
+  if (blink) s += Ci(720, 760, 200, 'url(#glowA)', 'opacity=".5"');
+  return s;
+};
+S.radio = (lt, d, t, fi) => {
+  const fl = Math.floor(t * 2.5) % 2 === 0;
+  let s = R(0, 0, 1080, 1920, '#10141e') + Ci(540, 900, 600, 'url(#glowA)', 'opacity=".2"');
+  let b = R(-420, -300, 840, 600, '#1d222e', 'rx="40"') + R(-420, -300, 840, 60, '#252b38', 'rx="40"');
+  b += R(-360, -210, 420, 200, '#071a10', 'rx="14"') + Tx(-150, -70, 'CH 16', 100, C.green, '', 800, 'middle', 'DejaVu Sans Mono');
+  b += Tx(-150, -170, fl ? 'MAYDAY' : '', 46, C.red, 'letter-spacing="6"', 900);
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) b += Ci(180 + i * 36, -170 + j * 36, 10, '#0e1118');
+  const a = TL.amp ? 0 : 0;
+  for (let i = 0; i < 24; i++) { const h = 10 + Math.abs(Math.sin(t * 9 + i * 1.7)) * 60; b += R(-350 + i * 17, 60 - h / 2, 9, h, C.green, 'rx="4" opacity=".8"'); }
+  b += Ci(-250, 200, 50, '#2a2f3c') + Ci(-90, 200, 50, '#2a2f3c') + R(80, 170, 280, 60, '#2a2f3c', 'rx="30"');
+  s += G(b, `translate(540,${900 + Math.sin(t * 1.4) * 6}) rotate(${Math.sin(t * 1.1) * 1.5})`);
+  return s;
+};
+S.radar = (lt, d, t) => {
+  const ang = (t * 140) % 360;
+  let s = R(0, 0, 1080, 1920, '#081018') + Ci(540, 960, 430, '#0f1b14') ;
+  let r = Ci(0, 0, 380, C.greenD);
+  for (const rr of [95, 190, 285, 380]) r += Ci(0, 0, rr, 'none', `stroke="${C.green}" stroke-width="2" opacity=".35"`);
+  r += Ln(-380, 0, 380, 0, C.green, 2, 'opacity=".25"') + Ln(0, -380, 0, 380, C.green, 2, 'opacity=".25"');
+  r += G(P('M0,0 L380,0 A380,380 0 0 0 329,-190 Z', C.green, 'opacity=".28"'), `rotate(${ang})`) + G(Ln(0, 0, 380, 0, C.green, 4), `rotate(${ang})`);
+  r += Ci(0, 0, 10, C.yellow) + Ci(0, 0, 190, 'none', `stroke="${C.red}" stroke-width="4" stroke-dasharray="14 12" opacity="${.5 + .3 * Math.sin(t * 5)}"`);
+  r += Tx(0, -200, '2.0 NM', 26, C.red, '', 800);
+  s += G(G(r, '', 'clip-path="url(#radarC)"'), 'translate(540,960)') + Ci(540, 960, 400, 'none', `stroke="#1d2a22" stroke-width="40"`);
+  s += G(R(-210, -44, 420, 88, '#000', 'rx="44" opacity=".6"') + Tx(0, 15, 'NO CONTACTS', 40, C.green, 'letter-spacing="3"', 900, 'middle', 'DejaVu Sans Mono'), 'translate(540,1480)');
+  return s;
+};
+S.satphone = (lt, d, t) => {
+  const M = TL.M, m1 = easeOut((t - M.msg) / .25), m2 = easeOut((t - M.reply) / .25);
+  let sc = R(-205, -430, 410, 860, C.ui) + Tx(-150, -395, '2:49', 22, C.white, '', 700, 'start') + Tx(150, -395, 'SAT · 63%', 18, C.green, '', 700, 'end');
+  sc += R(-205, -360, 410, 110, C.ui2) + Ci(0, -320, 26, '#3a3d66') + Tx(0, -311, 'T', 26, C.white) + Tx(0, -270, 'Theo · via satellite', 20, C.white, '', 700);
+  sc += G(R(-150, -60, 335, 150, C.blue, 'rx="28"') + Tx(-128, -18, 'mayday on ch16.', 22, C.white, '', 600, 'start') + Tx(-128, 14, 'ship called Elsa Marie.', 22, C.white, '', 600, 'start') + Tx(-128, 46, 'radar shows nothing??', 22, C.white, '', 600, 'start'), `translate(0,${lerp(30, -110, m1)})`, `opacity="${m1}"`);
+  if (t >= M.msg + .4 && t < M.reply) { const k = Math.floor(t * 3) % 3; sc += R(-185, 80, 110, 60, C.ui3, 'rx="30"') + [0, 1, 2].map((i) => Ci(-160 + i * 30, 110, 9, C.white, `opacity="${i === k ? 1 : .35}"`)).join(''); }
+  sc += G(R(-185, -60, 350, 150, C.ui3, 'rx="28"') + Tx(-163, -18, 'Mara. That ship sank', 22, C.white, '', 700, 'start') + Tx(-163, 14, 'in 1962.', 22, C.red, '', 900, 'start') + Tx(-163, 46, "Don't answer it.", 22, C.white, '', 700, 'start'), `translate(0,${lerp(140, 110, m2)})`, `opacity="${m2}"`);
+  return R(0, 0, 1080, 1920, C.cabin) + Ci(540, 950, 620, '#3a1027', `opacity="${m2 * .8}"`) + phone(540, 980, 1.08, sc, -2);
+};
+S.ship = (lt, d, t) => {
+  const M = TL.M, li = clamp((t - M.lights) / .5) * (.85 + .15 * Math.sin(t * 7));
+  let s = R(0, 0, 1080, 1920, 'url(#sky)') + waves(t, 1150, 30, C.sea1, 1.8);
+  s += freighter(640, 1120, .95, li > 0 ? li : 0);
+  s += waves(t, 1240, 40, C.sea2, 2.3, 2) + sailboat(200, 1480, .6, t, { mara: true, lamp: true }) + waves(t, 1520, 50, C.sea3, 2.7, 4) + rain(t, 110, .4);
+  if (t > M.lights) s += Ln(180, 1170, 900, 980, '#ffe0a3', 3, `opacity="${li * .25}"`);
+  return s;
+};
+S.ladder = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, C.rust) + R(640, 0, 440, 1920, C.rustD);
+  for (let y = 120; y < 1500; y += 180) for (let x = 60; x < 1080; x += 140) s += Ci(x, y, 9, C.rustL);
+  for (let i = 0; i < 7; i++) s += R(100 + i * 140, 300 + (i % 3) * 200, 14, 600, '#3a1818', 'opacity=".5"');
+  const sw = Math.sin(t * 1.8) * 14;
+  let l = Ln(-110, 0, -110 + sw, 1500, '#c9a66b', 10) + Ln(110, 0, 110 + sw, 1500, '#c9a66b', 10);
+  for (let y = 80; y < 1500; y += 120) l += Ln(-110 + sw * y / 1500, y, 110 + sw * y / 1500, y, C.wood, 22);
+  s += G(l, 'translate(520,0)') + waves(t, 1560, 40, C.sea2, 2.4) + waves(t, 1660, 50, C.sea3, 2.8, 3) + rain(t, 80, .3);
+  return s;
+};
+S.crates = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#0e1a2a') + R(0, 1150, 1080, 770, '#3a2a22') + R(0, 1150, 1080, 20, '#4a362a');
+  const crate = (x, y, w, h) => R(x, y, w, h, C.wood) + R(x + w * .7, y, w * .3, h, C.woodD) + R(x, y + h * .45, w, 16, C.woodD) + Tx(x + w * .38, y + h * .32, 'FRESH', 34, '#2a1a10', 'letter-spacing="3"', 900) + Tx(x + w * .38, y + h * .32 + 40, 'WATER', 34, '#2a1a10', 'letter-spacing="3"', 900);
+  s += crate(120, 1000, 300, 240) + crate(440, 1000, 300, 240) + crate(280, 760, 300, 240) + crate(760, 1060, 240, 180);
+  s += Ci(860, 900, 18, C.amberL) + Ci(860, 900, 220, 'url(#glowA)', `opacity="${.8 + .2 * Math.sin(t * 9)}"`) + R(845, 920, 30, 80, '#2a2a2a');
+  s += R(0, 1500, 1080, 26, '#2a1d17') + R(0, 1430, 1080, 18, '#2a1d17');
+  for (let x = 40; x < 1080; x += 120) s += R(x, 1430, 16, 96, '#2a1d17');
+  return s + rain(t, 70, .3);
+};
+S.choice = (lt, d, t) => {
+  const M = TL.M;
+  let s = R(0, 0, 1080, 1920, '#08111c') + G(freighter(540, 1500, .9, .7), '', 'opacity=".35"') + waves(t, 1560, 30, C.sea3, 2);
+  s += G(Tx(0, 0, 'SHOULD MARA', 84, C.white) + Tx(0, 100, `<tspan fill="${C.red}">CLIMB</tspan> ABOARD?`, 84, C.white), 'translate(540,560)', `opacity="${easeOut(lt / .3)}"`);
+  s += btn('A', 'CLIMB ABOARD', C.go, 540, 900, easeOut((t - M.A) / .3));
+  s += btn('B', 'SAIL AWAY', C.stop, 540, 1060, easeOut((t - M.B) / .3));
+  return s;
+};
+const HANDLE = '@aorb.horror_stories';
+function miniLogo(x, y, sc) { return G(Ci(0, 0, 40, '#1f2250') + Tx(-12, 15, 'A', 40, C.go, '', 900) + Tx(15, 15, 'B', 40, C.stop, '', 900) + Poly([[4, -24], [10, -24], [-4, 26], [-10, 26]], C.white), `translate(${x},${y}) scale(${sc})`); }
+function handleTag() { return G(R(-330, -34, 330, 68, '#05060f', 'rx="34" opacity=".55"') + miniLogo(-296, 0, .7) + Tx(-262, 9, HANDLE, 24, C.white, '', 700, 'start'), 'translate(1040,320)'); }
+S.finale = (lt, d, t) => {
+  const beat = Math.pow(Math.max(0, Math.sin(lt * Math.PI * 2 / .92)), 8);
+  let s = R(0, 0, 1080, 1920, 'url(#redglow)') + miniLogo(540, 300, 2.2) + Tx(540, 440, HANDLE, 40, C.white, 'letter-spacing="1"', 800);
+  s += Tx(540, 640, 'MAYDAY  ·  PART 1', 32, '#e8e2ff', 'letter-spacing="4"', 600) + G(Tx(0, 0, 'PART 2', 190, C.red), `translate(540,850) scale(${1 + beat * .03})`);
+  s += Tx(540, 950, 'DAY 3 OF 21  ·  9 L LEFT', 34, '#e8e2ff', 'letter-spacing="3"', 600);
+  s += R(330, 1010, 420, 76, 'none', `rx="38" stroke="${C.white}" stroke-width="4"`) + Tx(540, 1060, 'FOLLOW FOR PART 2', 30, C.white, 'letter-spacing="1"', 800);
+  s += btn('A', 'CLIMB ABOARD', C.go, 540, 1200, 1, .78) + btn('B', 'SAIL AWAY', C.stop, 540, 1320, 1, .78);
+  s += G(Tx(0, 0, `COMMENT <tspan fill="${C.red}">A OR B</tspan>`, 70, C.white), `translate(540,${1480 + Math.sin(lt * 6) * 8})`);
+  return s;
+};
+// ---------------------------------------------------------------- HUD e sottotitoli
+function hud(t, clock) {
+  const M = TL.M, lvl = t < M.crack + .2 ? 40 : lerp(40, 9, ease((t - M.crack - .2) / 1.4));
+  const low = lvl < 20;
+  return Ci(78, 112, 7, C.red) + Tx(94, 120, 'DAY 3/21', 22, C.red, 'letter-spacing="2"', 800, 'start')
+    + Tx(66, 186, clock, 60, C.white, '', 900, 'start') + Tx(68, 222, 'LAND IN 21 DAYS', 24, C.amber, 'letter-spacing="1"', 800, 'start')
+    + P('M84,234 Q72,252 74,262 A10,10 0 0 0 94,262 Q96,252 84,234Z', low ? C.red : '#6cc0df') + Tx(106, 264, `WATER ${lvl.toFixed(1)} L`, 24, low ? C.red : '#9fd6ea', '', 800, 'start');
+}
+function captions(t) {
+  const c = TL.caps.find((c) => t >= c.s && t < c.e);
+  if (!c) return '';
+  if (c.v) {
+    const span = c.w.map((w, i) => `<tspan fill="${i === c.i ? '#ffffff' : C.green}">${w}</tspan>`).join(' ');
+    return G(R(-460, -70, 920, 100, '#000', 'rx="18" opacity=".55"') + `<text x="0" y="0" font-family="DejaVu Sans Mono" font-weight="700" font-size="52" text-anchor="middle">${span}</text>`, 'translate(540,1310)');
+  }
+  const SC = new Set(TL.scary), pop = 1 + .07 * clamp(1 - (t - c.s) * 9);
+  const span = c.w.map((w, i) => `<tspan fill="${i === c.i ? (SC.has(w) ? C.red : '#ffd23f') : C.white}">${w}</tspan>`).join(' ');
+  return G(`<text x="0" y="0" font-family="Inter" font-weight="900" font-size="76" text-anchor="middle" stroke="#06101a" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${span}</text>`, `translate(540,1300) scale(${pop})`);
+}
+window.render = (t) => {
+  const fi = Math.round(t * TL.fps);
+  const sh = SHOTS.find((s) => t >= s.t0 && t < s.t1) || SHOTS[SHOTS.length - 1];
+  const lt = t - sh.t0, d = sh.t1 - sh.t0;
+  let s = S[sh.id](lt, d, t, fi);
+  s = G(s, `translate(540,960) scale(${1 + .05 * (1 - easeOut(lt / .3))}) translate(-540,-960)`);
+  let o = R(0, 0, 1080, 1920, 'url(#vig)');
+  if (sh.id !== 'finale') o += hud(t, sh.clock) + handleTag();
+  if (t < TL.T.N2 - .1) o += G(R(-420, -95, 840, 190, C.white, 'rx="28"') + Tx(0, -12, 'ALONE IN THE ATLANTIC.', 54, '#0b1a2a') + Tx(0, 62, '9 LITERS OF WATER.', 62, C.red), 'translate(540,470)', `opacity="${clamp((TL.T.N2 - .1 - t) / .2)}"`);
+  if (!['finale', 'choice'].includes(sh.id)) o += captions(t);
+  for (const b of TL.booms) if (t >= b && t - b < .1) o += R(0, 0, 1080, 1920, C.white, `opacity="${.5 * (1 - (t - b) / .1)}"`);
+  document.getElementById('v').innerHTML = DEFS + s + o;
+};
+</script>
+</body></html>
