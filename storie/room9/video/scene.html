@@ -262,8 +262,17 @@ S.finale = (lt, d, t) => {
   s += R(330, 1010, 420, 76, 'none', `rx="38" stroke="${C.white}" stroke-width="4"`) + Tx(540, 1060, 'FOLLOW FOR PART 2', 30, C.white, 'letter-spacing="1"', 800);
   s += btn('A', 'OPEN IT', C.go, '', 540, 1200, 1, .78) + btn('B', 'KEEP IT LOCKED', C.stop, '', 540, 1320, 1, .78);
   s += G(Tx(0, 0, `COMMENT <tspan fill="${C.red}">A OR B</tspan>`, 70, C.white), `translate(540,${1480 + Math.sin(lt * 6) * 8})`);
+  s += miniLogo(540, 300, 2.2) + Tx(540, 440, HANDLE, 40, C.white, 'letter-spacing="1"', 800);
   return s;
 };
+
+const HANDLE = '@aorb.horror_stories';
+function miniLogo(x, y, sc) {
+  return G(Ci(0, 0, 40, '#1f2250') + Tx(-12, 15, 'A', 40, C.go, '', 900) + Tx(15, 15, 'B', 40, C.stop, '', 900) + Poly([[4, -24], [10, -24], [-4, 26], [-10, 26]], C.white), `translate(${x},${y}) scale(${sc})`);
+}
+function handleTag() {
+  return G(R(-330, -34, 330, 68, '#05060f', 'rx="34" opacity=".55"') + miniLogo(-296, 0, .7) + Tx(-262, 9, HANDLE, 24, C.white, '', 700, 'start'), 'translate(1040,320)');
+}
 // ---------------------------------------------------------------- HUD e sottotitoli
 function hud(t, clock) {
   const ks = [[0, 70], [TL.T.N3, 84], [TL.M.buzz, 98], [TL.M.knock, 118], [TL.M.nametag, 132], [TL.M.lens, 150], [TL.dur, 152]];
@@ -294,6 +303,7 @@ window.render = (t) => {
   s = G(s, `translate(540,960) scale(${1 + .05 * (1 - easeOut(lt / .3))}) translate(-540,-960)`);
   let o = R(0, 0, 1080, 1920, 'url(#vig)');
   if (sh.id !== 'finale') o += hud(t, sh.clock);
+  if (sh.id !== 'finale') o += handleTag();
   if (t < TL.T.N2 - .1) o += G(R(-420, -95, 840, 190, C.white, 'rx="28"') + Tx(0, -12, '9 ROOMS ON THE SIGN.', 56, '#14163a') + Tx(0, 62, 'ONLY 8 DOORS.', 62, C.red), 'translate(540,470)', `opacity="${clamp((TL.T.N2 - .1 - t) / .2)}"`);
   if (!['finale', 'note', 'choice'].includes(sh.id)) o += captions(t);
   for (const b of TL.booms) if (t >= b && t - b < .1) o += R(0, 0, 1080, 1920, C.white, `opacity="${.55 * (1 - (t - b) / .1)}"`);
