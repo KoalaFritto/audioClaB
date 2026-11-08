@@ -54,7 +54,7 @@ function sailboat(x, y, s, t, o = {}) {
   let b = P('M-260,0 L260,0 L200,90 L-200,90 Z', C.hull) + P('M60,0 L260,0 L200,90 L40,90 Z', C.hullD) + R(-200, 40, 400, 12, '#2f6bff');
   b += R(-6, -520, 12, 520, C.mast) + Poly([[0, -500], [0, -40], [230, -40]], C.sail) + Poly([[0, -500], [0, -40], [70, -40]], C.sailD) + Poly([[-12, -460], [-12, -60], [-190, -60]], C.sail);
   b += R(-150, -30, 130, 30, C.hullD, 'rx="8"');
-  if (o.mara !== false) b += G(R(-24, -60, 48, 70, C.yellow, 'rx="16"') + Ci(0, -80, 22, C.skin) + P('M-22,-82 Q0,-112 22,-82 Z', C.hair) + R(-26, -96, 52, 14, C.yellowD, 'rx="7"'), 'translate(-110,-30)');
+  if (o.mara !== false) b += maraSide(-120, 0, .2, { t, pose: 'tiller', beam: o.beamM || 0 });
   if (o.lamp) b += Ci(0, -520, 8, C.amberL) + Ci(0, -520, 60, 'url(#glowA)');
   return G(b, `translate(${x},${y + Math.sin(t * 1.6) * 10}) rotate(${Math.sin(t * 1.2) * 3}) scale(${s})`);
 }
@@ -71,7 +71,7 @@ function tank(level, cracked, t) {
 function phone(x, y, s, screen, tilt = 0) {
   let b = R(-225, -455, 450, 910, '#0a0a14', 'rx="70"') + R(-215, -445, 430, 890, '#1c1d33', 'rx="62"');
   b += G(R(-205, -430, 410, 860, C.ui) + screen, '', 'clip-path="url(#screen)"') + R(-62, -418, 124, 34, '#000', 'rx="17"');
-  const hand = (sx) => G(R(-60, 0, 120, 360, C.yellow, 'rx="60"') + El(0, -10, 70, 95, C.skin), `translate(${sx * 250},330) rotate(${-sx * 14})`);
+  const hand = (sx) => G(R(-60, 0, 120, 360, MC.jacket, 'rx="60"') + R(-60, 120, 120, 26, MC.refl) + El(0, -10, 70, 95, MC.skin) + El(0, 30, 72, 60, MC.glove), `translate(${sx * 250},330) rotate(${-sx * 14})`);
   return G(b + hand(-1) + hand(1), `translate(${x},${y}) rotate(${tilt}) scale(${s})`);
 }
 function freighter(x, y, s, lights) {
@@ -91,8 +91,87 @@ function btn(letter, label, col, x, y, k = 1, sc = 1) {
   const b = R(-w / 2, -58, w, 116, col, 'rx="58"') + Ci(-w / 2 + 60, 0, 38, C.white) + Tx(-w / 2 + 60, 15, letter, 42, col) + Tx(-w / 2 + 120, 16, label, 44, C.white, 'letter-spacing="1"', 900, 'start');
   return G(b, `translate(${x},${y}) scale(${sc * lerp(.85, 1, k)})`, `opacity="${k}"`);
 }
+
+// ---------------------------------------------------------------- MARA (character design)
+const MC = { jacket:'#ffc531', jacketD:'#dca21b', jacketL:'#ffd96a', refl:'#c7cfd8', vest:'#ff6a1a', vestD:'#d9520c', strap:'#22262f',
+  pants:'#e8b21f', pantsD:'#c4911a', boot:'#1f2430', glove:'#2a2f3c', beanie:'#1d8a8f', beanieD:'#156a6e', hair:'#c4622f', hairD:'#9c4a22', skin:'#e9b48a', skinD:'#cf9670' };
+function braid(x0, y0, len, sway, sc = 1) {
+  let s = '', x = x0, y = y0;
+  for (let i = 0; i < 7; i++) {
+    const k = i / 6, dx = Math.sin(sway + i * .6) * 6 * k * sc;
+    s += El(x + dx, y, 17 * sc * (1 - k * .35), 22 * sc, i % 2 ? MC.hairD : MC.hair, `transform="rotate(${(i % 2 ? 18 : -18)} ${x + dx} ${y})"`);
+    y += len / 7;
+  }
+  return s + El(x + Math.sin(sway + 4) * 6 * sc, y + 4, 9 * sc, 14 * sc, MC.beanie);
+}
+// in piedi, di tre quarti verso destra; (x,y) = piedi; s scala (1 = alta ~900px)
+function maraSide(x, y, s, o = {}) {
+  const t = o.t || 0, wind = Math.sin(t * 2.4);
+  let b = '';
+  if (o.beam) b += Poly([[95, -885], [900, -1150], [900, -560]], 'url(#beam)', `opacity="${o.beam}"`);
+  // gambe e stivali
+  b += R(-95, -430, 82, 360, MC.pantsD, 'rx="34"') + R(-5, -430, 88, 360, MC.pants, 'rx="36"');
+  b += R(-110, -110, 105, 110, MC.boot, 'rx="26"') + R(-10, -110, 120, 110, MC.boot, 'rx="26"') + R(-10, -16, 128, 16, '#11141c', 'rx="8"');
+  // treccia dietro la spalla (disegnata prima del busto)
+  b += braid(-118, -850, 330, t * 2.4 + 1, 1);
+  // braccio dietro
+  b += P('M-80,-700 Q-150,-560 -120,-430 L-70,-430 Q-90,-560 -40,-660 Z', MC.jacketD);
+  // giacca: base, piano d'ombra, piano di luce
+  b += P('M-120,-760 Q-150,-560 -140,-380 L130,-380 Q150,-560 110,-760 Q0,-800 -120,-760 Z', MC.jacket);
+  b += P('M-120,-760 Q-150,-560 -140,-380 L-60,-380 Q-80,-560 -50,-770 Z', MC.jacketD);
+  b += P('M60,-770 Q110,-760 115,-700 Q130,-560 128,-420 L90,-420 Q95,-600 60,-770 Z', MC.jacketL);
+  b += R(-142, -440, 272, 26, MC.refl) + R(-142, -400, 272, 20, MC.jacketD);
+  // giubbotto autogonfiabile (collare + cinghie)
+  b += P('M-95,-770 Q0,-720 95,-770 L80,-640 Q0,-610 -80,-640 Z', MC.vest) + P('M-95,-770 Q-60,-745 -40,-735 L-40,-628 Q-60,-632 -80,-640 Z', MC.vestD);
+  b += R(-62, -640, 22, 220, MC.strap, 'rx="8"') + R(42, -640, 22, 220, MC.strap, 'rx="8"') + R(-62, -520, 126, 20, MC.strap, 'rx="8"') + R(-14, -530, 28, 40, '#9aa3ad', 'rx="6"');
+  // colletto alto
+  b += P('M-70,-840 L70,-840 L90,-760 L-90,-760 Z', MC.jacket) + P('M-70,-840 L-20,-840 L-30,-760 L-90,-760 Z', MC.jacketD);
+  // testa (senza volto): pelle, piano d'ombra, naso di profilo
+  b += Ci(10, -890, 72, MC.skin) + P('M10,-962 A72,72 0 0 0 10,-818 Q-30,-860 -30,-890 Q-30,-930 10,-962 Z', MC.skinD, 'opacity=".55"');
+  b += P('M80,-905 Q100,-890 82,-874 Z', MC.skinD);
+  // capelli e treccia
+  b += P('M-62,-930 Q-110,-880 -118,-850 L-90,-845 Q-70,-880 -40,-905 Z', MC.hair);
+  // berretto
+  b += P('M-66,-905 Q-60,-990 15,-992 Q85,-990 86,-905 Z', MC.beanie) + R(-70, -915, 160, 30, MC.beanieD, 'rx="14"') + Ci(10, -995, 16, MC.beanieD);
+  // braccio avanti
+  if (o.pose === 'tiller') b += P('M70,-720 Q170,-640 230,-560 L200,-525 Q130,-600 40,-660 Z', MC.jacket) + R(180, -560, 70, 30, MC.refl, 'transform="rotate(38 215 -545)"') + Ci(232, -538, 30, MC.glove);
+  else b += P('M80,-720 Q140,-560 120,-430 L70,-430 Q90,-560 40,-680 Z', MC.jacket) + R(72, -480, 54, 22, MC.refl) + Ci(98, -415, 30, MC.glove);
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+// di spalle (scena della scelta)
+function maraBack(x, y, s, t = 0) {
+  let b = P('M-330,520 Q-320,160 -120,110 L120,110 Q320,160 330,520 Z', MC.jacket) + P('M120,110 Q320,160 330,520 L170,520 Q190,240 120,110 Z', MC.jacketD);
+  b += R(-320, 330, 640, 40, MC.refl) + R(-180, 140, 50, 380, MC.strap, 'rx="16"') + R(130, 140, 50, 380, MC.strap, 'rx="16"');
+  b += P('M-200,120 Q0,40 200,120 L180,190 Q0,140 -180,190 Z', MC.vest);
+  b += P('M-120,60 L120,60 L150,140 L-150,140 Z', MC.jacketD);
+  b += Ci(0, -90, 160, MC.hair) + P('M-160,-90 Q-150,40 -80,60 L80,60 Q150,40 160,-90 Z', MC.hairD, 'opacity=".5"');
+  b += braid(0, 40, 420, t * 2.4, 2.1);
+  b += P('M-158,-110 Q-150,-290 0,-292 Q150,-290 158,-110 Z', MC.beanie) + R(-165, -130, 330, 56, MC.beanieD, 'rx="26"') + Ci(0, -296, 30, MC.beanieD);
+  return G(b, `translate(${x},${y}) scale(${s})`);
+}
+// in cuccetta: sdraiata (k=0) -> seduta (k=1)
+function maraBunk(x, y, k, t) {
+  let b = P('M-330,0 Q-340,-90 -200,-100 L250,-100 Q330,-90 320,0 Z', '#2c3d6b') + P('M-330,0 Q-340,-40 -260,-50 L300,-50 Q330,-30 320,0 Z', '#22305a');
+  for (let i = 0; i < 5; i++) b += R(-240 + i * 110, -98, 8, 96, '#22305a');
+  const tor = G(P('M-60,0 Q-70,-180 0,-200 Q70,-180 60,0 Z', MC.jacket) + P('M-60,0 Q-70,-180 0,-200 L0,0 Z', MC.jacketD) + R(-62, -60, 124, 18, MC.refl)
+    + Ci(0, -250, 62, MC.skin) + P('M0,-312 A62,62 0 0 0 0,-188 Q-30,-220 -30,-250 Q-30,-280 0,-312 Z', MC.skinD, 'opacity=".55"')
+    + P('M-56,-262 Q-52,-334 0,-336 Q52,-334 56,-262 Z', MC.beanie) + R(-60, -272, 120, 24, MC.beanieD, 'rx="12"') + braid(-45, -215, 160, t * 2, .7), '', '');
+  b += G(tor, `translate(${lerp(-40, -190, k)},${lerp(-70, -60, k)}) rotate(${lerp(-90, 0, k)})`);
+  return G(b, `translate(${x},${y})`);
+}
 // ---------------------------------------------------------------- scene
 const S = {};
+
+S.maraIntro = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, 'url(#skyDay)') + Ci(820, 520, 220, '#f0c9a0', 'opacity=".35"') + waves(t, 1250, 22, C.sea1, 1.3);
+  // poppa della barca, timone a barra
+  s += P('M-60,1500 L1140,1500 L1140,1920 L-60,1920 Z', C.hull) + R(-60, 1500, 1200, 26, C.hullD) + R(-60, 1610, 1200, 18, '#2f6bff');
+  s += R(150, 1240, 14, 260, '#9aa3ad') + Ln(160, 1240, 1080, 1180, '#9aa3ad', 6);
+  s += maraSide(520, 1500, .78 + lt * .01, { t, pose: 'tiller' });
+  { const sc = .78 + lt * .01, hx = 520 + 232 * sc, hy = 1500 - 538 * sc; s += Ln(hx, hy, 940, 1500, '#7a5a3a', 26) + R(925, 1480, 40, 40, '#5a3f28', 'rx="8"'); }
+  for (let i = 0; i < 5; i++) { const ph = (t * 1.5 + i * .23) % 1; s += El(ph * 1300 - 100, 900 + i * 90, 50, 3, '#ffffff', `opacity="${.25 * (1 - ph)}"`); }
+  return s;
+};
 S.sea = (lt, d, t) => {
   const M = TL.M, hit = clamp((t - M.wave + .6) / .9), cr = t >= M.crack;
   let s = R(0, 0, 1080, 1920, 'url(#skyDay)') + Ci(800, 700, 200, '#f0c9a0', 'opacity=".35"');
@@ -122,7 +201,7 @@ S.cabin = (lt, d, t) => {
   const blink = Math.floor(t * 3) % 2 === 0 && t >= TL.M.radio - .2;
   let s = R(0, 0, 1080, 1920, C.cabin) + R(0, 1300, 1080, 620, C.cabinD) + Ci(800, 520, 70, '#0e1424') + Ci(800, 520, 54, '#20304a') + G(rain(t, 12, .5), 'translate(746,466) scale(.1)');
   s += R(120, 1080, 840, 200, '#2a3248', 'rx="30"') + R(160, 1040, 760, 80, '#3a4560', 'rx="30"');
-  s += G(El(0, 0, 260, 70, C.yellow) + Ci(300, -30, 60, C.skin) + P('M260,-40 Q300,-110 360,-40 Z', C.hair), `translate(420,${1040 - (t > TL.M.radio ? easeOut((t - TL.M.radio) / .4) * 30 : 0)})`);
+  s += maraBunk(540, 1080, t > TL.M.radio ? easeOut((t - TL.M.radio) / .5) : 0, t);
   s += R(620, 700, 300, 160, '#11161f', 'rx="16"') + R(650, 730, 140, 60, blink ? C.red : '#3a1010', 'rx="8"') + Ci(860, 780, 30, '#2a2f3c');
   if (blink) s += Ci(720, 760, 200, 'url(#glowA)', 'opacity=".5"');
   return s;
@@ -166,7 +245,7 @@ S.ship = (lt, d, t) => {
   const M = TL.M, li = clamp((t - M.lights) / .5) * (.85 + .15 * Math.sin(t * 7));
   let s = R(0, 0, 1080, 1920, 'url(#sky)') + waves(t, 1150, 30, C.sea1, 1.8);
   s += freighter(640, 1120, .95, li > 0 ? li : 0);
-  s += waves(t, 1240, 40, C.sea2, 2.3, 2) + sailboat(200, 1480, .6, t, { mara: true, lamp: true }) + waves(t, 1520, 50, C.sea3, 2.7, 4) + rain(t, 110, .4);
+  s += waves(t, 1240, 40, C.sea2, 2.3, 2) + sailboat(200, 1480, .6, t, { mara: true, lamp: true, beamM: t > TL.M.lights ? .8 : 0 }) + waves(t, 1520, 50, C.sea3, 2.7, 4) + rain(t, 110, .4);
   if (t > M.lights) s += Ln(180, 1170, 900, 980, '#ffe0a3', 3, `opacity="${li * .25}"`);
   return s;
 };
@@ -192,9 +271,19 @@ S.crates = (lt, d, t) => {
 S.choice = (lt, d, t) => {
   const M = TL.M;
   let s = R(0, 0, 1080, 1920, '#08111c') + G(freighter(540, 1500, .9, .7), '', 'opacity=".35"') + waves(t, 1560, 30, C.sea3, 2);
+  s += maraBack(540, 1640, 1.05, t);
   s += G(Tx(0, 0, 'SHOULD MARA', 84, C.white) + Tx(0, 100, `<tspan fill="${C.red}">CLIMB</tspan> ABOARD?`, 84, C.white), 'translate(540,560)', `opacity="${easeOut(lt / .3)}"`);
   s += btn('A', 'CLIMB ABOARD', C.go, 540, 900, easeOut((t - M.A) / .3));
   s += btn('B', 'SAIL AWAY', C.stop, 540, 1060, easeOut((t - M.B) / .3));
+  return s;
+};
+
+S.sheet = (lt, d, t) => {
+  let s = R(0, 0, 1080, 1920, '#0f1d2e') + Tx(540, 150, 'MARA', 110, C.white, 'letter-spacing="10"') + Tx(540, 215, 'SOLO SAILOR · MAYDAY', 32, MC.jacket, 'letter-spacing="4"', 800);
+  s += maraSide(330, 1350, 1.0, { t: .5, pose: 'idle' }) + maraBack(820, 1100, .62, .5);
+  const sw = [['JACKET', MC.jacket], ['VEST', MC.vest], ['BEANIE', MC.beanie], ['HAIR', MC.hair], ['SKIN', MC.skin], ['REFLECTIVE', MC.refl]];
+  sw.forEach(([n, c], i) => { const x = 110 + i * 172; s += R(x - 60, 1520, 120, 120, c, 'rx="18"') + Tx(x, 1680, n, 22, '#cfd8e3', 'letter-spacing="2"', 800); });
+  s += Tx(540, 1790, 'faceless · copper braid · teal beanie · offshore yellow', 28, '#8aa0b6', '', 600);
   return s;
 };
 const HANDLE = '@aorb.horror_stories';
@@ -236,6 +325,7 @@ window.render = (t) => {
   let s = S[sh.id](lt, d, t, fi);
   s = G(s, `translate(540,960) scale(${1 + .05 * (1 - easeOut(lt / .3))}) translate(-540,-960)`);
   let o = R(0, 0, 1080, 1920, 'url(#vig)');
+  if (sh.id === 'sheet') { document.getElementById('v').innerHTML = DEFS + s; return; }
   if (sh.id !== 'finale') o += hud(t, sh.clock) + handleTag();
   if (t < TL.T.N2 - .1) o += G(R(-420, -95, 840, 190, C.white, 'rx="28"') + Tx(0, -12, 'ALONE IN THE ATLANTIC.', 54, '#0b1a2a') + Tx(0, 62, '9 LITERS OF WATER.', 62, C.red), 'translate(540,470)', `opacity="${clamp((TL.T.N2 - .1 - t) / .2)}"`);
   if (!['finale', 'choice'].includes(sh.id)) o += captions(t);

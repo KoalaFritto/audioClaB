@@ -188,7 +188,8 @@ def main():
         "A": wt("N8", "A:"), "B": wt("N8", "B:"),
     }
     shots = [
-        (0.0, "sea", "4:12 PM"),
+        (0.0, "maraIntro", "4:12 PM"),
+        (wt("N1", "Then") - 0.05, "sea", "4:12 PM"),
         (T["N2"] - 0.1, "chart", "4:13 PM"),
         (T["N3"] - 0.15, "cabin", "2:47 AM"),
         (T["RADIO"] - 0.1, "radio", "2:47 AM"),
